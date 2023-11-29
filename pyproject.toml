@@ -5,6 +5,7 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "pyhead"
 authors = [{ name = "David Carmichael", email = "david@uilix.com" }]
+readme = "README.md"
 license = { file = "LICENSE" }
 classifiers = ["License :: OSI Approved :: MIT License"]
 requires-python = ">=3.5"
