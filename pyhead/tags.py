@@ -49,7 +49,7 @@ class ContentSecurityPolicy:
         return f'<ContentSecurityPolicy content_security_policy="{self._content_security_policy}">'
 
     def __str__(self):
-        return Markup(f'<meta http-equiv="viewport" content="{self._content_security_policy}">')
+        return Markup(f'<meta http-equiv="Content-Security-Policy" content="{self._content_security_policy}">')
 
     def replace(self, content_security_policy: str):
         self._content_security_policy = content_security_policy
@@ -141,9 +141,9 @@ class Google:
     _googlebot: list
 
     _order: list = [
-        "t__googlebot",
-        "t__sitelinks",
-        "t__no_translate",
+        "googlebot",
+        "sitelinks",
+        "no_translate",
     ]
 
     def __init__(
@@ -241,27 +241,27 @@ class Verification:
 
 
 class ReferrerPolicy:
-    _content: str = None
+    _policy: str = None
     _fallback: str = None
 
-    def __init__(self, content: str, fallback: Optional[str] = None):
-        self._content = content
+    def __init__(self, policy: str, fallback: Optional[str] = None):
+        self._policy = policy
         self._fallback = fallback
 
     def __repr__(self):
-        return f'<ReferrerPolicy content="{self._content}" fallback="{self._fallback}">'
+        return f'<ReferrerPolicy content="{self._policy}" fallback="{self._fallback}">'
 
     def __str__(self):
         _ = []
         if self._fallback is not None:
             _.append(self._fallback)
 
-        _.append(self._content)
+        _.append(self._policy)
 
         return Markup(f'<meta name="referrer" content="{", ".join(_)}">')
 
     def replace_content(self, content: str, fallback: Optional[str] = None):
-        self._content = content
+        self._policy = content
         self._fallback = fallback
         return self
 

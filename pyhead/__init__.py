@@ -4,8 +4,8 @@ from typing import Optional, Union, Literal
 
 from markupsafe import Markup
 
-from exceptions import *
-from tags import (
+from .exceptions import *
+from .tags import (
     Charset,
     ContentSecurityPolicy,
     Title,
@@ -19,7 +19,7 @@ from tags import (
     TwitterCard,
 )
 
-__version__ = "0.3"
+__version__ = "0.4"
 
 
 class Head:
@@ -34,13 +34,13 @@ class Head:
     t__title: Optional[Title] = None
     t__base: Optional[Base] = None
     t__description: Optional[MetaTag] = None
+    t__keywords: Optional[Keywords] = None
     t__subject: Optional[MetaTag] = None
     t__rating: Optional[MetaTag] = None
     t__referrer_policy: Optional[ReferrerPolicy] = None
-    t__keywords: Optional[Keywords] = None
     t__google: Optional[Google] = None
     t__verification: Optional[Verification] = None
-    t__open_graph_website: Optional[OpenGraphWebsite] = None
+    t__opengraph_website: Optional[OpenGraphWebsite] = None
     t__twitter_card: Optional[TwitterCard] = None
 
     _order = [
@@ -53,13 +53,13 @@ class Head:
         't__title',
         't__base',
         't__description',
+        't__keywords',
         't__subject',
         't__rating',
         't__referrer_policy',
-        't__keywords',
         't__google',
         't__verification',
-        't__open_graph_website',
+        't__opengraph_website',
         't__twitter_card',
     ]
 
@@ -69,11 +69,89 @@ class Head:
             viewport: str = 'width=device-width, initial-scale=1.0',
             content_security_policy: str = None,
             title: str = None,
+            _exclude_title_tags: bool = False,
             base: str = None,
             description: str = None,
             keywords: Union[str, list] = None,
-            _exclude_title_tags: bool = False,
+            subject: str = None,
+            rating: str = None,
+            referrer_policy: dict = None,
+            google: dict = None,
+            verification: dict = None,
+            opengraph_website: dict = None,
+            twitter_card: dict = None,
     ):
+        """
+
+        .. code-block::
+
+            referrer_policy: {
+                'policy': 'no-referrer',
+                'fallback': 'origin',
+            }
+
+        .. code-block::
+
+            google: {
+                'index': True,
+                'follow': False,
+                'no_sitelinks_search_box': False,
+                'no_translate': False,
+            }
+
+        .. code-block::
+
+            verification: {
+                'google': '1234567890',
+                'yandex': '1234567890',
+                'bing': '1234567890',
+                'alexa': '1234567890',
+                'pinterest': '1234567890',
+                'norton': '1234567890',
+            }
+
+        .. code-block::
+
+            opengraph_website: {
+                'site_name': 'Example',
+                'title': 'Example',
+                'description': 'Example',
+                'url': 'https://example.com',
+                'image': 'https://example.com/image.png',
+                'image_alt': 'Example',
+                'locale': 'en_US',
+            }
+
+        .. code-block::
+
+            twitter_card: {
+                'card': 'summary',
+                'site_account': '@example',
+                'creator_account': '@example',
+                'title': 'Example',
+                'description': 'Example',
+                'image': 'https://example.com/image.png',
+                'image_alt': 'Example',
+            }
+
+
+        :param charset:
+        :param viewport:
+        :param content_security_policy:
+        :param title:
+        :param _exclude_title_tags:
+        :param base:
+        :param description:
+        :param keywords:
+        :param subject:
+        :param rating:
+        :param referrer_policy:
+        :param google:
+        :param verification:
+        :param opengraph_website:
+        :param twitter_card:
+        """
+
         self._exclude_title_tags = _exclude_title_tags
 
         self.t__charset = Charset(charset)
@@ -81,6 +159,8 @@ class Head:
 
         if content_security_policy is not None:
             self.t__content_security_policy = ContentSecurityPolicy(content_security_policy)
+        else:
+            self.t__content_security_policy = ContentSecurityPolicy("default-src 'self'")
 
         if title is not None:
             self.t__title = Title(title)
@@ -97,6 +177,27 @@ class Head:
                 self.t__keywords.set_from_string(keywords)
             if isinstance(keywords, list):
                 self.t__keywords.set_from_list(keywords)
+
+        if subject is not None:
+            self.t__subject = MetaTag('subject', subject)
+
+        if rating is not None:
+            self.t__rating = MetaTag('rating', rating)
+
+        if referrer_policy is not None:
+            self.t__referrer_policy = ReferrerPolicy(**referrer_policy)
+
+        if google is not None:
+            self.t__google = Google(**google)
+
+        if verification is not None:
+            self.t__verification = Verification(**verification)
+
+        if opengraph_website is not None:
+            self.t__opengraph_website = OpenGraphWebsite(**opengraph_website)
+
+        if twitter_card is not None:
+            self.t__twitter_card = TwitterCard(**twitter_card)
 
     def set_charset(self, charset: str):
         self.t__charset.replace(charset)
@@ -248,7 +349,7 @@ class Head:
         )
         return self
 
-    def set_open_graph_website(
+    def set_opengraph_website(
             self,
             site_name: Optional[str] = None,
             title: Optional[str] = None,
@@ -258,7 +359,7 @@ class Head:
             image_alt: Optional[str] = None,
             locale: Optional[str] = None,
     ):
-        self.t__open_graph_website = OpenGraphWebsite(
+        self.t__opengraph_website = OpenGraphWebsite(
             site_name=site_name,
             title=title,
             description=description,
@@ -299,46 +400,3 @@ class Head:
             [str(getattr(self, o_tag)) for o_tag in self._order
              if getattr(self, o_tag) is not None]
         ))
-
-
-if __name__ == '__main__':
-    head = Head(base='https://example.com')
-    head.set_title('Hello World')
-    head.set_referrer_policy('no-referrer', 'origin')
-    ver = {
-        'google': '1234567890',
-        'bing': '1234567890',
-    }
-    head.set_verification(**ver)
-    head.set_open_graph_website(
-        site_name='Example',
-        title='Example',
-        description='Example',
-        url='https://example.com',
-        image='https://example.com/image.png',
-        image_alt='Example',
-        locale='en_US',
-    )
-    head.set_twitter_card(
-        card='summary_large_image',
-        site_account='@example',
-        creator_account='@example',
-        title='Example',
-        description='Example',
-        image='https://example.com/image.png',
-        image_alt='Example',
-    )
-    # head.set_default_content_security_policy()
-    # head.set_title('Hello World')
-    # head.set_description('This is a test')
-    # head.set_keywords('test, hello, world')
-    # head.set_description('This is a test')
-    # head.set_google(index=True, follow=False)
-    # head.set_verification(google='1234567890')
-    # head.set_rating('General')
-    # head.append_title('Hello World1', ' - ')
-
-    print(head)
-
-    # for k, v in head.as_dict().items():
-    #     print(k, "=", v)

@@ -1,11 +1,3 @@
-# pyhead
-
-[![PyPI version](https://badge.fury.io/py/pyhead.svg)](https://badge.fury.io/py/pyhead)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/CheeseCake87/pyhead/master/LICENSE)
-
-The Python HTML `<head>` filler.
-
-```python
 from flask import Flask
 
 from pyhead import Head
@@ -119,43 +111,3 @@ def create_app():
             """
 
     return app
-```
-
-view-source:
-
-```text
-        <html>
-            <head>
-                <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'">
-<title>Hello World2 - Hello World - Hello World1</title>
-<base href="https://example.com">
-<meta name="description" content="This is a test">
-<meta name="keywords" content="test, hello, world">
-<meta name="rating" content="General">
-<meta name="referrer" content="origin, no-referrer">
-<meta name="googlebot" content="index, nofollow">
-<meta name="google-site-verification" content="1234567890">
-<meta name="msvalidate.01" content="1234567890">
-<meta name="og:type" content="website">
-<meta name="og:locale" content="en_US">
-<meta name="og:site_name" content="Example">
-<meta name="og:title" content="Example">
-<meta name="og:description" content="Example">
-<meta name="og:image" content="https://example.com/image.png">
-<meta name="og:image:alt" content="Example">
-<meta name="og:url" content="https://example.com">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:site" content="@example">
-<meta name="twitter:creator" content="@example">
-<meta name="twitter:title" content="Example">
-<meta name="twitter:description" content="Example">
-<meta name="twitter:image" content="https://example.com/image.png">
-<meta name="twitter:image:alt" content="Example">
-            </head>
-            <body>
-                <h1>Flask App</h1>
-            </body>
-        </html>
-```
