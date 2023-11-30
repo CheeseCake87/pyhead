@@ -1,6 +1,6 @@
 """A simple python package to generate HTML head tags."""
 
-from typing import Optional, Union
+from typing import Optional, Union, Literal
 
 from markupsafe import Markup
 
@@ -15,6 +15,8 @@ from tags import (
     Google,
     Verification,
     ReferrerPolicy,
+    OpenGraphWebsite,
+    TwitterCard,
 )
 
 __version__ = "0.3"
@@ -38,6 +40,8 @@ class Head:
     t__keywords: Optional[Keywords] = None
     t__google: Optional[Google] = None
     t__verification: Optional[Verification] = None
+    t__open_graph_website: Optional[OpenGraphWebsite] = None
+    t__twitter_card: Optional[TwitterCard] = None
 
     _order = [
         't__charset',
@@ -55,6 +59,8 @@ class Head:
         't__keywords',
         't__google',
         't__verification',
+        't__open_graph_website',
+        't__twitter_card',
     ]
 
     def __init__(
@@ -242,6 +248,48 @@ class Head:
         )
         return self
 
+    def set_open_graph_website(
+            self,
+            site_name: Optional[str] = None,
+            title: Optional[str] = None,
+            description: Optional[str] = None,
+            url: Optional[str] = None,
+            image: Optional[str] = None,
+            image_alt: Optional[str] = None,
+            locale: Optional[str] = None,
+    ):
+        self.t__open_graph_website = OpenGraphWebsite(
+            site_name=site_name,
+            title=title,
+            description=description,
+            url=url,
+            image=image,
+            image_alt=image_alt,
+            locale=locale,
+        )
+        return self
+
+    def set_twitter_card(
+            self,
+            card: Literal['summary', 'summary_large_image'] = 'summary',
+            site_account: Optional[str] = None,
+            creator_account: Optional[str] = None,
+            title: Optional[str] = None,
+            description: Optional[str] = None,
+            image: Optional[str] = None,
+            image_alt: Optional[str] = None,
+    ):
+        self.t__twitter_card = TwitterCard(
+            card=card,
+            site_account=site_account,
+            creator_account=creator_account,
+            title=title,
+            description=description,
+            image=image,
+            image_alt=image_alt,
+        )
+        return self
+
     def as_dict(self):
         return {o_tag.replace("t__", ""): getattr(self, o_tag) for o_tag in self._order
                 if getattr(self, o_tag) is not None}
@@ -255,7 +303,31 @@ class Head:
 
 if __name__ == '__main__':
     head = Head(base='https://example.com')
+    head.set_title('Hello World')
     head.set_referrer_policy('no-referrer', 'origin')
+    ver = {
+        'google': '1234567890',
+        'bing': '1234567890',
+    }
+    head.set_verification(**ver)
+    head.set_open_graph_website(
+        site_name='Example',
+        title='Example',
+        description='Example',
+        url='https://example.com',
+        image='https://example.com/image.png',
+        image_alt='Example',
+        locale='en_US',
+    )
+    head.set_twitter_card(
+        card='summary_large_image',
+        site_account='@example',
+        creator_account='@example',
+        title='Example',
+        description='Example',
+        image='https://example.com/image.png',
+        image_alt='Example',
+    )
     # head.set_default_content_security_policy()
     # head.set_title('Hello World')
     # head.set_description('This is a test')

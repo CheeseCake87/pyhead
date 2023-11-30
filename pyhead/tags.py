@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Literal
 
 from markupsafe import Markup
 
@@ -257,10 +257,138 @@ class ReferrerPolicy:
             _.append(self._fallback)
 
         _.append(self._content)
-        
+
         return Markup(f'<meta name="referrer" content="{", ".join(_)}">')
 
     def replace_content(self, content: str, fallback: Optional[str] = None):
         self._content = content
         self._fallback = fallback
         return self
+
+
+class OpenGraphWebsite:
+    type: MetaTag
+    locale: Optional[MetaTag] = None
+    title: Optional[MetaTag] = None
+    url: Optional[MetaTag] = None
+    image: Optional[MetaTag] = None
+    image_alt: Optional[MetaTag] = None
+    description: Optional[MetaTag] = None
+    site_name: Optional[MetaTag] = None
+
+    _order: list = [
+        "type",
+        "locale",
+        "site_name",
+        "title",
+        "description",
+        "image",
+        "image_alt",
+        "url",
+    ]
+
+    def __init__(
+            self,
+            locale: str = 'en_US',
+            title: Optional[str] = None,
+            image: Optional[str] = None,
+            image_alt: Optional[str] = None,
+            description: Optional[str] = None,
+            site_name: Optional[str] = None,
+            url: Optional[str] = None,
+    ):
+        self.type = MetaTag('og:type', 'website')
+        self.locale = MetaTag('og:locale', locale)
+
+        if title is not None:
+            self.title = MetaTag('og:title', title)
+
+        if url is not None:
+            self.url = MetaTag('og:url', url)
+
+        if image is not None:
+            self.image = MetaTag('og:image', image)
+
+        if image_alt is not None:
+            self.image_alt = MetaTag('og:image:alt', image_alt)
+
+        if description is not None:
+            self.description = MetaTag('og:description', description)
+
+        if site_name is not None:
+            self.site_name = MetaTag('og:site_name', site_name)
+
+    def __repr__(self):
+        return '<OpenGraph type="website">'
+
+    def __str__(self):
+        _ = [str(getattr(self, o_tag)) for o_tag in self._order if getattr(self, o_tag) is not None]
+        if _:
+            return Markup("\n".join(_))
+        return ""
+
+
+class TwitterCard:
+    card: MetaTag
+    site_account: Optional[MetaTag] = None
+    creator_account: Optional[MetaTag] = None
+    title: Optional[MetaTag] = None
+    description: Optional[MetaTag] = None
+    image: Optional[MetaTag] = None
+    image_alt: Optional[MetaTag] = None
+    url: Optional[MetaTag] = None
+
+    _order: list = [
+        "card",
+        "site_account",
+        "creator_account",
+        "title",
+        "description",
+        "image",
+        "image_alt",
+        "url",
+    ]
+
+    def __init__(
+            self,
+            card: Literal['summary', 'summary_large_image'] = 'summary',
+            site_account: Optional[str] = None,
+            creator_account: Optional[str] = None,
+            title: Optional[str] = None,
+            description: Optional[str] = None,
+            image: Optional[str] = None,
+            image_alt: Optional[str] = None,
+            url: Optional[str] = None,
+
+    ):
+        self.card = MetaTag('twitter:card', card)
+
+        if site_account is not None:
+            self.site_account = MetaTag('twitter:site', site_account)
+
+        if creator_account is not None:
+            self.creator_account = MetaTag('twitter:creator', creator_account)
+
+        if title is not None:
+            self.title = MetaTag('twitter:title', title)
+
+        if description is not None:
+            self.description = MetaTag('twitter:description', description)
+
+        if image is not None:
+            self.image = MetaTag('twitter:image', image)
+
+        if image_alt is not None:
+            self.image_alt = MetaTag('twitter:image:alt', image_alt)
+
+        if url is not None:
+            self.url = MetaTag('twitter:url', url)
+
+    def __repr__(self):
+        return '<TwitterCard>'
+
+    def __str__(self):
+        _ = [str(getattr(self, o_tag)) for o_tag in self._order if getattr(self, o_tag) is not None]
+        if _:
+            return Markup("\n".join(_))
+        return ""
