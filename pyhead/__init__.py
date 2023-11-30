@@ -4,127 +4,267 @@ from typing import Optional, Union
 
 from markupsafe import Markup
 
+from exceptions import *
+from tags import (
+    Charset,
+    ContentSecurityPolicy,
+    Title,
+    Base,
+    Keywords,
+    MetaTag,
+    Google,
+    Verification,
+    ReferrerPolicy,
+)
+
 __version__ = "0.3"
 
 
-class PageTitle:
-    _page_title: str = None
-
-    def __init__(self, page_title: str):
-        self._page_title = page_title
-
-    def __repr__(self):
-        return f'<PageTitle page_title="{self._page_title}">'
-
-    def __str__(self):
-        return Markup(f'<title>{self._page_title}</title>')
-
-    def replace(self, page_title: str):
-        self._page_title = page_title
-        return self
-
-    def append(self, more_page_title: str, separator: str):
-        self._page_title = self._page_title + separator + more_page_title
-        return self
-
-    def prepend(self, more_page_title: str, separator: str):
-        self._page_title = more_page_title + separator + self._page_title
-        return self
-
-
-class PageDescription:
-    _page_description: str = None
-
-    def __init__(self, page_description: str):
-        self._page_description = page_description
-
-    def __repr__(self):
-        return f'<PageDescription page_description="{self._page_description}">'
-
-    def __str__(self):
-        return Markup(f'<meta name="description" content="{self._page_description}">')
-
-    def replace(self, page_description: str):
-        self._page_description = page_description
-        return self
-
-
-class PageKeywords:
-    _page_keywords: list = None
-
-    def __init__(self):
-        pass
-
-    def __repr__(self):
-        return f'<PageKeywords page_keywords="{self._page_keywords}">'
-
-    def __str__(self):
-        return Markup(f'<meta name="keywords" content="{", ".join(self._page_keywords)}">')
-
-    def set_from_string(self, keywords: str):
-        self._page_keywords = keywords.replace(" ", "").split(',')
-        return self
-
-    def set_from_list(self, keywords: list):
-        self._page_keywords = keywords
-        return self
-
-
 class Head:
-    page_title: PageTitle
-    page_description: Optional[PageDescription] = None
-    page_keywords: Optional[PageKeywords] = None
+    _exclude_title_tags: bool
+
+    t__charset: Charset
+    t__viewport: MetaTag
+    t__content_security_policy: Optional[ContentSecurityPolicy] = None
+    t__application_name: Optional[MetaTag] = None
+    t__generator: Optional[MetaTag] = None
+    t__theme_color: Optional[MetaTag] = None
+    t__title: Optional[Title] = None
+    t__base: Optional[Base] = None
+    t__description: Optional[MetaTag] = None
+    t__subject: Optional[MetaTag] = None
+    t__rating: Optional[MetaTag] = None
+    t__referrer_policy: Optional[ReferrerPolicy] = None
+    t__keywords: Optional[Keywords] = None
+    t__google: Optional[Google] = None
+    t__verification: Optional[Verification] = None
+
+    _order = [
+        't__charset',
+        't__viewport',
+        't__content_security_policy',
+        't__application_name',
+        't__generator',
+        't__theme_color',
+        't__title',
+        't__base',
+        't__description',
+        't__subject',
+        't__rating',
+        't__referrer_policy',
+        't__keywords',
+        't__google',
+        't__verification',
+    ]
 
     def __init__(
             self,
-            page_title: str,
+            charset: str = 'utf-8',
+            viewport: str = 'width=device-width, initial-scale=1.0',
+            content_security_policy: str = None,
+            title: str = None,
+            base: str = None,
+            description: str = None,
+            keywords: Union[str, list] = None,
+            _exclude_title_tags: bool = False,
     ):
-        self.page_title = PageTitle(page_title)
+        self._exclude_title_tags = _exclude_title_tags
 
-    def set_page_title(self, page_title: str):
-        self.page_title.replace(page_title)
+        self.t__charset = Charset(charset)
+        self.t__viewport = MetaTag('viewport', viewport)
+
+        if content_security_policy is not None:
+            self.t__content_security_policy = ContentSecurityPolicy(content_security_policy)
+
+        if title is not None:
+            self.t__title = Title(title)
+
+        if base is not None:
+            self.t__base = Base(base)
+
+        if description is not None:
+            self.t__description = MetaTag('description', description)
+
+        if keywords is not None:
+            self.t__keywords = Keywords()
+            if isinstance(keywords, str):
+                self.t__keywords.set_from_string(keywords)
+            if isinstance(keywords, list):
+                self.t__keywords.set_from_list(keywords)
+
+    def set_charset(self, charset: str):
+        self.t__charset.replace(charset)
         return self
 
-    def set_page_description(self, page_description: str):
-        self.page_description = PageDescription(page_description)
+    def set_viewport(self, viewport: str):
+        self.t__viewport.replace_content(viewport)
         return self
 
-    def set_page_keywords(self, keywords: Union[str, list]):
-        self.page_keywords = PageKeywords()
+    def set_content_security_policy(self, content_security_policy: str):
+        self.t__content_security_policy = ContentSecurityPolicy(content_security_policy)
+        return self
+
+    def set_default_content_security_policy(self):
+        self.t__content_security_policy = ContentSecurityPolicy("default-src 'self'")
+        return self
+
+    def set_application_name(self, application_name: str):
+        if self.t__application_name is not None:
+            self.t__application_name.replace_content(application_name)
+            return self
+
+        self.t__application_name = MetaTag('application_name', application_name)
+        return self
+
+    def set_generator(self, generator: str):
+        if self.t__generator is not None:
+            self.t__generator.replace_content(generator)
+            return self
+
+        self.t__generator = MetaTag('generator', generator)
+        return self
+
+    def set_title(self, title: str):
+        self.t__title = Title(title, self._exclude_title_tags)
+        return self
+
+    def append_title(self, title: str, separator: str = ' '):
+        if self.t__title is not None:
+            self.t__title.append(title, separator)
+            return self
+
+        raise PageTitleNotSet('Page title not set')
+
+    def prepend_title(self, title: str, separator: str = ' '):
+        if self.t__title is not None:
+            self.t__title.prepend(title, separator)
+            return self
+
+        raise PageTitleNotSet('Page title not set')
+
+    def set_base(self, base: str):
+        self.t__base = Base(base)
+        return self
+
+    def set_description(self, description: str):
+        if self.t__description is not None:
+            self.t__description.replace_content(description)
+            return self
+
+        self.t__description = MetaTag('description', description)
+        return self
+
+    def set_subject(self, subject: str):
+        if self.t__subject is not None:
+            self.t__subject.replace_content(subject)
+            return self
+
+        self.t__subject = MetaTag('subject', subject)
+        return self
+
+    def set_rating(self, rating: str = 'General'):
+        if self.t__rating is not None:
+            self.t__rating.replace_content(rating)
+            return self
+
+        self.t__rating = MetaTag('rating', rating)
+        return self
+
+    def set_referrer_policy(self, referrer_policy: str = 'no-referrer', fallback: Optional[str] = None):
+        if self.t__referrer_policy is not None:
+            self.t__referrer_policy.replace_content(referrer_policy, fallback)
+            return self
+
+        self.t__referrer_policy = ReferrerPolicy(referrer_policy, fallback)
+        return self
+
+    def set_keywords(self, keywords: Union[str, list]):
+        self.t__keywords = Keywords()
         if isinstance(keywords, str):
-            self.page_keywords.set_from_string(keywords)
+            self.t__keywords.set_from_string(keywords)
             return self
         if isinstance(keywords, list):
-            self.page_keywords.set_from_list(keywords)
+            self.t__keywords.set_from_list(keywords)
             return self
 
         return self
 
+    def append_keywords(self, keywords: Union[str, list]):
+        if self.t__keywords is not None:
+            if isinstance(keywords, str):
+                self.t__keywords.str_append(keywords)
+                return self
+            if isinstance(keywords, list):
+                self.t__keywords.list_append(keywords)
+                return self
+
+        raise KeywordsNotSet('Keywords not set')
+
     def __repr__(self):
-        return f'<Head page_title="{self.page_title}">'
+        return f'<Head page_title="{self.t__title}">'
+
+    def set_google(
+            self,
+            index: Optional[bool] = None,
+            follow: Optional[bool] = None,
+            no_sitelinks_search_box: bool = False,
+            no_translate: bool = False
+    ):
+        google_meta = Google(
+            index=index,
+            follow=follow,
+            no_sitelinks_search_box=no_sitelinks_search_box,
+            no_translate=no_translate
+        )
+        if str(google_meta) != '':
+            self.t__google = google_meta
+        else:
+            self.t__google = None
+
+        return self
+
+    def set_verification(
+            self,
+            google: Optional[str] = None,
+            yandex: Optional[str] = None,
+            bing: Optional[str] = None,
+            alexa: Optional[str] = None,
+            pinterest: Optional[str] = None,
+            norton: Optional[str] = None,
+    ):
+        self.t__verification = Verification(
+            google=google,
+            yandex=yandex,
+            bing=bing,
+            alexa=alexa,
+            pinterest=pinterest,
+            norton=norton,
+        )
+        return self
 
     def as_dict(self):
-        return {
-            'page_title': self.page_title,
-            'page_description': self.page_description,
-            'page_keywords': self.page_keywords
-        }
+        return {o_tag.replace("t__", ""): getattr(self, o_tag) for o_tag in self._order
+                if getattr(self, o_tag) is not None}
 
     def __str__(self):
-        build = [
-            f"{self.page_title}",
-            f"{self.page_description}" if self.page_description else None,
-            f"{self.page_keywords}" if self.page_keywords else None
-        ]
-        return Markup("\n".join([x for x in build if x is not None]))
+        return Markup("\n".join(
+            [str(getattr(self, o_tag)) for o_tag in self._order
+             if getattr(self, o_tag) is not None]
+        ))
 
 
 if __name__ == '__main__':
-    head = Head('Hello World')
-    head.set_page_description('This is a test')
-    head.set_page_keywords('test, hello, world')
-    head.set_page_description('This is a test')
-    head.page_title.append('Hello World1', ' - ')
+    head = Head(base='https://example.com')
+    head.set_referrer_policy('no-referrer', 'origin')
+    # head.set_default_content_security_policy()
+    # head.set_title('Hello World')
+    # head.set_description('This is a test')
+    # head.set_keywords('test, hello, world')
+    # head.set_description('This is a test')
+    # head.set_google(index=True, follow=False)
+    # head.set_verification(google='1234567890')
+    # head.set_rating('General')
+    # head.append_title('Hello World1', ' - ')
 
     print(head)
 
