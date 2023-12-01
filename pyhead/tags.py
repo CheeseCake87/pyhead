@@ -71,9 +71,9 @@ class Title:
     _exclude_title_tags: bool = False
 
     def __init__(
-            self,
-            page_title: str,
-            _exclude_title_tags: bool = False,
+        self,
+        page_title: str,
+        _exclude_title_tags: bool = False,
     ):
         self.title = page_title
         self._exclude_title_tags = _exclude_title_tags
@@ -143,12 +143,12 @@ class Google:
     ]
 
     def __init__(
-            self,
-            googlebot: Optional[str] = None,
-            no_sitelinks_search_box: bool = False,
-            no_translate: bool = False,
-            *args,
-            **kwargs,
+        self,
+        googlebot: Optional[str] = None,
+        no_sitelinks_search_box: bool = False,
+        no_translate: bool = False,
+        *args,
+        **kwargs,
     ):
         self._googlebot = []
 
@@ -198,15 +198,15 @@ class Verification:
     ]
 
     def __init__(
-            self,
-            google: Optional[str] = None,
-            yandex: Optional[str] = None,
-            bing: Optional[str] = None,
-            alexa: Optional[str] = None,
-            pinterest: Optional[str] = None,
-            norton: Optional[str] = None,
-            *args,
-            **kwargs,
+        self,
+        google: Optional[str] = None,
+        yandex: Optional[str] = None,
+        bing: Optional[str] = None,
+        alexa: Optional[str] = None,
+        pinterest: Optional[str] = None,
+        norton: Optional[str] = None,
+        *args,
+        **kwargs,
     ):
         if google is not None:
             self.google = MetaTag("google-site-verification", google)
@@ -296,16 +296,16 @@ class OpenGraphWebsite:
     ]
 
     def __init__(
-            self,
-            locale: str = "en_US",
-            title: Optional[str] = None,
-            image: Optional[str] = None,
-            image_alt: Optional[str] = None,
-            description: Optional[str] = None,
-            site_name: Optional[str] = None,
-            url: Optional[str] = None,
-            *args,
-            **kwargs,
+        self,
+        locale: str = "en_US",
+        title: Optional[str] = None,
+        image: Optional[str] = None,
+        image_alt: Optional[str] = None,
+        description: Optional[str] = None,
+        site_name: Optional[str] = None,
+        url: Optional[str] = None,
+        *args,
+        **kwargs,
     ):
         self.type = MetaTag("og:type", "website")
         self.locale = MetaTag("og:locale", locale)
@@ -371,17 +371,17 @@ class TwitterCard:
     ]
 
     def __init__(
-            self,
-            card: Literal["summary", "summary_large_image"] = "summary",
-            site_account: Optional[str] = None,
-            creator_account: Optional[str] = None,
-            title: Optional[str] = None,
-            description: Optional[str] = None,
-            image: Optional[str] = None,
-            image_alt: Optional[str] = None,
-            url: Optional[str] = None,
-            *args,
-            **kwargs,
+        self,
+        card: Literal["summary", "summary_large_image"] = "summary",
+        site_account: Optional[str] = None,
+        creator_account: Optional[str] = None,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        image: Optional[str] = None,
+        image_alt: Optional[str] = None,
+        url: Optional[str] = None,
+        *args,
+        **kwargs,
     ):
         self.card = MetaTag("twitter:card", card)
 
@@ -441,13 +441,13 @@ class GeoPosition:
     ]
 
     def __init__(
-            self,
-            icbm: Optional[str] = None,
-            geo_position: Optional[str] = None,
-            geo_region: Optional[str] = None,
-            geo_placename: Optional[str] = None,
-            *args,
-            **kwargs,
+        self,
+        icbm: Optional[str] = None,
+        geo_position: Optional[str] = None,
+        geo_region: Optional[str] = None,
+        geo_placename: Optional[str] = None,
+        *args,
+        **kwargs,
     ):
         if icbm is not None:
             self.icbm = MetaTag("ICBM", icbm)
