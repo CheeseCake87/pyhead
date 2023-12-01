@@ -64,13 +64,26 @@ def create_app():
                 'geo_position': '55.86013028402754;-4.252019430273945',
                 'geo_region': 'en_GB',
                 'geo_placename': 'Duke of Wellington',
+            },
+            favicon={
+                "ico_icon_16_32_href": 'https://example.com/favicon.ico',
+                "png_icon_16_href": 'https://example.com/favicon-16x16.png',
+                "png_icon_32_href": 'https://example.com/favicon-32x32.png',
+                "png_icon_128_href": 'https://example.com/favicon-128x128.png',
+                "png_icon_180_href": 'https://example.com/favicon-180x180.png',
+                "png_icon_192_href": 'https://example.com/favicon-192x192.png',
+                "png_icon_228_href": 'https://example.com/favicon-228x228.png',
+                "png_icon_512_href": 'https://example.com/favicon-512x512.png',
+                "set_icon_192_to_apple_touch_icon": True,
             }
         )
         head.append_title('Hello World1', ' - ')
         head.prepend_title('Hello World2', ' - ')
+
+        head.set_meta_tag(name='tag', content='tag-content')
+        head.set_meta_tag(name='another-tag', content='another-tag-content', is_http_equiv=True)
         
-        head.set_tag(name='tag', content='tag-content')
-        head.set_tag(name='another-tag', content='another-tag-content', is_http_equiv=True)
+        head.set_link_tag('canonical', 'https://example.com')
 
         return f"""\
             <html>
@@ -134,12 +147,25 @@ def create_app():
             geo_region='en_GB',
             geo_placename='Duke of Wellington',
         )
+        head.set_favicon(
+            ico_icon_16_32_href='https://example.com/favicon.ico',
+            png_icon_16_href='https://example.com/favicon-16x16.png',
+            png_icon_32_href='https://example.com/favicon-32x32.png',
+            png_icon_128_href='https://example.com/favicon-128x128.png',
+            png_icon_180_href='https://example.com/favicon-180x180.png',
+            png_icon_192_href='https://example.com/favicon-192x192.png',
+            png_icon_228_href='https://example.com/favicon-228x228.png',
+            png_icon_512_href='https://example.com/favicon-512x512.png',
+            set_icon_192_to_apple_touch_icon=True,
+        )
 
         head.append_title('Hello World1', ' - ')
         head.prepend_title('Hello World2', ' - ')
+
+        head.set_meta_tag(name='tag', content='tag-content')
+        head.set_meta_tag(name='another-tag', content='another-tag-content', is_http_equiv=True)
         
-        head.set_tag(name='tag', content='tag-content')
-        head.set_tag(name='another-tag', content='another-tag-content', is_http_equiv=True)
+        head.set_link_tag('canonical', 'https://example.com')
 
         return f"""\
             <html>
@@ -158,7 +184,7 @@ def create_app():
 
 view-source:
 
-```text
+```html
 <meta charset="utf-8">
 <meta name="viewport" content="'width=device-width, initial-scale=1.0'">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
@@ -195,4 +221,12 @@ view-source:
 <meta name="format-detection" content="telephone=no">
 <meta name="tag" content="tag-content">
 <meta http-equiv="another-tag" content="another-tag-content">
+<link rel="icon" href="https://example.com/favicon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="https://example.com/favicon-32x32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="https://example.com/favicon-128x128.png" sizes="128x128" type="image/png">
+<link rel="icon" href="https://example.com/favicon-180x180.png" sizes="180x180" type="image/png">
+<link rel="icon" href="https://example.com/favicon-192x192.png" sizes="192x192" type="image/png">
+<link rel="icon" href="https://example.com/favicon-512x512.png" sizes="512x512" type="image/png">
+<link rel="apple-touch-icon" href="https://example.com/favicon-192x192.png">
+<link rel="canonical" href="https://example.com">
 ```

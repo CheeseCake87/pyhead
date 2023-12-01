@@ -9,11 +9,13 @@ from .exceptions import (
     KeywordsNotSet,
 )
 from .tags import (
+    LinkTag,
+    MetaTag,
+    FavIcon,
     Charset,
     Title,
     Base,
     Keywords,
-    MetaTag,
     Google,
     Verification,
     ReferrerPolicy,
@@ -22,7 +24,7 @@ from .tags import (
     GeoPosition,
 )
 
-__version__ = "0.8"
+__version__ = "1.0"
 
 
 class Head:
@@ -49,7 +51,8 @@ class Head:
     t__geo_position: Optional[GeoPosition] = None
     t__detect_telephone_numbers: Optional[MetaTag] = None
 
-    _custom_tags: dict
+    _set_meta_tags: dict
+    _set_link_tags: dict
 
     _order = [
         "t__charset",
@@ -79,6 +82,9 @@ class Head:
         charset: str = "utf-8",
         viewport: Optional[str] = None,
         content_security_policy: Optional[str] = None,
+        application_name: Optional[str] = None,
+        generator: Optional[str] = None,
+        theme_color: Optional[str] = None,
         title: Optional[str] = None,
         base: Optional[str] = None,
         description: Optional[str] = None,
@@ -92,11 +98,10 @@ class Head:
         opengraph_website: Optional[dict] = None,
         twitter_card: Optional[dict] = None,
         geo_position: Optional[dict] = None,
-        detect_telephone_numbers: bool = False,
+        disable_detection_of_telephone_numbers: bool = False,
         exclude_title_tags: bool = False,
         exclude_viewport: bool = False,
-        exclude_content_security_policy: bool = False,
-        exclude_detect_telephone_numbers: bool = False,
+        favicon: Optional[dict] = None,
     ):
         """
         viewport is set to "'width=device-width, initial-scale=1.0'" by default.
@@ -170,7 +175,8 @@ class Head:
         """
 
         self._exclude_title_tags = exclude_title_tags
-        self._custom_tags = {}
+        self._set_meta_tags = {}
+        self._set_link_tags = {}
 
         self.t__charset = Charset(charset)
 
@@ -186,11 +192,15 @@ class Head:
             self.t__content_security_policy = MetaTag(
                 "Content-Security-Policy", content_security_policy, is_http_equiv=True
             )
-        else:
-            if not exclude_content_security_policy:
-                self.t__content_security_policy = MetaTag(
-                    "Content-Security-Policy", "default-src 'self'", is_http_equiv=True
-                )
+
+        if application_name is not None:
+            self.t__application_name = MetaTag("application_name", application_name)
+
+        if generator is not None:
+            self.t__generator = MetaTag("generator", generator)
+
+        if theme_color is not None:
+            self.t__theme_color = MetaTag("theme-color", theme_color)
 
         if title is not None:
             self.t__title = Title(title)
@@ -235,15 +245,13 @@ class Head:
         if geo_position is not None:
             self.t__geo_position = GeoPosition(**geo_position)
 
-        if detect_telephone_numbers:
+        if disable_detection_of_telephone_numbers:
             self.t__detect_telephone_numbers = MetaTag(
-                "format-detection", "telephone=yes"
+                "format-detection", "telephone=no"
             )
-        else:
-            if not exclude_detect_telephone_numbers:
-                self.t__detect_telephone_numbers = MetaTag(
-                    "format-detection", "telephone=no"
-                )
+
+        if favicon is not None:
+            self._set_link_tags["favicon"] = FavIcon(**favicon)
 
     def set_charset(self, charset: str):
         self.t__charset.replace(charset)
@@ -281,6 +289,14 @@ class Head:
             return self
 
         self.t__generator = MetaTag("generator", generator)
+        return self
+
+    def set_theme_color(self, theme_color: str):
+        if self.t__theme_color is not None:
+            self.t__theme_color.replace_content(theme_color)
+            return self
+
+        self.t__theme_color = MetaTag("theme-color", theme_color)
         return self
 
     def set_title(self, title: str):
@@ -465,23 +481,72 @@ class Head:
         )
         return self
 
-    def set_detect_telephone_numbers(self, detect_telephone_numbers: bool = False):
-        if detect_telephone_numbers:
-            self.t__detect_telephone_numbers = MetaTag(
-                "format-detection", "telephone=yes"
-            )
-            return self
-
+    def set_disable_detection_of_telephone_numbers(self):
         self.t__detect_telephone_numbers = MetaTag("format-detection", "telephone=no")
         return self
 
-    def set_tag(self, name: str, content: str, is_http_equiv: bool = False):
-        self._custom_tags[name] = MetaTag(name, content, is_http_equiv)
+    def set_favicon(
+        self,
+        ico_icon_16_32_href: Optional[str] = None,
+        png_icon_16_href: Optional[str] = None,
+        png_icon_32_href: Optional[str] = None,
+        png_icon_128_href: Optional[str] = None,
+        png_icon_180_href: Optional[str] = None,
+        png_icon_192_href: Optional[str] = None,
+        png_icon_228_href: Optional[str] = None,
+        png_icon_512_href: Optional[str] = None,
+        set_icon_192_to_apple_touch_icon: bool = True,
+    ):
+        """
+        apple_touch_icon will only be generated if png_icon_192_href exists.
+
+        :param ico_icon_16_32_href:
+        :param png_icon_16_href:
+        :param png_icon_32_href:
+        :param png_icon_128_href:
+        :param png_icon_180_href:
+        :param png_icon_192_href:
+        :param png_icon_228_href:
+        :param png_icon_512_href:
+        :param set_icon_192_to_apple_touch_icon:
+        :return:
+        """
+        self._set_link_tags["favicon"] = FavIcon(
+            ico_icon_16_32_href,
+            png_icon_16_href,
+            png_icon_32_href,
+            png_icon_128_href,
+            png_icon_180_href,
+            png_icon_192_href,
+            png_icon_228_href,
+            png_icon_512_href,
+            set_icon_192_to_apple_touch_icon,
+        )
         return self
 
-    def remove_tag(self, name: str):
-        if name in self._custom_tags:
-            del self._custom_tags[name]
+    def set_meta_tag(self, name: str, content: str, is_http_equiv: bool = False):
+        self._set_meta_tags[name] = MetaTag(name, content, is_http_equiv)
+        return self
+
+    def remove_meta_tag(self, name: str):
+        if name in self._set_meta_tags:
+            del self._set_meta_tags[name]
+        return self
+
+    def set_link_tag(
+        self,
+        rel: str,
+        href: str,
+        sizes: Optional[str] = None,
+        type_: Optional[str] = None,
+        hreflang: Optional[str] = None,
+    ):
+        self._set_link_tags[rel] = LinkTag(rel, href, sizes, type_, hreflang)
+        return self
+
+    def remove_link_tag(self, rel: str):
+        if rel in self._set_link_tags:
+            del self._set_link_tags[rel]
         return self
 
     def as_dict(self):
@@ -491,7 +556,8 @@ class Head:
                 for o_tag in self._order
                 if getattr(self, o_tag) is not None
             },
-            **self._custom_tags,
+            **self._set_meta_tags,
+            **self._set_link_tags,
         }
 
     def __str__(self):
@@ -505,7 +571,12 @@ class Head:
                     ],
                     *[
                         str(c_tag)
-                        for c_tag in self._custom_tags.values()
+                        for c_tag in self._set_meta_tags.values()
+                        if c_tag is not None
+                    ],
+                    *[
+                        str(c_tag)
+                        for c_tag in self._set_link_tags.values()
                         if c_tag is not None
                     ],
                 ]

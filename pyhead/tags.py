@@ -3,21 +3,205 @@ from typing import Optional, Literal
 from markupsafe import Markup
 
 
-class Charset:
-    charset: str = None
+class LinkTag:
+    rel: str = None
+    href: str = None
+    sizes: str = None
+    type: str = None
+    hreflang: str = None
 
-    def __init__(self, charset: str = "utf-8"):
-        self.charset = charset
+    _rel: str = None
+    _href: str = None
+    _sizes: str = None
+    _type: str = None
+    _hreflang: str = None
+
+    def __init__(
+        self,
+        rel: str,
+        href: Optional[str] = None,
+        sizes: Optional[str] = None,
+        type_: Optional[str] = None,
+        hreflang: Optional[str] = None,
+    ):
+        self.rel = rel
+        self.href = href
+        self.sizes = sizes
+        self.type = type_
+        self.hreflang = hreflang
+
+        self._rel = f'rel="{self.rel}" '
+        self._href = f'href="{self.href}" ' if self.href is not None else ""
+        self._sizes = f'sizes="{self.sizes}" ' if self.sizes is not None else ""
+        self._type = f'type="{self.type}" ' if self.type is not None else ""
+        self._hreflang = (
+            f'hreflang="{self.hreflang}" ' if self.hreflang is not None else ""
+        )
 
     def __repr__(self):
-        return f'<Charset charset="{self.charset}">'
+        return Markup(
+            f"<LinkTag {self._rel}{self._href}{self._sizes}{self._type}{self._hreflang}>".replace(
+                " >", ">"
+            )
+        )
 
     def __str__(self):
-        return Markup(f'<meta charset="{self.charset}">')
+        return Markup(
+            f"<link {self._rel}{self._href}{self._sizes}{self._type}{self._hreflang}>".replace(
+                " >", ">"
+            )
+        )
 
-    def replace(self, charset: str):
-        self.charset = charset
-        return self
+
+class FavIcon:
+    ico_icon_16_32_href: Optional[LinkTag] = None
+    png_icon_16_href: Optional[LinkTag] = None
+    png_icon_32_href: Optional[LinkTag] = None
+    png_icon_128_href: Optional[LinkTag] = None
+    png_icon_180_href: Optional[LinkTag] = None
+    png_icon_192_href: Optional[LinkTag] = None
+    png_icon_228_href: Optional[LinkTag] = None
+    png_icon_512_href: Optional[LinkTag] = None
+    apple_touch_icon: Optional[LinkTag] = None
+
+    _order: list = [
+        "ico_icon_16_32_href",
+        "png_icon_16_href",
+        "png_icon_32_href",
+        "png_icon_128_href",
+        "png_icon_180_href",
+        "png_icon_192_href",
+        "png_icon_228_href",
+        "png_icon_512_href",
+        "apple_touch_icon",
+    ]
+
+    def __init__(
+        self,
+        ico_icon_16_32_href: Optional[str] = None,
+        png_icon_16_href: Optional[str] = None,
+        png_icon_32_href: Optional[str] = None,
+        png_icon_128_href: Optional[str] = None,
+        png_icon_180_href: Optional[str] = None,
+        png_icon_192_href: Optional[str] = None,
+        png_icon_228_href: Optional[str] = None,
+        png_icon_512_href: Optional[str] = None,
+        set_icon_192_to_apple_touch_icon: bool = False,
+        *args,
+        **kwargs,
+    ):
+        if ico_icon_16_32_href is not None:
+            self.ico_icon_href = LinkTag(
+                "icon", ico_icon_16_32_href, "16x16 32x32", "image/x-icon"
+            )
+
+        if png_icon_16_href is not None:
+            self.png_icon_16_href = LinkTag(
+                "icon", png_icon_16_href, "16x16", "image/png"
+            )
+
+        if png_icon_32_href is not None:
+            self.png_icon_32_href = LinkTag(
+                "icon", png_icon_32_href, "32x32", "image/png"
+            )
+
+        if png_icon_128_href is not None:
+            self.png_icon_128_href = LinkTag(
+                "icon", png_icon_128_href, "128x128", "image/png"
+            )
+
+        if png_icon_180_href is not None:
+            self.png_icon_180_href = LinkTag(
+                "icon", png_icon_180_href, "180x180", "image/png"
+            )
+
+        if png_icon_192_href is not None:
+            self.png_icon_192_href = LinkTag(
+                "icon", png_icon_192_href, "192x192", "image/png"
+            )
+            if set_icon_192_to_apple_touch_icon:
+                self.apple_touch_icon = LinkTag("apple-touch-icon", png_icon_192_href)
+
+        if png_icon_228_href is not None:
+            self.png_icon_228_href = LinkTag(
+                "icon", png_icon_228_href, "228x228", "image/png"
+            )
+
+        if png_icon_512_href is not None:
+            self.png_icon_228_href = LinkTag(
+                "icon", png_icon_512_href, "512x512", "image/png"
+            )
+
+        _, __ = args, kwargs
+
+    def __repr__(self):
+        _ico_icon_16_32_href = (
+            f'ico_icon_16_32_href="{self.ico_icon_16_32_href}" '
+            if self.ico_icon_16_32_href is not None
+            else ""
+        )
+        _png_icon_16_href = (
+            f'png_icon_16_href="{self.png_icon_16_href}" '
+            if self.png_icon_16_href is not None
+            else ""
+        )
+        _png_icon_32_href = (
+            f'png_icon_32_href="{self.png_icon_32_href}" '
+            if self.png_icon_32_href is not None
+            else ""
+        )
+        _png_icon_128_href = (
+            f'png_icon_128_href="{self.png_icon_128_href}" '
+            if self.png_icon_128_href is not None
+            else ""
+        )
+        _png_icon_180_href = (
+            f'png_icon_180_href="{self.png_icon_180_href}" '
+            if self.png_icon_180_href is not None
+            else ""
+        )
+        _png_icon_192_href = (
+            f'png_icon_192_href="{self.png_icon_192_href}" '
+            if self.png_icon_192_href is not None
+            else ""
+        )
+        _png_icon_228_href = (
+            f'png_icon_228_href="{self.png_icon_228_href}" '
+            if self.png_icon_228_href is not None
+            else ""
+        )
+        _png_icon_512_href = (
+            f'png_icon_512_href="{self.png_icon_512_href}" '
+            if self.png_icon_512_href is not None
+            else ""
+        )
+        _apple_touch_icon = (
+            f'apple_touch_icon="{self.apple_touch_icon}" '
+            if self.apple_touch_icon is not None
+            else ""
+        )
+        return (
+            f"<FavIcon {_ico_icon_16_32_href}"
+            f"{_png_icon_16_href}"
+            f"{_png_icon_32_href}"
+            f"{_png_icon_128_href}"
+            f"{_png_icon_180_href}"
+            f"{_png_icon_192_href}"
+            f"{_png_icon_228_href}"
+            f"{_png_icon_512_href}"
+            f"{_apple_touch_icon}"
+            ">".replace(" >", ">")
+        )
+
+    def __str__(self):
+        _ = [
+            str(getattr(self, o_link))
+            for o_link in self._order
+            if getattr(self, o_link) is not None
+        ]
+        if _:
+            return Markup("\n".join(_))
+        return ""
 
 
 class MetaTag:
@@ -46,6 +230,23 @@ class MetaTag:
 
     def replace_content(self, content: str):
         self.content = content
+        return self
+
+
+class Charset:
+    charset: str = None
+
+    def __init__(self, charset: str = "utf-8"):
+        self.charset = charset
+
+    def __repr__(self):
+        return f'<Charset charset="{self.charset}">'
+
+    def __str__(self):
+        return Markup(f'<meta charset="{self.charset}">')
+
+    def replace(self, charset: str):
+        self.charset = charset
         return self
 
 
