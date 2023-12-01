@@ -5,6 +5,8 @@
 
 The Python HTML `<head>` filler.
 
+`pip install pyhead`
+
 ```python
 from flask import Flask
 
