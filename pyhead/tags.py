@@ -6,7 +6,7 @@ from markupsafe import Markup
 class Charset:
     charset: str = None
 
-    def __init__(self, charset: str = 'utf-8'):
+    def __init__(self, charset: str = "utf-8"):
         self.charset = charset
 
     def __repr__(self):
@@ -37,10 +37,12 @@ class MetaTag:
         )
 
     def __str__(self):
-        return Markup((
-            f'<meta {"http-equiv" if self.is_http_equiv else "name"}'
-            f'="{self.name}" content="{self.content}">'
-        ))
+        return Markup(
+            (
+                f'<meta {"http-equiv" if self.is_http_equiv else "name"}'
+                f'="{self.name}" content="{self.content}">'
+            )
+        )
 
     def replace_content(self, content: str):
         self.content = content
@@ -69,9 +71,9 @@ class Title:
     _exclude_title_tags: bool = False
 
     def __init__(
-            self,
-            page_title: str,
-            _exclude_title_tags: bool = False,
+        self,
+        page_title: str,
+        _exclude_title_tags: bool = False,
     ):
         self.title = page_title
         self._exclude_title_tags = _exclude_title_tags
@@ -81,9 +83,9 @@ class Title:
 
     def __str__(self):
         if not self._exclude_title_tags:
-            return Markup(f'<title>{self.title}</title>')
+            return Markup(f"<title>{self.title}</title>")
         else:
-            return Markup(f'{self.title}')
+            return Markup(f"{self.title}")
 
     def replace(self, page_title: str):
         self.title = page_title
@@ -111,7 +113,7 @@ class Keywords:
         return Markup(f'<meta name="keywords" content="{", ".join(self.keywords)}">')
 
     def set_from_string(self, keywords: str):
-        self.keywords = keywords.replace(" ", "").split(',')
+        self.keywords = keywords.replace(" ", "").split(",")
         return self
 
     def set_from_list(self, keywords: list):
@@ -119,7 +121,7 @@ class Keywords:
         return self
 
     def str_append(self, more_keywords: str):
-        self.keywords.append(more_keywords.replace(" ", "").split(','))
+        self.keywords.append(more_keywords.replace(" ", "").split(","))
         return self
 
     def list_append(self, more_keywords: list):
@@ -142,48 +144,51 @@ class Google:
     ]
 
     def __init__(
-            self,
-            index: Optional[bool] = None,
-            follow: Optional[bool] = None,
-            no_sitelinks_search_box: bool = False,
-            no_translate: bool = False,
-            *args,
-            **kwargs
+        self,
+        index: Optional[bool] = None,
+        follow: Optional[bool] = None,
+        no_sitelinks_search_box: bool = False,
+        no_translate: bool = False,
+        *args,
+        **kwargs,
     ):
         self._googlebot = []
 
         if index is not None:
             if index:
-                self._googlebot.append('index')
+                self._googlebot.append("index")
             else:
-                self._googlebot.append('noindex')
+                self._googlebot.append("noindex")
 
         if follow is not None:
             if follow:
-                self._googlebot.append('follow')
+                self._googlebot.append("follow")
             else:
-                self._googlebot.append('nofollow')
+                self._googlebot.append("nofollow")
 
         if len(self._googlebot) > 0:
-            self.googlebot = MetaTag('googlebot', f'{", ".join(self._googlebot)}')
+            self.googlebot = MetaTag("googlebot", f'{", ".join(self._googlebot)}')
 
         if no_sitelinks_search_box:
-            self.sitelinks = MetaTag('google', 'nositelinkssearchbox')
+            self.sitelinks = MetaTag("google", "nositelinkssearchbox")
 
         if no_translate:
-            self.no_translate = MetaTag('google', 'notranslate')
+            self.no_translate = MetaTag("google", "notranslate")
 
         _, __ = args, kwargs
 
     def __repr__(self):
         return (
-            f'<Google googlebot={self.googlebot} sitelinks={self.sitelinks} '
-            f'no_translate={self.no_translate}>'
+            f"<Google googlebot={self.googlebot} sitelinks={self.sitelinks} "
+            f"no_translate={self.no_translate}>"
         )
 
     def __str__(self):
-        _ = [str(getattr(self, o_tag)) for o_tag in self._order
-             if getattr(self, o_tag) is not None]
+        _ = [
+            str(getattr(self, o_tag))
+            for o_tag in self._order
+            if getattr(self, o_tag) is not None
+        ]
         if _:
             return Markup("\n".join(_))
         return ""
@@ -207,46 +212,49 @@ class Verification:
     ]
 
     def __init__(
-            self,
-            google: Optional[str] = None,
-            yandex: Optional[str] = None,
-            bing: Optional[str] = None,
-            alexa: Optional[str] = None,
-            pinterest: Optional[str] = None,
-            norton: Optional[str] = None,
-            *args,
-            **kwargs
+        self,
+        google: Optional[str] = None,
+        yandex: Optional[str] = None,
+        bing: Optional[str] = None,
+        alexa: Optional[str] = None,
+        pinterest: Optional[str] = None,
+        norton: Optional[str] = None,
+        *args,
+        **kwargs,
     ):
         if google is not None:
-            self.google = MetaTag('google-site-verification', google)
+            self.google = MetaTag("google-site-verification", google)
 
         if yandex is not None:
-            self.yandex = MetaTag('yandex-verification', yandex)
+            self.yandex = MetaTag("yandex-verification", yandex)
 
         if bing is not None:
-            self.bing = MetaTag('msvalidate.01', bing)
+            self.bing = MetaTag("msvalidate.01", bing)
 
         if alexa is not None:
-            self.alexa = MetaTag('alexaVerifyID', alexa)
+            self.alexa = MetaTag("alexaVerifyID", alexa)
 
         if pinterest is not None:
-            self.pinterest = MetaTag('p:domain_verify', pinterest)
+            self.pinterest = MetaTag("p:domain_verify", pinterest)
 
         if norton is not None:
-            self.norton = MetaTag('norton-safeweb-site-verification', norton)
+            self.norton = MetaTag("norton-safeweb-site-verification", norton)
 
         _, __ = args, kwargs
 
     def __repr__(self):
         return (
-            f'<Verification google={self.google} yandex={self.yandex} '
-            f'bing={self.bing} alexa={self.alexa} pinterest={self.pinterest} '
-            f'norton={self.norton}>'
+            f"<Verification google={self.google} yandex={self.yandex} "
+            f"bing={self.bing} alexa={self.alexa} pinterest={self.pinterest} "
+            f"norton={self.norton}>"
         )
 
     def __str__(self):
-        _ = [str(getattr(self, o_tag)) for o_tag in self._order
-             if getattr(self, o_tag) is not None]
+        _ = [
+            str(getattr(self, o_tag))
+            for o_tag in self._order
+            if getattr(self, o_tag) is not None
+        ]
         if _:
             return Markup("\n".join(_))
         return ""
@@ -256,13 +264,7 @@ class ReferrerPolicy:
     policy: str = None
     fallback: str = None
 
-    def __init__(
-            self,
-            policy: str,
-            fallback: Optional[str] = None,
-            *args,
-            **kwargs
-    ):
+    def __init__(self, policy: str, fallback: Optional[str] = None, *args, **kwargs):
         self.policy = policy
         self.fallback = fallback
 
@@ -308,51 +310,54 @@ class OpenGraphWebsite:
     ]
 
     def __init__(
-            self,
-            locale: str = 'en_US',
-            title: Optional[str] = None,
-            image: Optional[str] = None,
-            image_alt: Optional[str] = None,
-            description: Optional[str] = None,
-            site_name: Optional[str] = None,
-            url: Optional[str] = None,
-            *args,
-            **kwargs
+        self,
+        locale: str = "en_US",
+        title: Optional[str] = None,
+        image: Optional[str] = None,
+        image_alt: Optional[str] = None,
+        description: Optional[str] = None,
+        site_name: Optional[str] = None,
+        url: Optional[str] = None,
+        *args,
+        **kwargs,
     ):
-        self.type = MetaTag('og:type', 'website')
-        self.locale = MetaTag('og:locale', locale)
+        self.type = MetaTag("og:type", "website")
+        self.locale = MetaTag("og:locale", locale)
 
         if title is not None:
-            self.title = MetaTag('og:title', title)
+            self.title = MetaTag("og:title", title)
 
         if url is not None:
-            self.url = MetaTag('og:url', url)
+            self.url = MetaTag("og:url", url)
 
         if image is not None:
-            self.image = MetaTag('og:image', image)
+            self.image = MetaTag("og:image", image)
 
         if image_alt is not None:
-            self.image_alt = MetaTag('og:image:alt', image_alt)
+            self.image_alt = MetaTag("og:image:alt", image_alt)
 
         if description is not None:
-            self.description = MetaTag('og:description', description)
+            self.description = MetaTag("og:description", description)
 
         if site_name is not None:
-            self.site_name = MetaTag('og:site_name', site_name)
+            self.site_name = MetaTag("og:site_name", site_name)
 
         _, __ = args, kwargs
 
     def __repr__(self):
         return (
-            f'<OpenGraphWebsite type={self.type} locale={self.locale} '
-            f'title={self.title} url={self.url} image={self.image} '
-            f'image_alt={self.image_alt} description={self.description} '
-            f'site_name={self.site_name}>'
+            f"<OpenGraphWebsite type={self.type} locale={self.locale} "
+            f"title={self.title} url={self.url} image={self.image} "
+            f"image_alt={self.image_alt} description={self.description} "
+            f"site_name={self.site_name}>"
         )
 
     def __str__(self):
-        _ = [str(getattr(self, o_tag)) for o_tag in self._order
-             if getattr(self, o_tag) is not None]
+        _ = [
+            str(getattr(self, o_tag))
+            for o_tag in self._order
+            if getattr(self, o_tag) is not None
+        ]
         if _:
             return Markup("\n".join(_))
         return ""
@@ -380,54 +385,57 @@ class TwitterCard:
     ]
 
     def __init__(
-            self,
-            card: Literal['summary', 'summary_large_image'] = 'summary',
-            site_account: Optional[str] = None,
-            creator_account: Optional[str] = None,
-            title: Optional[str] = None,
-            description: Optional[str] = None,
-            image: Optional[str] = None,
-            image_alt: Optional[str] = None,
-            url: Optional[str] = None,
-            *args,
-            **kwargs
+        self,
+        card: Literal["summary", "summary_large_image"] = "summary",
+        site_account: Optional[str] = None,
+        creator_account: Optional[str] = None,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        image: Optional[str] = None,
+        image_alt: Optional[str] = None,
+        url: Optional[str] = None,
+        *args,
+        **kwargs,
     ):
-        self.card = MetaTag('twitter:card', card)
+        self.card = MetaTag("twitter:card", card)
 
         if site_account is not None:
-            self.site_account = MetaTag('twitter:site', site_account)
+            self.site_account = MetaTag("twitter:site", site_account)
 
         if creator_account is not None:
-            self.creator_account = MetaTag('twitter:creator', creator_account)
+            self.creator_account = MetaTag("twitter:creator", creator_account)
 
         if title is not None:
-            self.title = MetaTag('twitter:title', title)
+            self.title = MetaTag("twitter:title", title)
 
         if description is not None:
-            self.description = MetaTag('twitter:description', description)
+            self.description = MetaTag("twitter:description", description)
 
         if image is not None:
-            self.image = MetaTag('twitter:image', image)
+            self.image = MetaTag("twitter:image", image)
 
         if image_alt is not None:
-            self.image_alt = MetaTag('twitter:image:alt', image_alt)
+            self.image_alt = MetaTag("twitter:image:alt", image_alt)
 
         if url is not None:
-            self.url = MetaTag('twitter:url', url)
+            self.url = MetaTag("twitter:url", url)
 
         _, __ = args, kwargs
 
     def __repr__(self):
         return (
-            f'<TwitterCard card={self.card} site_account={self.site_account} '
-            f'creator_account={self.creator_account} title={self.title} '
-            f'description={self.description} image={self.image} '
-            f'image_alt={self.image_alt} url={self.url}>'
+            f"<TwitterCard card={self.card} site_account={self.site_account} "
+            f"creator_account={self.creator_account} title={self.title} "
+            f"description={self.description} image={self.image} "
+            f"image_alt={self.image_alt} url={self.url}>"
         )
 
     def __str__(self):
-        _ = [str(getattr(self, o_tag)) for o_tag in self._order
-             if getattr(self, o_tag) is not None]
+        _ = [
+            str(getattr(self, o_tag))
+            for o_tag in self._order
+            if getattr(self, o_tag) is not None
+        ]
         if _:
             return Markup("\n".join(_))
         return ""
@@ -447,37 +455,40 @@ class GeoPosition:
     ]
 
     def __init__(
-            self,
-            icbm: Optional[str] = None,
-            geo_position: Optional[str] = None,
-            geo_region: Optional[str] = None,
-            geo_placename: Optional[str] = None,
-            *args,
-            **kwargs
+        self,
+        icbm: Optional[str] = None,
+        geo_position: Optional[str] = None,
+        geo_region: Optional[str] = None,
+        geo_placename: Optional[str] = None,
+        *args,
+        **kwargs,
     ):
         if icbm is not None:
-            self.icbm = MetaTag('ICBM', icbm)
+            self.icbm = MetaTag("ICBM", icbm)
 
         if geo_position is not None:
-            self.geo_position = MetaTag('geo.position', geo_position)
+            self.geo_position = MetaTag("geo.position", geo_position)
 
         if geo_region is not None:
-            self.geo_region = MetaTag('geo.region', geo_region)
+            self.geo_region = MetaTag("geo.region", geo_region)
 
         if geo_placename is not None:
-            self.geo_placename = MetaTag('geo.placename', geo_placename)
+            self.geo_placename = MetaTag("geo.placename", geo_placename)
 
         _, __ = args, kwargs
 
     def __repr__(self):
         return (
-            f'<GeoPosition icbm={self.icbm} geo_position={self.geo_position} '
-            f'geo_region={self.geo_region} geo_placename={self.geo_placename}>'
+            f"<GeoPosition icbm={self.icbm} geo_position={self.geo_position} "
+            f"geo_region={self.geo_region} geo_placename={self.geo_placename}>"
         )
 
     def __str__(self):
-        _ = [str(getattr(self, o_tag)) for o_tag in self._order
-             if getattr(self, o_tag) is not None]
+        _ = [
+            str(getattr(self, o_tag))
+            for o_tag in self._order
+            if getattr(self, o_tag) is not None
+        ]
         if _:
             return Markup("\n".join(_))
         return ""
