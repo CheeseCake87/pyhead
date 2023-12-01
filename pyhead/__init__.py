@@ -7,7 +7,6 @@ from markupsafe import Markup
 from .exceptions import *
 from .tags import (
     Charset,
-    ContentSecurityPolicy,
     Title,
     Base,
     Keywords,
@@ -17,9 +16,10 @@ from .tags import (
     ReferrerPolicy,
     OpenGraphWebsite,
     TwitterCard,
+    GeoPosition,
 )
 
-__version__ = "0.4"
+__version__ = "0.5"
 
 
 class Head:
@@ -27,7 +27,7 @@ class Head:
 
     t__charset: Charset
     t__viewport: MetaTag
-    t__content_security_policy: Optional[ContentSecurityPolicy] = None
+    t__content_security_policy: Optional[MetaTag] = None
     t__application_name: Optional[MetaTag] = None
     t__generator: Optional[MetaTag] = None
     t__theme_color: Optional[MetaTag] = None
@@ -42,6 +42,10 @@ class Head:
     t__verification: Optional[Verification] = None
     t__opengraph_website: Optional[OpenGraphWebsite] = None
     t__twitter_card: Optional[TwitterCard] = None
+    t__geo_position: Optional[GeoPosition] = None
+    t__detect_telephone_numbers: Optional[MetaTag] = None
+
+    _custom_tags: dict
 
     _order = [
         't__charset',
@@ -61,27 +65,42 @@ class Head:
         't__verification',
         't__opengraph_website',
         't__twitter_card',
+        't__geo_position',
+        't__detect_telephone_numbers',
     ]
 
     def __init__(
             self,
             charset: str = 'utf-8',
-            viewport: str = 'width=device-width, initial-scale=1.0',
-            content_security_policy: str = None,
-            title: str = None,
-            _exclude_title_tags: bool = False,
-            base: str = None,
-            description: str = None,
-            keywords: Union[str, list] = None,
-            subject: str = None,
-            rating: str = None,
-            referrer_policy: dict = None,
-            google: dict = None,
-            verification: dict = None,
-            opengraph_website: dict = None,
-            twitter_card: dict = None,
+            viewport: Optional[str] = None,
+            content_security_policy: Optional[str] = None,
+            title: Optional[str] = None,
+            base: Optional[str] = None,
+            description: Optional[str] = None,
+            keywords: Optional[Union[str, list]] = None,
+            subject: Optional[str] = None,
+            rating: Optional[str] = None,
+            referrer_policy: Optional[dict] = None,
+            google: Optional[dict] = None,
+            verification: Optional[dict] = None,
+            opengraph_website: Optional[dict] = None,
+            twitter_card: Optional[dict] = None,
+            geo_position: Optional[dict] = None,
+            detect_telephone_numbers: bool = False,
+            exclude_title_tags: bool = False,
+            exclude_viewport: bool = False,
+            exclude_content_security_policy: bool = False,
+            exclude_detect_telephone_numbers: bool = False,
     ):
         """
+        viewport is set to "'width=device-width, initial-scale=1.0'" by default.
+        Set exclude_viewport to True to exclude the tag.
+
+        content_security_policy is set to "default-src 'self'" by default.
+        Set exclude_content_security_policy to True to exclude the tag.
+
+        detect_telephone_numbers is set to "telephone=no" by default.
+        Set exclude_detect_telephone_numbers to True to exclude the tag.
 
         .. code-block::
 
@@ -134,33 +153,38 @@ class Head:
                 'image_alt': 'Example',
             }
 
+        .. code-block::
 
-        :param charset:
-        :param viewport:
-        :param content_security_policy:
-        :param title:
-        :param _exclude_title_tags:
-        :param base:
-        :param description:
-        :param keywords:
-        :param subject:
-        :param rating:
-        :param referrer_policy:
-        :param google:
-        :param verification:
-        :param opengraph_website:
-        :param twitter_card:
+            geo_position: {
+                'icbm': '12.345, 12.345',
+                'geo_position': '12.345;12.345',
+                'geo_region': 'en_US',
+                'geo_placename': 'Example',
+            }
+
         """
 
-        self._exclude_title_tags = _exclude_title_tags
+        self._exclude_title_tags = exclude_title_tags
+        self._custom_tags = {}
 
         self.t__charset = Charset(charset)
-        self.t__viewport = MetaTag('viewport', viewport)
 
         if content_security_policy is not None:
-            self.t__content_security_policy = ContentSecurityPolicy(content_security_policy)
+            self.t__viewport = MetaTag('viewport', viewport)
         else:
-            self.t__content_security_policy = ContentSecurityPolicy("default-src 'self'")
+            if not exclude_viewport:
+                self.t__viewport = MetaTag(
+                    'viewport',
+                    "'width=device-width, initial-scale=1.0'")
+
+        if content_security_policy is not None:
+            self.t__content_security_policy = MetaTag(
+                'Content-Security-Policy', content_security_policy, is_http_equiv=True)
+        else:
+            if not exclude_content_security_policy:
+                self.t__content_security_policy = MetaTag(
+                    'Content-Security-Policy',
+                    "default-src 'self'", is_http_equiv=True)
 
         if title is not None:
             self.t__title = Title(title)
@@ -199,6 +223,17 @@ class Head:
         if twitter_card is not None:
             self.t__twitter_card = TwitterCard(**twitter_card)
 
+        if geo_position is not None:
+            self.t__geo_position = GeoPosition(**geo_position)
+
+        if detect_telephone_numbers:
+            self.t__detect_telephone_numbers = MetaTag(
+                'format-detection', 'telephone=yes')
+        else:
+            if not exclude_detect_telephone_numbers:
+                self.t__detect_telephone_numbers = MetaTag(
+                    'format-detection', 'telephone=no')
+
     def set_charset(self, charset: str):
         self.t__charset.replace(charset)
         return self
@@ -208,11 +243,17 @@ class Head:
         return self
 
     def set_content_security_policy(self, content_security_policy: str):
-        self.t__content_security_policy = ContentSecurityPolicy(content_security_policy)
+        if self.t__content_security_policy is not None:
+            self.t__content_security_policy.replace_content(content_security_policy)
+            return self
+
+        self.t__content_security_policy = MetaTag(
+            'Content-Security-Policy', content_security_policy, is_http_equiv=True)
         return self
 
     def set_default_content_security_policy(self):
-        self.t__content_security_policy = ContentSecurityPolicy("default-src 'self'")
+        MetaTag('Content-Security-Policy',
+                "default-src 'self'", is_http_equiv=True)
         return self
 
     def set_application_name(self, application_name: str):
@@ -277,7 +318,11 @@ class Head:
         self.t__rating = MetaTag('rating', rating)
         return self
 
-    def set_referrer_policy(self, referrer_policy: str = 'no-referrer', fallback: Optional[str] = None):
+    def set_referrer_policy(
+            self,
+            referrer_policy: str = 'no-referrer',
+            fallback: Optional[str] = None
+    ):
         if self.t__referrer_policy is not None:
             self.t__referrer_policy.replace_content(referrer_policy, fallback)
             return self
@@ -391,12 +436,57 @@ class Head:
         )
         return self
 
+    def set_geo_position(
+            self,
+            icbm: Optional[str] = None,
+            geo_position: Optional[str] = None,
+            geo_region: Optional[str] = None,
+            geo_placename: Optional[str] = None,
+    ):
+        self.t__geo_position = GeoPosition(
+            icbm=icbm,
+            geo_position=geo_position,
+            geo_region=geo_region,
+            geo_placename=geo_placename,
+        )
+        return self
+
+    def set_detect_telephone_numbers(self, detect_telephone_numbers: bool = False):
+        if detect_telephone_numbers:
+            self.t__detect_telephone_numbers = MetaTag(
+                'format-detection', 'telephone=yes')
+            return self
+
+        self.t__detect_telephone_numbers = MetaTag(
+            'format-detection', 'telephone=no')
+        return self
+
+    def set_tag(
+            self,
+            name: str,
+            content: str,
+            is_http_equiv: bool = False
+    ):
+        self._custom_tags[name] = MetaTag(name, content, is_http_equiv)
+        return self
+
+    def remove_tag(self, name: str):
+        if name in self._custom_tags:
+            del self._custom_tags[name]
+        return self
+
     def as_dict(self):
-        return {o_tag.replace("t__", ""): getattr(self, o_tag) for o_tag in self._order
-                if getattr(self, o_tag) is not None}
+        return {
+            **{o_tag.replace("t__", ""): getattr(self, o_tag) for o_tag in self._order
+               if getattr(self, o_tag) is not None},
+            **self._custom_tags
+        }
 
     def __str__(self):
         return Markup("\n".join(
-            [str(getattr(self, o_tag)) for o_tag in self._order
-             if getattr(self, o_tag) is not None]
+            [
+                *[str(getattr(self, o_tag)) for o_tag in self._order
+                  if getattr(self, o_tag) is not None],
+                *[str(c_tag) for c_tag in self._custom_tags.values() if c_tag is not None]
+            ]
         ))
