@@ -68,6 +68,9 @@ def create_app():
         )
         head.append_title('Hello World1', ' - ')
         head.prepend_title('Hello World2', ' - ')
+        
+        head.set_tag(name='tag', content='tag-content')
+        head.set_tag(name='another-tag', content='another-tag-content', is_http_equiv=True)
 
         return f"""\
             <html>
@@ -134,6 +137,9 @@ def create_app():
 
         head.append_title('Hello World1', ' - ')
         head.prepend_title('Hello World2', ' - ')
+        
+        head.set_tag(name='tag', content='tag-content')
+        head.set_tag(name='another-tag', content='another-tag-content', is_http_equiv=True)
 
         return f"""\
             <html>
@@ -187,5 +193,6 @@ view-source:
 <meta name="geo.region" content="en_GB">
 <meta name="geo.placename" content="Duke of Wellington">
 <meta name="format-detection" content="telephone=no">
-<meta http-equiv="test" content="test">
+<meta name="tag" content="tag-content">
+<meta http-equiv="another-tag" content="another-tag-content">
 ```
