@@ -24,7 +24,7 @@ from .tags import (
     GeoPosition,
 )
 
-__version__ = "1.0"
+__version__ = "1.1"
 
 
 class Head:
