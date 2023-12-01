@@ -22,7 +22,7 @@ from .tags import (
     GeoPosition,
 )
 
-__version__ = "0.5"
+__version__ = "0.6"
 
 
 class Head:
@@ -40,6 +40,7 @@ class Head:
     t__keywords: Optional[Keywords] = None
     t__subject: Optional[MetaTag] = None
     t__rating: Optional[MetaTag] = None
+    t__robots: Optional[MetaTag] = None
     t__referrer_policy: Optional[ReferrerPolicy] = None
     t__google: Optional[Google] = None
     t__verification: Optional[Verification] = None
@@ -63,6 +64,7 @@ class Head:
         "t__keywords",
         "t__subject",
         "t__rating",
+        "t__robots",
         "t__referrer_policy",
         "t__google",
         "t__verification",
@@ -73,27 +75,28 @@ class Head:
     ]
 
     def __init__(
-        self,
-        charset: str = "utf-8",
-        viewport: Optional[str] = None,
-        content_security_policy: Optional[str] = None,
-        title: Optional[str] = None,
-        base: Optional[str] = None,
-        description: Optional[str] = None,
-        keywords: Optional[Union[str, list]] = None,
-        subject: Optional[str] = None,
-        rating: Optional[str] = None,
-        referrer_policy: Optional[dict] = None,
-        google: Optional[dict] = None,
-        verification: Optional[dict] = None,
-        opengraph_website: Optional[dict] = None,
-        twitter_card: Optional[dict] = None,
-        geo_position: Optional[dict] = None,
-        detect_telephone_numbers: bool = False,
-        exclude_title_tags: bool = False,
-        exclude_viewport: bool = False,
-        exclude_content_security_policy: bool = False,
-        exclude_detect_telephone_numbers: bool = False,
+            self,
+            charset: str = "utf-8",
+            viewport: Optional[str] = None,
+            content_security_policy: Optional[str] = None,
+            title: Optional[str] = None,
+            base: Optional[str] = None,
+            description: Optional[str] = None,
+            keywords: Optional[Union[str, list]] = None,
+            subject: Optional[str] = None,
+            rating: Optional[str] = None,
+            robots: Optional[str] = None,
+            referrer_policy: Optional[dict] = None,
+            google: Optional[dict] = None,
+            verification: Optional[dict] = None,
+            opengraph_website: Optional[dict] = None,
+            twitter_card: Optional[dict] = None,
+            geo_position: Optional[dict] = None,
+            detect_telephone_numbers: bool = False,
+            exclude_title_tags: bool = False,
+            exclude_viewport: bool = False,
+            exclude_content_security_policy: bool = False,
+            exclude_detect_telephone_numbers: bool = False,
     ):
         """
         viewport is set to "'width=device-width, initial-scale=1.0'" by default.
@@ -115,8 +118,7 @@ class Head:
         .. code-block::
 
             google: {
-                'index': True,
-                'follow': False,
+                'googlebot': 'index, follow',
                 'no_sitelinks_search_box': False,
                 'no_translate': False,
             }
@@ -159,10 +161,10 @@ class Head:
         .. code-block::
 
             geo_position: {
-                'icbm': '12.345, 12.345',
-                'geo_position': '12.345;12.345',
-                'geo_region': 'en_US',
-                'geo_placename': 'Example',
+                'icbm': '55.86013028402754, -4.252019430273945',
+                'geo_position': '55.86013028402754;-4.252019430273945',
+                'geo_region': 'en_GB',
+                'geo_placename': 'Duke of Wellington',
             }
 
         """
@@ -211,6 +213,9 @@ class Head:
 
         if rating is not None:
             self.t__rating = MetaTag("rating", rating)
+
+        if robots is not None:
+            self.t__robots = MetaTag("robots", robots)
 
         if referrer_policy is not None:
             self.t__referrer_policy = ReferrerPolicy(**referrer_policy)
@@ -325,13 +330,13 @@ class Head:
         return self
 
     def set_referrer_policy(
-        self, referrer_policy: str = "no-referrer", fallback: Optional[str] = None
+            self, policy: str = "no-referrer", fallback: Optional[str] = None
     ):
         if self.t__referrer_policy is not None:
-            self.t__referrer_policy.replace_content(referrer_policy, fallback)
+            self.t__referrer_policy.replace_content(policy, fallback)
             return self
 
-        self.t__referrer_policy = ReferrerPolicy(referrer_policy, fallback)
+        self.t__referrer_policy = ReferrerPolicy(policy, fallback)
         return self
 
     def set_keywords(self, keywords: Union[str, list]):
@@ -360,15 +365,13 @@ class Head:
         return f'<Head page_title="{self.t__title}">'
 
     def set_google(
-        self,
-        index: Optional[bool] = None,
-        follow: Optional[bool] = None,
-        no_sitelinks_search_box: bool = False,
-        no_translate: bool = False,
+            self,
+            googlebot: Optional[str] = 'index, follow',
+            no_sitelinks_search_box: bool = False,
+            no_translate: bool = False,
     ):
         google_meta = Google(
-            index=index,
-            follow=follow,
+            googlebot=googlebot,
             no_sitelinks_search_box=no_sitelinks_search_box,
             no_translate=no_translate,
         )
@@ -379,14 +382,21 @@ class Head:
 
         return self
 
+    def set_robots(
+            self,
+            instructions: Optional[str] = 'index, follow',
+    ):
+        self.t__robots = MetaTag("robots", instructions)
+        return self
+
     def set_verification(
-        self,
-        google: Optional[str] = None,
-        yandex: Optional[str] = None,
-        bing: Optional[str] = None,
-        alexa: Optional[str] = None,
-        pinterest: Optional[str] = None,
-        norton: Optional[str] = None,
+            self,
+            google: Optional[str] = None,
+            yandex: Optional[str] = None,
+            bing: Optional[str] = None,
+            alexa: Optional[str] = None,
+            pinterest: Optional[str] = None,
+            norton: Optional[str] = None,
     ):
         self.t__verification = Verification(
             google=google,
@@ -399,14 +409,14 @@ class Head:
         return self
 
     def set_opengraph_website(
-        self,
-        site_name: Optional[str] = None,
-        title: Optional[str] = None,
-        description: Optional[str] = None,
-        url: Optional[str] = None,
-        image: Optional[str] = None,
-        image_alt: Optional[str] = None,
-        locale: Optional[str] = None,
+            self,
+            site_name: Optional[str] = None,
+            title: Optional[str] = None,
+            description: Optional[str] = None,
+            url: Optional[str] = None,
+            image: Optional[str] = None,
+            image_alt: Optional[str] = None,
+            locale: Optional[str] = None,
     ):
         self.t__opengraph_website = OpenGraphWebsite(
             site_name=site_name,
@@ -420,14 +430,14 @@ class Head:
         return self
 
     def set_twitter_card(
-        self,
-        card: Literal["summary", "summary_large_image"] = "summary",
-        site_account: Optional[str] = None,
-        creator_account: Optional[str] = None,
-        title: Optional[str] = None,
-        description: Optional[str] = None,
-        image: Optional[str] = None,
-        image_alt: Optional[str] = None,
+            self,
+            card: Literal["summary", "summary_large_image"] = "summary",
+            site_account: Optional[str] = None,
+            creator_account: Optional[str] = None,
+            title: Optional[str] = None,
+            description: Optional[str] = None,
+            image: Optional[str] = None,
+            image_alt: Optional[str] = None,
     ):
         self.t__twitter_card = TwitterCard(
             card=card,
@@ -441,11 +451,11 @@ class Head:
         return self
 
     def set_geo_position(
-        self,
-        icbm: Optional[str] = None,
-        geo_position: Optional[str] = None,
-        geo_region: Optional[str] = None,
-        geo_placename: Optional[str] = None,
+            self,
+            icbm: Optional[str] = None,
+            geo_position: Optional[str] = None,
+            geo_region: Optional[str] = None,
+            geo_placename: Optional[str] = None,
     ):
         self.t__geo_position = GeoPosition(
             icbm=icbm,
