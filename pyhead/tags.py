@@ -91,7 +91,7 @@ class FavIcon:
         **kwargs,
     ):
         if ico_icon_16_32_href is not None:
-            self.ico_icon_href = LinkTag(
+            self.ico_icon_16_32_href = LinkTag(
                 "icon", ico_icon_16_32_href, "16x16 32x32", "image/x-icon"
             )
 

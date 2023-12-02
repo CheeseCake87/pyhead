@@ -221,6 +221,7 @@ view-source:
 <meta name="format-detection" content="telephone=no">
 <meta name="tag" content="tag-content">
 <meta http-equiv="another-tag" content="another-tag-content">
+<link rel="icon" href="https://example.com/favicon.ico" sizes="16x16 32x32" type="image/x-icon">
 <link rel="icon" href="https://example.com/favicon-16x16.png" sizes="16x16" type="image/png">
 <link rel="icon" href="https://example.com/favicon-32x32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="https://example.com/favicon-128x128.png" sizes="128x128" type="image/png">
