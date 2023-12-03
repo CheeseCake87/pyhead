@@ -227,7 +227,6 @@ This will output all the tags in the correct order:
 view-source (Using set functions, no jinja):
 
 ```html
-
 <meta charset="utf-8">
 <meta name="viewport" content="'width=device-width, initial-scale=1.0'">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
