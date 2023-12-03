@@ -46,10 +46,14 @@ class LinkTag:
         )
 
     def __str__(self):
-        return Markup(
-            f"<link {self._rel}{self._href}{self._sizes}{self._type}{self._hreflang}>".replace(
-                " >", ">"
-            )
+        return Markup(self._compile())
+
+    def __call__(self, *args, **kwargs):
+        return Markup(self._compile())
+
+    def _compile(self):
+        return f"<link {self._rel}{self._href}{self._sizes}{self._type}{self._hreflang}>".replace(
+            " >", ">"
         )
 
 
@@ -194,13 +198,19 @@ class FavIcon:
         )
 
     def __str__(self):
+        return Markup(self._compile())
+
+    def __call__(self, *args, **kwargs):
+        return Markup(self._compile())
+
+    def _compile(self):
         _ = [
             str(getattr(self, o_link))
             for o_link in self._order
             if getattr(self, o_link) is not None
         ]
         if _:
-            return Markup("\n".join(_))
+            return "\n".join(_)
         return ""
 
 
@@ -221,11 +231,15 @@ class MetaTag:
         )
 
     def __str__(self):
-        return Markup(
-            (
-                f'<meta {"http-equiv" if self.is_http_equiv else "name"}'
-                f'="{self.name}" content="{self.content}">'
-            )
+        return Markup(self._compile())
+
+    def __call__(self, *args, **kwargs):
+        return Markup(self._compile())
+
+    def _compile(self):
+        return (
+            f'<meta {"http-equiv" if self.is_http_equiv else "name"}'
+            f'="{self.name}" content="{self.content}">'
         )
 
     def replace_content(self, content: str):
@@ -243,7 +257,13 @@ class Charset:
         return f'<Charset charset="{self.charset}">'
 
     def __str__(self):
-        return Markup(f'<meta charset="{self.charset}">')
+        return Markup(self._compile())
+
+    def __call__(self, *args, **kwargs):
+        return Markup(self._compile())
+
+    def _compile(self):
+        return f'<meta charset="{self.charset}">'
 
     def replace(self, charset: str):
         self.charset = charset
@@ -260,7 +280,13 @@ class Base:
         return f'<Base base="{self.base}">'
 
     def __str__(self):
-        return Markup(f'<base href="{self.base}">')
+        return Markup(self._compile())
+
+    def __call__(self, *args, **kwargs):
+        return Markup(self._compile())
+
+    def _compile(self):
+        return f'<base href="{self.base}">'
 
     def replace(self, base: str):
         self.base = base
@@ -283,10 +309,16 @@ class Title:
         return f'<Title page_title="{self.title}">'
 
     def __str__(self):
-        if not self._exclude_title_tags:
-            return Markup(f"<title>{self.title}</title>")
+        return Markup(f"{self._compile()}")
+
+    def __call__(self, *args, **kwargs):
+        return Markup(f"{self._compile()}")
+
+    def _compile(self):
+        if self._exclude_title_tags:
+            return f"{self.title}"
         else:
-            return Markup(f"{self.title}")
+            return f"<title>{self.title}</title>"
 
     def replace(self, page_title: str):
         self.title = page_title
@@ -311,7 +343,13 @@ class Keywords:
         return f'<Keywords page_keywords="{self.keywords}">'
 
     def __str__(self):
-        return Markup(f'<meta name="keywords" content="{", ".join(self.keywords)}">')
+        return Markup(self._compile())
+
+    def __call__(self, *args, **kwargs):
+        return Markup(self._compile())
+
+    def _compile(self):
+        return f'<meta name="keywords" content="{", ".join(self.keywords)}">'
 
     def set_from_string(self, keywords: str):
         self.keywords = keywords.replace(" ", "").split(",")
@@ -371,13 +409,19 @@ class Google:
         )
 
     def __str__(self):
+        return Markup(self._compile())
+
+    def __call__(self, *args, **kwargs):
+        return Markup(self._compile())
+
+    def _compile(self):
         _ = [
             str(getattr(self, o_tag))
             for o_tag in self._order
             if getattr(self, o_tag) is not None
         ]
         if _:
-            return Markup("\n".join(_))
+            return "\n".join(_)
         return ""
 
 
@@ -437,13 +481,19 @@ class Verification:
         )
 
     def __str__(self):
+        return Markup(self._compile())
+
+    def __call__(self, *args, **kwargs):
+        return Markup(self._compile())
+
+    def _compile(self):
         _ = [
             str(getattr(self, o_tag))
             for o_tag in self._order
             if getattr(self, o_tag) is not None
         ]
         if _:
-            return Markup("\n".join(_))
+            return "\n".join(_)
         return ""
 
 
@@ -461,13 +511,19 @@ class ReferrerPolicy:
         return f'<ReferrerPolicy content="{self.policy}" fallback="{self.fallback}">'
 
     def __str__(self):
+        return Markup(self._compile())
+
+    def __call__(self, *args, **kwargs):
+        return Markup(self._compile())
+
+    def _compile(self):
         _ = []
         if self.fallback is not None:
             _.append(self.fallback)
 
         _.append(self.policy)
 
-        return Markup(f'<meta name="referrer" content="{", ".join(_)}">')
+        return f'<meta name="referrer" content="{", ".join(_)}">'
 
     def replace_content(self, content: str, fallback: Optional[str] = None):
         self.policy = content
@@ -540,13 +596,19 @@ class OpenGraphWebsite:
         )
 
     def __str__(self):
+        return Markup(self._compile())
+
+    def __call__(self, *args, **kwargs):
+        return Markup(self._compile())
+
+    def _compile(self):
         _ = [
             str(getattr(self, o_tag))
             for o_tag in self._order
             if getattr(self, o_tag) is not None
         ]
         if _:
-            return Markup("\n".join(_))
+            return "\n".join(_)
         return ""
 
 
@@ -618,13 +680,19 @@ class TwitterCard:
         )
 
     def __str__(self):
+        return Markup(self._compile())
+
+    def __call__(self, *args, **kwargs):
+        return Markup(self._compile())
+
+    def _compile(self):
         _ = [
             str(getattr(self, o_tag))
             for o_tag in self._order
             if getattr(self, o_tag) is not None
         ]
         if _:
-            return Markup("\n".join(_))
+            return "\n".join(_)
         return ""
 
 
@@ -671,11 +739,17 @@ class GeoPosition:
         )
 
     def __str__(self):
+        return Markup(self._compile())
+
+    def __call__(self, *args, **kwargs):
+        return Markup(self._compile())
+
+    def _compile(self):
         _ = [
             str(getattr(self, o_tag))
             for o_tag in self._order
             if getattr(self, o_tag) is not None
         ]
         if _:
-            return Markup("\n".join(_))
+            return "\n".join(_)
         return ""

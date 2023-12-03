@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 
 from pyhead import Head
 
@@ -8,7 +8,10 @@ def create_app():
 
     @app.route('/')
     def method_chain():
-        head = Head()
+        head = Head(
+            title="Hello World",
+            exclude_title_tags=True
+        )
         verification = {
             'google': '1234567890',
             'bing': '1234567890',
@@ -17,7 +20,6 @@ def create_app():
         head.set_base('https://example.com')
         head.set_referrer_policy('no-referrer', 'origin')
         head.set_default_content_security_policy()
-        head.set_title('Hello World')
         head.set_description('This is a test')
         head.set_keywords('test, hello, world')
         head.set_description('This is a test')
@@ -48,8 +50,6 @@ def create_app():
             image='https://example.com/image.png',
             image_alt='Example',
         )
-        head.append_title('Hello World1', ' - ')
-        head.prepend_title('Hello World2', ' - ')
 
         head.set_link_tag('canonical', 'https://example.com')
 
@@ -65,19 +65,10 @@ def create_app():
             set_icon_192_to_apple_touch_icon=True,
         )
 
-        print(head.as_dict())
-
-        return f"""\
-        <html>
-            <head>
-                {head}
-            </head>
-            <body>
-                <h1>Flask App</h1>
-                <p>Right-Click view source</p>
-            </body>
-        </html>
-        """
+        return render_template(
+            'index.html',
+            head=head
+        )
 
     @app.route('/class')
     def class_only():

@@ -24,7 +24,7 @@ from .tags import (
     GeoPosition,
 )
 
-__version__ = "1.3"
+__version__ = "1.4"
 
 
 class Head:
@@ -54,15 +54,16 @@ class Head:
     _set_meta_tags: dict
     _set_link_tags: dict
 
-    _order = [
+    _top_level_tags = [
         "t__charset",
         "t__viewport",
+        "t__base",
+    ]
+    _order = [
         "t__content_security_policy",
         "t__application_name",
         "t__generator",
         "t__theme_color",
-        "t__title",
-        "t__base",
         "t__description",
         "t__keywords",
         "t__subject",
@@ -203,7 +204,7 @@ class Head:
             self.t__theme_color = MetaTag("theme-color", theme_color)
 
         if title is not None:
-            self.t__title = Title(title)
+            self.t__title = Title(title, self._exclude_title_tags)
 
         if base is not None:
             self.t__base = Base(base)
@@ -252,6 +253,15 @@ class Head:
 
         if favicon is not None:
             self._set_link_tags["favicon"] = FavIcon(**favicon)
+
+    def __repr__(self):
+        return f'<Head page_title="{self.t__title}">'
+
+    def __str__(self):
+        return Markup(self._compile_all())
+
+    def __call__(self, *args, **kwargs):
+        return Markup(self._compile_all())
 
     def set_charset(self, charset: str):
         self.t__charset.replace(charset)
@@ -377,9 +387,6 @@ class Head:
 
         raise KeywordsNotSet("Keywords not set")
 
-    def __repr__(self):
-        return f'<Head page_title="{self.t__title}">'
-
     def set_google(
         self,
         googlebot: Optional[str] = "index, follow",
@@ -454,6 +461,7 @@ class Head:
         description: Optional[str] = None,
         image: Optional[str] = None,
         image_alt: Optional[str] = None,
+        url: Optional[str] = None,
     ):
         self.t__twitter_card = TwitterCard(
             card=card,
@@ -463,6 +471,7 @@ class Head:
             description=description,
             image=image,
             image_alt=image_alt,
+            url=url,
         )
         return self
 
@@ -553,6 +562,11 @@ class Head:
         return {
             **{
                 o_tag.replace("t__", ""): getattr(self, o_tag)
+                for o_tag in self._top_level_tags
+                if getattr(self, o_tag) is not None
+            },
+            **{
+                o_tag.replace("t__", ""): getattr(self, o_tag)
                 for o_tag in self._order
                 if getattr(self, o_tag) is not None
             },
@@ -560,7 +574,26 @@ class Head:
             **self._set_link_tags,
         }
 
-    def __str__(self):
+    @property
+    def title(self):
+        return Markup(str(self.t__title))
+
+    @property
+    def top_level_tags(self):
+        return Markup(
+            "\n".join(
+                [
+                    *[
+                        str(getattr(self, o_tag))
+                        for o_tag in self._top_level_tags
+                        if getattr(self, o_tag) is not None
+                    ]
+                ]
+            )
+        )
+
+    @property
+    def meta_tags(self):
         return Markup(
             "\n".join(
                 [
@@ -574,11 +607,52 @@ class Head:
                         for c_tag in self._set_meta_tags.values()
                         if c_tag is not None
                     ],
+                ]
+            )
+        )
+
+    @property
+    def link_tags(self):
+        return Markup(
+            "\n".join(
+                [
                     *[
                         str(c_tag)
                         for c_tag in self._set_link_tags.values()
                         if c_tag is not None
-                    ],
+                    ]
                 ]
             )
         )
+
+    def _compile_all(self):
+        compiled_tags = [
+            *[
+                str(getattr(self, o_tag))
+                for o_tag in self._top_level_tags
+                if getattr(self, o_tag) is not None
+            ],
+        ]
+
+        if not self._exclude_title_tags:
+            if self.t__title is not None:
+                compiled_tags.append(str(self.t__title))
+
+        compiled_tags = compiled_tags + [
+            *[
+                str(getattr(self, o_tag))
+                for o_tag in self._order
+                if getattr(self, o_tag) is not None
+            ],
+            *[
+                str(c_tag)
+                for c_tag in self._set_meta_tags.values()
+                if c_tag is not None
+            ],
+            *[
+                str(c_tag)
+                for c_tag in self._set_link_tags.values()
+                if c_tag is not None
+            ],
+        ]
+        return "\n".join([tag for tag in compiled_tags if tag is not None])

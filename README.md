@@ -8,7 +8,7 @@ The Python HTML `<head>` filler.
 `pip install pyhead`
 
 ```python
-from flask import Flask
+from flask import Flask, render_template
 
 from pyhead import Head
 
@@ -18,6 +18,9 @@ def create_app():
 
     @app.route('/')
     def dicts_as_args():
+        """
+        Using __init__ args, with jinja
+        """
         head = Head(
             charset='utf-8',
             viewport='width=device-width, initial-scale=1.0',
@@ -75,30 +78,27 @@ def create_app():
                 'png_icon_228_href': 'https://example.com/favicon-228x228.png',
                 'png_icon_512_href': 'https://example.com/favicon-512x512.png',
                 'set_icon_192_to_apple_touch_icon': True,
-            }
+            },
+            exclude_title_tags=True,
         )
         head.append_title('Hello World1', ' - ')
         head.prepend_title('Hello World2', ' - ')
 
         head.set_meta_tag(name='tag', content='tag-content')
         head.set_meta_tag(name='another-tag', content='another-tag-content', is_http_equiv=True)
-        
+
         head.set_link_tag('canonical', 'https://example.com')
 
-        return f"""\
-            <html>
-                <head>
-                    {head}
-                </head>
-                <body>
-                    <h1>Flask App</h1>
-                    <p>Right-Click view source</p>
-                </body>
-            </html>
-            """
+        return render_template(
+            'index.html',
+            head=head
+        )
 
     @app.route('/args')
     def using_args():
+        """
+        Using set functions, no jinja
+        """
         head = Head(
             charset='utf-8',
             viewport='width=device-width, initial-scale=1.0',
@@ -164,7 +164,7 @@ def create_app():
 
         head.set_meta_tag(name='tag', content='tag-content')
         head.set_meta_tag(name='another-tag', content='another-tag-content', is_http_equiv=True)
-        
+
         head.set_link_tag('canonical', 'https://example.com')
 
         return f"""\
@@ -182,9 +182,52 @@ def create_app():
     return app
 ```
 
-view-source:
+Jinja usage:
 
 ```html
+
+<html lang="en">
+<head>
+    {{ head.top_level_tags }}
+    <title>{{ head.title }}</title>
+    {{ head.meta_tags }}
+    {{ head.link_tags }}
+</head>
+<body>
+<h1>Flask App</h1>
+<p>Right-Click view source</p>
+</body>
+</html>
+```
+
+`{{ head.top_level_tags }}` are:
+
+```html
+
+<meta charset="utf-8">
+<meta name="viewport" content="'width=device-width, initial-scale=1.0'">
+<base href="https://example.com">
+```
+
+This will output all the tags in the correct order:
+
+```html
+
+<html lang="en">
+<head>
+    {{ head() }}
+</head>
+<body>
+<h1>Flask App</h1>
+<p>Right-Click view source</p>
+</body>
+</html>
+```
+
+view-source (Using set functions, no jinja):
+
+```html
+
 <meta charset="utf-8">
 <meta name="viewport" content="'width=device-width, initial-scale=1.0'">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
