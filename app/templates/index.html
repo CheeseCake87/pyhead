@@ -1,12 +1,12 @@
-<html lang="en">
-<head>
-    {{ head.top_level_tags }}
-    <title>{{ head.title }}</title>
-    {{ head.meta_tags }}
-    {{ head.link_tags }}
-</head>
-<body>
+{% extends "extends.html" %}
+
+{% block head %}
+{% set _ = head.append_title('Flask App', ' - ') %}
+{% set _ = head.remove_link_tag('canonical') %}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
 <h1>Flask App</h1>
 <p>Right-Click view source</p>
-</body>
-</html>
+{% endblock %}

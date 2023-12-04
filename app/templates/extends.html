@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    {%- block head -%}
+        {{ head.top_level_tags }}
+        <title>{{ head.title }}</title>
+        {{ head.meta_tags }}
+        {{ head.link_tags }}
+    {% endblock %}
+</head>
+<body>
+{% block content %}
+
+{% endblock %}
+</body>
+</html>

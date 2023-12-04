@@ -1,0 +1,31 @@
+{
+  "base": "https://example.com",
+  "title": "Hello World",
+  "exclude_title_tags": true,
+  "description": "This is a test",
+  "keywords": "test, hello, world",
+  "subject": "Hello World",
+  "rating": "General",
+  "robots": "index, follow",
+  "referrer_policy": {
+    "policy": "no-referrer",
+    "fallback": "origin"
+  },
+  "google": {
+    "googlebot": "index, follow",
+    "no_sitelinks_search_box": true,
+    "no_translate": true
+  },
+  "twitter_card": {
+    "card": "summary",
+    "site_account": "@example",
+    "creator_account": "@example",
+    "title": "Example",
+    "description": "Example",
+    "image": "https://example.com/image.png",
+    "image_alt": "Example"
+  },
+  "favicon": {
+    "ico_icon_16_32_href": "https://example.com/favicon.ico"
+  }
+}
