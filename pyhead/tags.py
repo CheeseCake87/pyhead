@@ -218,15 +218,23 @@ class MetaTag:
     name: str = None
     content: str = None
     is_http_equiv: bool = False
+    is_property: bool = False
 
-    def __init__(self, name: str, content: str, is_http_equiv: bool = False):
+    def __init__(
+        self,
+        name: str,
+        content: str,
+        is_http_equiv: bool = False,
+        is_property: bool = False,
+    ):
         self.name = name
         self.content = content
         self.is_http_equiv = is_http_equiv
+        self.is_property = is_property
 
     def __repr__(self):
         return (
-            f'<MetaTag {"http-equiv" if self.is_http_equiv else "name"}'
+            f'<MetaTag {"http-equiv" if self.is_http_equiv else "property" if self.is_property else "name"}'
             f'="{self.name}" content="{self.content}">'
         )
 
@@ -238,7 +246,7 @@ class MetaTag:
 
     def _compile(self):
         return (
-            f'<meta {"http-equiv" if self.is_http_equiv else "name"}'
+            f'<meta {"http-equiv" if self.is_http_equiv else "property" if self.is_property else "name"}'
             f'="{self.name}" content="{self.content}">'
         )
 
@@ -564,26 +572,26 @@ class OpenGraphWebsite:
         *args,
         **kwargs,
     ):
-        self.type = MetaTag("og:type", "website")
-        self.locale = MetaTag("og:locale", locale)
+        self.type = MetaTag("og:type", "website", is_property=True)
+        self.locale = MetaTag("og:locale", locale, is_property=True)
 
         if title is not None:
-            self.title = MetaTag("og:title", title)
+            self.title = MetaTag("og:title", title, is_property=True)
 
         if url is not None:
-            self.url = MetaTag("og:url", url)
+            self.url = MetaTag("og:url", url, is_property=True)
 
         if image is not None:
-            self.image = MetaTag("og:image", image)
+            self.image = MetaTag("og:image", image, is_property=True)
 
         if image_alt is not None:
-            self.image_alt = MetaTag("og:image:alt", image_alt)
+            self.image_alt = MetaTag("og:image:alt", image_alt, is_property=True)
 
         if description is not None:
-            self.description = MetaTag("og:description", description)
+            self.description = MetaTag("og:description", description, is_property=True)
 
         if site_name is not None:
-            self.site_name = MetaTag("og:site_name", site_name)
+            self.site_name = MetaTag("og:site_name", site_name, is_property=True)
 
         _, __ = args, kwargs
 
