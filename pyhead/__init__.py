@@ -21,10 +21,10 @@ from .tags import (
     ReferrerPolicy,
     OpenGraphWebsite,
     TwitterCard,
-    GeoPosition,
+    GeoPosition, ScriptTag,
 )
 
-__version__ = "1.6"
+__version__ = "1.7"
 
 
 class Head:
@@ -53,6 +53,7 @@ class Head:
 
     _set_meta_tags: dict
     _set_link_tags: dict
+    _set_script_tags: dict
 
     _top_level_tags = [
         "t__charset",
@@ -178,6 +179,7 @@ class Head:
         self._exclude_title_tags = exclude_title_tags
         self._set_meta_tags = {}
         self._set_link_tags = {}
+        self._set_script_tags = {}
 
         self.t__charset = Charset(charset)
 
@@ -558,6 +560,25 @@ class Head:
             del self._set_link_tags[rel]
         return self
 
+    def set_script_tag(
+        self,
+        src: str,
+        type: Optional[str] = None,
+        async_: bool = False,
+        defer: bool = False,
+        crossorigin: Optional[str] = None,
+        integrity: Optional[str] = None,
+    ):
+        self._set_script_tags[src] = ScriptTag(
+            src, type, async_, defer, crossorigin, integrity
+        )
+        return self
+
+    def remove_script_tag(self, src: str):
+        if src in self._set_script_tags:
+            del self._set_script_tags[src]
+        return self
+
     def as_dict(self):
         return {
             **{
@@ -625,6 +646,20 @@ class Head:
             )
         )
 
+    @property
+    def script_tags(self):
+        return Markup(
+            "\n".join(
+                [
+                    *[
+                        str(c_tag)
+                        for c_tag in self._set_script_tags.values()
+                        if c_tag is not None
+                    ]
+                ]
+            )
+        )
+
     def _compile_all(self):
         compiled_tags = [
             *[
@@ -652,6 +687,11 @@ class Head:
             *[
                 str(c_tag)
                 for c_tag in self._set_link_tags.values()
+                if c_tag is not None
+            ],
+            *[
+                str(c_tag)
+                for c_tag in self._set_script_tags.values()
                 if c_tag is not None
             ],
         ]

@@ -84,6 +84,9 @@ def create_app():
         )
 
         head.set_link_tag("canonical", "https://example.com")
+        head.set_script_tag(
+            "/static/example.js", type="module"
+        )
 
         return render_template("index.html", head=head)
 
