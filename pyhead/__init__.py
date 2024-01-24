@@ -18,7 +18,6 @@ from .tags import (
     Keywords,
     Google,
     Verification,
-    Referrer,
     OpenGraphWebsite,
     TwitterCard,
     GeoPosition, ScriptTag,
@@ -43,7 +42,7 @@ class Head:
     t__subject: Optional[MetaTag] = None
     t__rating: Optional[MetaTag] = None
     t__robots: Optional[MetaTag] = None
-    t__referrer: Optional[Referrer] = None
+    t__referrer_policy: Optional[MetaTag] = None
     t__google: Optional[Google] = None
     t__verification: Optional[Verification] = None
     t__opengraph_website: Optional[OpenGraphWebsite] = None
@@ -70,7 +69,7 @@ class Head:
         "t__subject",
         "t__rating",
         "t__robots",
-        "t__referrer",
+        "t__referrer_policy",
         "t__google",
         "t__verification",
         "t__opengraph_website",
@@ -94,7 +93,7 @@ class Head:
         subject: Optional[str] = None,
         rating: Optional[str] = None,
         robots: Optional[str] = None,
-        referrer: Optional[str] = None,
+        referrer_policy: Optional[str] = None,
         google: Optional[dict] = None,
         verification: Optional[dict] = None,
         opengraph_website: Optional[dict] = None,
@@ -223,8 +222,8 @@ class Head:
         if robots is not None:
             self.t__robots = MetaTag("robots", robots)
 
-        if referrer is not None:
-            self.t__referrer = MetaTag("referrer", referrer)
+        if referrer_policy is not None:
+            self.t__referrer_policy = MetaTag("referrer", referrer_policy)
 
         if google is not None:
             self.t__google = Google(**google)
@@ -350,14 +349,14 @@ class Head:
         self.t__rating = MetaTag("rating", rating)
         return self
 
-    def set_referrer(
+    def set_referrer_policy(
         self, policy: str = "no-referrer"
     ):
-        if self.t__referrer is not None:
-            self.t__referrer.replace_content(policy)
+        if self.t__referrer_policy is not None:
+            self.t__referrer_policy.replace_content(policy)
             return self
 
-        self.t__referrer = MetaTag("referrer", policy)
+        self.t__referrer_policy = MetaTag("referrer", policy)
         return self
 
     def set_keywords(self, keywords: Union[str, list]):

@@ -30,10 +30,7 @@ def create_app():
             robots="index, follow",
         )
         head.set_default_content_security_policy()
-        head.set_referrer_policy(
-            policy="no-referrer",
-            fallback="origin",
-        )
+        head.set_referrer_policy("no-referrer")
         head.set_google(
             googlebot="index, follow",
             no_sitelinks_search_box=True,
