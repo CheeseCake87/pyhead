@@ -18,7 +18,7 @@ from .tags import (
     Keywords,
     Google,
     Verification,
-    ReferrerPolicy,
+    Referrer,
     OpenGraphWebsite,
     TwitterCard,
     GeoPosition, ScriptTag,
@@ -43,7 +43,7 @@ class Head:
     t__subject: Optional[MetaTag] = None
     t__rating: Optional[MetaTag] = None
     t__robots: Optional[MetaTag] = None
-    t__referrer_policy: Optional[ReferrerPolicy] = None
+    t__referrer: Optional[Referrer] = None
     t__google: Optional[Google] = None
     t__verification: Optional[Verification] = None
     t__opengraph_website: Optional[OpenGraphWebsite] = None
@@ -70,7 +70,7 @@ class Head:
         "t__subject",
         "t__rating",
         "t__robots",
-        "t__referrer_policy",
+        "t__referrer",
         "t__google",
         "t__verification",
         "t__opengraph_website",
@@ -94,7 +94,7 @@ class Head:
         subject: Optional[str] = None,
         rating: Optional[str] = None,
         robots: Optional[str] = None,
-        referrer_policy: Optional[dict] = None,
+        referrer: Optional[str] = None,
         google: Optional[dict] = None,
         verification: Optional[dict] = None,
         opengraph_website: Optional[dict] = None,
@@ -114,13 +114,6 @@ class Head:
 
         detect_telephone_numbers is set to "telephone=no" by default.
         Set exclude_detect_telephone_numbers to True to exclude the tag.
-
-        .. code-block::
-
-            referrer_policy: {
-                'policy': 'no-referrer',
-                'fallback': 'origin',
-            }
 
         .. code-block::
 
@@ -188,7 +181,7 @@ class Head:
         else:
             if not exclude_viewport:
                 self.t__viewport = MetaTag(
-                    "viewport", "'width=device-width, initial-scale=1.0'"
+                    "viewport", "width=device-width, initial-scale=1"
                 )
 
         if content_security_policy is not None:
@@ -230,8 +223,8 @@ class Head:
         if robots is not None:
             self.t__robots = MetaTag("robots", robots)
 
-        if referrer_policy is not None:
-            self.t__referrer_policy = ReferrerPolicy(**referrer_policy)
+        if referrer is not None:
+            self.t__referrer = MetaTag("referrer", referrer)
 
         if google is not None:
             self.t__google = Google(**google)
@@ -357,14 +350,14 @@ class Head:
         self.t__rating = MetaTag("rating", rating)
         return self
 
-    def set_referrer_policy(
-        self, policy: str = "no-referrer", fallback: Optional[str] = None
+    def set_referrer(
+        self, policy: str = "no-referrer"
     ):
-        if self.t__referrer_policy is not None:
-            self.t__referrer_policy.replace_content(policy, fallback)
+        if self.t__referrer is not None:
+            self.t__referrer.replace_content(policy)
             return self
 
-        self.t__referrer_policy = ReferrerPolicy(policy, fallback)
+        self.t__referrer = MetaTag("referrer", policy)
         return self
 
     def set_keywords(self, keywords: Union[str, list]):

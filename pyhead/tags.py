@@ -584,40 +584,6 @@ class Verification:
         return ""
 
 
-class ReferrerPolicy:
-    policy: str = None
-    fallback: str = None
-
-    def __init__(self, policy: str, fallback: Optional[str] = None, *args, **kwargs):
-        self.policy = policy
-        self.fallback = fallback
-
-        _, __ = args, kwargs
-
-    def __repr__(self):
-        return f'<ReferrerPolicy content="{self.policy}" fallback="{self.fallback}">'
-
-    def __str__(self):
-        return Markup(self._compile())
-
-    def __call__(self, *args, **kwargs):
-        return Markup(self._compile())
-
-    def _compile(self):
-        _ = []
-        if self.fallback is not None:
-            _.append(self.fallback)
-
-        _.append(self.policy)
-
-        return f'<meta name="referrer" content="{", ".join(_)}">'
-
-    def replace_content(self, content: str, fallback: Optional[str] = None):
-        self.policy = content
-        self.fallback = fallback
-        return self
-
-
 class OpenGraphWebsite:
     type: MetaTag
     locale: Optional[MetaTag] = None
