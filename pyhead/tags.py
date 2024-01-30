@@ -99,14 +99,14 @@ class ScriptTag:
         self._src = f'src="{self.src}" '
         self._type = f'type="{self.type}" ' if self.type is not None else ""
         self._async = f'async="{str(self.async_).lower()}" ' if self.async_ else ""
-        self._defer = f'defer ' if self.defer else ""
+        self._defer = f"defer " if self.defer else ""
         self._crossorigin = (
             f'crossorigin="{self.crossorigin}" ' if self.crossorigin is not None else ""
         )
         self._integrity = (
             f'integrity="{self.integrity}" ' if self.integrity is not None else ""
         )
-        self._nomodule = f'nomodule ' if self.nomodule else ""
+        self._nomodule = f"nomodule " if self.nomodule else ""
         self._referrerpolicy = (
             f'referrerpolicy="{self.referrerpolicy}" '
             if self.referrerpolicy is not None

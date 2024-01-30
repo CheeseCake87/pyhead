@@ -20,7 +20,8 @@ from .tags import (
     Verification,
     OpenGraphWebsite,
     TwitterCard,
-    GeoPosition, ScriptTag,
+    GeoPosition,
+    ScriptTag,
 )
 
 __version__ = "1.9"
@@ -349,9 +350,7 @@ class Head:
         self.t__rating = MetaTag("rating", rating)
         return self
 
-    def set_referrer_policy(
-        self, policy: str = "no-referrer"
-    ):
+    def set_referrer_policy(self, policy: str = "no-referrer"):
         if self.t__referrer_policy is not None:
             self.t__referrer_policy.replace_content(policy)
             return self
