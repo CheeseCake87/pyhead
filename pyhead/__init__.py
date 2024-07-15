@@ -24,7 +24,7 @@ from .tags import (
     ScriptTag,
 )
 
-__version__ = "2.0"
+__version__ = "2.1"
 
 
 class Head:
@@ -80,33 +80,33 @@ class Head:
     ]
 
     def __init__(
-        self,
-        charset: str = "utf-8",
-        viewport: Optional[str] = None,
-        content_security_policy: Optional[str] = None,
-        application_name: Optional[str] = None,
-        generator: Optional[str] = None,
-        theme_color: Optional[str] = None,
-        title: Optional[str] = None,
-        base: Optional[str] = None,
-        description: Optional[str] = None,
-        keywords: Optional[Union[str, list]] = None,
-        subject: Optional[str] = None,
-        rating: Optional[str] = None,
-        robots: Optional[str] = None,
-        referrer_policy: Optional[str] = None,
-        google: Optional[dict] = None,
-        verification: Optional[dict] = None,
-        opengraph_website: Optional[dict] = None,
-        twitter_card: Optional[dict] = None,
-        geo_position: Optional[dict] = None,
-        disable_detection_of_telephone_numbers: bool = False,
-        exclude_title_tags: bool = False,
-        exclude_viewport: bool = False,
-        favicon: Optional[dict] = None,
+            self,
+            charset: str = "utf-8",
+            viewport: Optional[str] = None,
+            content_security_policy: Optional[str] = None,
+            application_name: Optional[str] = None,
+            generator: Optional[str] = None,
+            theme_color: Optional[str] = None,
+            title: Optional[str] = None,
+            base: Optional[str] = None,
+            description: Optional[str] = None,
+            keywords: Optional[Union[str, list]] = None,
+            subject: Optional[str] = None,
+            rating: Optional[str] = None,
+            robots: Optional[str] = None,
+            referrer_policy: Optional[str] = None,
+            google: Optional[dict] = None,
+            verification: Optional[dict] = None,
+            opengraph_website: Optional[dict] = None,
+            twitter_card: Optional[dict] = None,
+            geo_position: Optional[dict] = None,
+            disable_detection_of_telephone_numbers: bool = False,
+            exclude_title_tags: bool = False,
+            exclude_viewport: bool = False,
+            favicon: Optional[dict] = None,
     ):
         """
-        viewport is set to "'width=device-width, initial-scale=1.0'" by default.
+        viewport is set to "width=device-width, initial-scale=1" by default.
         Set exclude_viewport to True to exclude the tag.
 
         content_security_policy is set to "default-src 'self'" by default.
@@ -249,6 +249,10 @@ class Head:
         if favicon is not None:
             self._set_link_tags["favicon"] = FavIcon(**favicon)
 
+    @property
+    def instance(self):
+        return self
+
     def __repr__(self):
         return f'<Head page_title="{self.t__title}">'
 
@@ -381,10 +385,10 @@ class Head:
         raise KeywordsNotSet("Keywords not set")
 
     def set_google(
-        self,
-        googlebot: Optional[str] = "index, follow",
-        no_sitelinks_search_box: bool = False,
-        no_translate: bool = False,
+            self,
+            googlebot: Optional[str] = "index, follow",
+            no_sitelinks_search_box: bool = False,
+            no_translate: bool = False,
     ):
         google_meta = Google(
             googlebot=googlebot,
@@ -399,20 +403,20 @@ class Head:
         return self
 
     def set_robots(
-        self,
-        instructions: Optional[str] = "index, follow",
+            self,
+            instructions: Optional[str] = "index, follow",
     ):
         self.t__robots = MetaTag("robots", instructions)
         return self
 
     def set_verification(
-        self,
-        google: Optional[str] = None,
-        yandex: Optional[str] = None,
-        bing: Optional[str] = None,
-        alexa: Optional[str] = None,
-        pinterest: Optional[str] = None,
-        norton: Optional[str] = None,
+            self,
+            google: Optional[str] = None,
+            yandex: Optional[str] = None,
+            bing: Optional[str] = None,
+            alexa: Optional[str] = None,
+            pinterest: Optional[str] = None,
+            norton: Optional[str] = None,
     ):
         self.t__verification = Verification(
             google=google,
@@ -425,14 +429,14 @@ class Head:
         return self
 
     def set_opengraph_website(
-        self,
-        site_name: Optional[str] = None,
-        title: Optional[str] = None,
-        description: Optional[str] = None,
-        url: Optional[str] = None,
-        image: Optional[str] = None,
-        image_alt: Optional[str] = None,
-        locale: Optional[str] = None,
+            self,
+            site_name: Optional[str] = None,
+            title: Optional[str] = None,
+            description: Optional[str] = None,
+            url: Optional[str] = None,
+            image: Optional[str] = None,
+            image_alt: Optional[str] = None,
+            locale: Optional[str] = None,
     ):
         self.t__opengraph_website = OpenGraphWebsite(
             site_name=site_name,
@@ -446,15 +450,15 @@ class Head:
         return self
 
     def set_twitter_card(
-        self,
-        card: Literal["summary", "summary_large_image"] = "summary",
-        site_account: Optional[str] = None,
-        creator_account: Optional[str] = None,
-        title: Optional[str] = None,
-        description: Optional[str] = None,
-        image: Optional[str] = None,
-        image_alt: Optional[str] = None,
-        url: Optional[str] = None,
+            self,
+            card: Literal["summary", "summary_large_image"] = "summary",
+            site_account: Optional[str] = None,
+            creator_account: Optional[str] = None,
+            title: Optional[str] = None,
+            description: Optional[str] = None,
+            image: Optional[str] = None,
+            image_alt: Optional[str] = None,
+            url: Optional[str] = None,
     ):
         self.t__twitter_card = TwitterCard(
             card=card,
@@ -469,11 +473,11 @@ class Head:
         return self
 
     def set_geo_position(
-        self,
-        icbm: Optional[str] = None,
-        geo_position: Optional[str] = None,
-        geo_region: Optional[str] = None,
-        geo_placename: Optional[str] = None,
+            self,
+            icbm: Optional[str] = None,
+            geo_position: Optional[str] = None,
+            geo_region: Optional[str] = None,
+            geo_placename: Optional[str] = None,
     ):
         self.t__geo_position = GeoPosition(
             icbm=icbm,
@@ -488,41 +492,56 @@ class Head:
         return self
 
     def set_favicon(
-        self,
-        ico_icon_16_32_href: Optional[str] = None,
-        png_icon_16_href: Optional[str] = None,
-        png_icon_32_href: Optional[str] = None,
-        png_icon_128_href: Optional[str] = None,
-        png_icon_180_href: Optional[str] = None,
-        png_icon_192_href: Optional[str] = None,
-        png_icon_228_href: Optional[str] = None,
-        png_icon_512_href: Optional[str] = None,
-        set_icon_192_to_apple_touch_icon: bool = True,
+            self,
+            ico_icon_href: Optional[str] = None,
+            png_icon_16_href: Optional[str] = None,
+            png_icon_32_href: Optional[str] = None,
+            png_icon_64_href: Optional[str] = None,
+            png_icon_96_href: Optional[str] = None,
+            png_icon_180_href: Optional[str] = None,
+            png_icon_196_href: Optional[str] = None,
+            png_apple_touch_icon_57_href: Optional[str] = None,
+            png_apple_touch_icon_60_href: Optional[str] = None,
+            png_apple_touch_icon_72_href: Optional[str] = None,
+            png_apple_touch_icon_76_href: Optional[str] = None,
+            png_apple_touch_icon_114_href: Optional[str] = None,
+            png_apple_touch_icon_120_href: Optional[str] = None,
+            png_apple_touch_icon_144_href: Optional[str] = None,
+            png_apple_touch_icon_152_href: Optional[str] = None,
+            png_apple_touch_icon_167_href: Optional[str] = None,
+            png_apple_touch_icon_180_href: Optional[str] = None,
+            png_mstile_70_href: Optional[str] = None,
+            png_mstile_270_href: Optional[str] = None,
+            png_mstile_310x150_href: Optional[str] = None,
+            png_mstile_310_href: Optional[str] = None,
     ):
         """
-        apple_touch_icon will only be generated if png_icon_192_href exists.
+        Set favicon links.
 
-        :param ico_icon_16_32_href:
-        :param png_icon_16_href:
-        :param png_icon_32_href:
-        :param png_icon_128_href:
-        :param png_icon_180_href:
-        :param png_icon_192_href:
-        :param png_icon_228_href:
-        :param png_icon_512_href:
-        :param set_icon_192_to_apple_touch_icon:
         :return:
         """
         self._set_link_tags["favicon"] = FavIcon(
-            ico_icon_16_32_href,
-            png_icon_16_href,
-            png_icon_32_href,
-            png_icon_128_href,
-            png_icon_180_href,
-            png_icon_192_href,
-            png_icon_228_href,
-            png_icon_512_href,
-            set_icon_192_to_apple_touch_icon,
+            ico_icon_href=ico_icon_href,
+            png_icon_16_href=png_icon_16_href,
+            png_icon_32_href=png_icon_32_href,
+            png_icon_64_href=png_icon_64_href,
+            png_icon_96_href=png_icon_96_href,
+            png_icon_180_href=png_icon_180_href,
+            png_icon_196_href=png_icon_196_href,
+            png_apple_touch_icon_57_href=png_apple_touch_icon_57_href,
+            png_apple_touch_icon_60_href=png_apple_touch_icon_60_href,
+            png_apple_touch_icon_72_href=png_apple_touch_icon_72_href,
+            png_apple_touch_icon_76_href=png_apple_touch_icon_76_href,
+            png_apple_touch_icon_114_href=png_apple_touch_icon_114_href,
+            png_apple_touch_icon_120_href=png_apple_touch_icon_120_href,
+            png_apple_touch_icon_144_href=png_apple_touch_icon_144_href,
+            png_apple_touch_icon_152_href=png_apple_touch_icon_152_href,
+            png_apple_touch_icon_167_href=png_apple_touch_icon_167_href,
+            png_apple_touch_icon_180_href=png_apple_touch_icon_180_href,
+            png_mstile_70_href=png_mstile_70_href,
+            png_mstile_270_href=png_mstile_270_href,
+            png_mstile_310x150_href=png_mstile_310x150_href,
+            png_mstile_310_href=png_mstile_310_href,
         )
         return self
 
@@ -536,12 +555,12 @@ class Head:
         return self
 
     def set_link_tag(
-        self,
-        rel: str,
-        href: str,
-        sizes: Optional[str] = None,
-        type_: Optional[str] = None,
-        hreflang: Optional[str] = None,
+            self,
+            rel: str,
+            href: str,
+            sizes: Optional[str] = None,
+            type_: Optional[str] = None,
+            hreflang: Optional[str] = None,
     ):
         self._set_link_tags[rel] = LinkTag(rel, href, sizes, type_, hreflang)
         return self
@@ -552,13 +571,13 @@ class Head:
         return self
 
     def set_script_tag(
-        self,
-        src: str,
-        type: Optional[str] = None,
-        async_: bool = False,
-        defer: bool = False,
-        crossorigin: Optional[str] = None,
-        integrity: Optional[str] = None,
+            self,
+            src: str,
+            type: Optional[str] = None,
+            async_: bool = False,
+            defer: bool = False,
+            crossorigin: Optional[str] = None,
+            integrity: Optional[str] = None,
     ):
         self._set_script_tags[src] = ScriptTag(
             src, type, async_, defer, crossorigin, integrity
