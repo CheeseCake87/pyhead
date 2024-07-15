@@ -7,6 +7,19 @@ The Python HTML `<head>` filler.
 
 `pip install pyhead`
 
+TOC:
+
+- [What is Pyhead?](#what-is-pyhead)
+- [Flask example](#flask-example)
+- [Advanced use cases](#advanced-use-cases)
+- [dict as args, and JSON](#dict-as-args-and-json)
+- [Working with extended templates](#working-with-extended-templates)
+- [Generating favicons](#generating-favicons)
+
+## What is Pyhead?
+
+Pyhead is a Python package that helps you generate the `<head>` tag for your HTML pages.
+
 ## Flask example:
 
 ```python
@@ -196,7 +209,7 @@ must remove the `exclude_title_tags=True`, from the Head() constructor.
 
 ### dict as args, and JSON
 
-You can pass a dict to the Head() constructor to set the values of the tags. 
+You can pass a dict to the Head() constructor to set the values of the tags.
 The keys must match the arguments of the set method.
 
 ```python
@@ -276,6 +289,7 @@ the stored JSON data in this case would look something like:
 The head object can be modified in templates that extend other templates. Here's an example:
 
 `extends.html`
+
 ```html
 
 <!DOCTYPE html>
@@ -283,7 +297,7 @@ The head object can be modified in templates that extend other templates. Here's
 <html lang="en">
 <head>
     {%- block head -%}
-        {{ head() }}
+    {{ head() }}
     {% endblock %}
 </head>
 <body>
@@ -296,6 +310,7 @@ The head object can be modified in templates that extend other templates. Here's
 ```
 
 `index.hml`
+
 ```html
 
 {% extends "extends.html" %}
@@ -313,7 +328,7 @@ The head object can be modified in templates that extend other templates. Here's
 
 ```
 
-In this example the `<link rel="canonical" href="https://example.com">` 
+In this example the `<link rel="canonical" href="https://example.com">`
 tag is removed, and the title is appended, resulting in:
 
 ```html
@@ -331,3 +346,89 @@ tag is removed, and the title is appended, resulting in:
 
 ...
 ```
+
+### Generating favicons
+
+You can generate favicons from a source image using the cli command `pyhead favicons -s favicon-gen-test.png`
+
+This uses the python package `favicons` to generate the favicons.
+
+You need to install the `favicons` package to use this command.
+
+```bash
+pip install favicons
+```
+
+All paths in the cli command are relative to the current working directory.
+
+Only the following source formats are supported:
+
+png, jpg, jpeg, gif, svg, tiff
+
+`-s, --source` This will look for the image file to use
+
+`-o, --output` This will be the output directory for the favicons
+
+`-hp, --href-prefix` This will prefix the href tag in the output html
+
+The following command:
+
+```bash
+pyhead favicons -s favicon-gen-test.png -o favicons -hp https://example.com
+```
+
+Will create a folder called `favicons` with the following files:
+
+```text
+apple-touch-icon-57x57.png
+apple-touch-icon-60x60.png
+apple-touch-icon-72x72.png
+apple-touch-icon-76x76.png
+apple-touch-icon-114x114.png
+apple-touch-icon-120x120.png
+apple-touch-icon-144x144.png
+apple-touch-icon-152x152.png
+apple-touch-icon-167x167.png
+apple-touch-icon-180x180.png
+favicon.html
+favicon.ico
+favicon-16x16.png
+favicon-32x32.png
+favicon-64x64.png
+favicon-96x96.png
+favicon-180x180.png
+favicon-196x196.png
+mstile-70x70.png
+mstile-270x270.png
+mstile-310x150.png
+mstile-310x310.png
+```
+
+The `favicon.html` file will contain the following:
+
+```html
+
+<link rel="icon" href="https://example.com/favicon.ico" sizes="16x16 32x32">
+<link rel="icon" href="https://example.com/favicon-16x16.png" sizes="16x16">
+<link rel="icon" href="https://example.com/favicon-32x32.png" sizes="32x32">
+<link rel="icon" href="https://example.com/favicon-64x64.png" sizes="64x64">
+<link rel="icon" href="https://example.com/favicon-96x96.png" sizes="96x96">
+<link rel="icon" href="https://example.com/favicon-180x180.png" sizes="180x180">
+<link rel="icon" href="https://example.com/favicon-196x196.png" sizes="196x196">
+<link rel="apple-touch-icon" href="https://example.com/apple-touch-icon-57x57.png" sizes="57x57">
+<link rel="apple-touch-icon" href="https://example.com/apple-touch-icon-60x60.png" sizes="60x60">
+<link rel="apple-touch-icon" href="https://example.com/apple-touch-icon-72x72.png" sizes="72x72">
+<link rel="apple-touch-icon" href="https://example.com/apple-touch-icon-76x76.png" sizes="76x76">
+<link rel="apple-touch-icon" href="https://example.com/apple-touch-icon-114x114.png" sizes="114x114">
+<link rel="apple-touch-icon" href="https://example.com/apple-touch-icon-120x120.png" sizes="120x120">
+<link rel="apple-touch-icon" href="https://example.com/apple-touch-icon-144x144.png" sizes="144x144">
+<link rel="apple-touch-icon" href="https://example.com/apple-touch-icon-152x152.png" sizes="152x152">
+<link rel="apple-touch-icon" href="https://example.com/apple-touch-icon-167x167.png" sizes="167x167">
+<link rel="apple-touch-icon" href="https://example.com/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="msapplication-square70x70logo" href="https://example.com/mstile-70x70.png">
+<link rel="msapplication-square270x270logo" href="https://example.com/mstile-270x270.png">
+<link rel="msapplication-wide310x150logo" href="https://example.com/mstile-310x150.png">
+<link rel="msapplication-wide310x150logo" href="https://example.com/mstile-310x150.png">
+```
+
+You can then copy the contents of the `favicon.html` file into the `<head>` tag of your HTML file.

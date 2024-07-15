@@ -23,12 +23,14 @@ class LinkTag:
         sizes: Optional[str] = None,
         type_: Optional[str] = None,
         hreflang: Optional[str] = None,
+        **kwargs,
     ):
         self.rel = rel
         self.href = href
         self.sizes = sizes
         self.type = type_
         self.hreflang = hreflang
+        _ = kwargs
 
         self._rel = f'rel="{self.rel}" '
         self._href = f'href="{self.href}" ' if self.href is not None else ""
@@ -99,14 +101,14 @@ class ScriptTag:
         self._src = f'src="{self.src}" '
         self._type = f'type="{self.type}" ' if self.type is not None else ""
         self._async = f'async="{str(self.async_).lower()}" ' if self.async_ else ""
-        self._defer = f"defer " if self.defer else ""
+        self._defer = "defer " if self.defer else ""
         self._crossorigin = (
             f'crossorigin="{self.crossorigin}" ' if self.crossorigin is not None else ""
         )
         self._integrity = (
             f'integrity="{self.integrity}" ' if self.integrity is not None else ""
         )
-        self._nomodule = f"nomodule " if self.nomodule else ""
+        self._nomodule = "nomodule " if self.nomodule else ""
         self._referrerpolicy = (
             f'referrerpolicy="{self.referrerpolicy}" '
             if self.referrerpolicy is not None
@@ -137,143 +139,215 @@ class ScriptTag:
 
 
 class FavIcon:
-    ico_icon_16_32_href: Optional[LinkTag] = None
+    ico_icon_href: Optional[LinkTag] = None
     png_icon_16_href: Optional[LinkTag] = None
     png_icon_32_href: Optional[LinkTag] = None
-    png_icon_128_href: Optional[LinkTag] = None
+    png_icon_64_href: Optional[LinkTag] = None
+    png_icon_96_href: Optional[LinkTag] = None
     png_icon_180_href: Optional[LinkTag] = None
-    png_icon_192_href: Optional[LinkTag] = None
-    png_icon_228_href: Optional[LinkTag] = None
-    png_icon_512_href: Optional[LinkTag] = None
-    apple_touch_icon: Optional[LinkTag] = None
+    png_icon_196_href: Optional[LinkTag] = None
+    png_apple_touch_icon_57_href: Optional[LinkTag] = None
+    png_apple_touch_icon_60_href: Optional[LinkTag] = None
+    png_apple_touch_icon_72_href: Optional[LinkTag] = None
+    png_apple_touch_icon_76_href: Optional[LinkTag] = None
+    png_apple_touch_icon_114_href: Optional[LinkTag] = None
+    png_apple_touch_icon_120_href: Optional[LinkTag] = None
+    png_apple_touch_icon_144_href: Optional[LinkTag] = None
+    png_apple_touch_icon_152_href: Optional[LinkTag] = None
+    png_apple_touch_icon_167_href: Optional[LinkTag] = None
+    png_apple_touch_icon_180_href: Optional[LinkTag] = None
+    png_mstile_70_href: Optional[LinkTag] = None
+    png_mstile_270_href: Optional[LinkTag] = None
+    png_mstile_310x150_href: Optional[LinkTag] = None
+    png_mstile_310_href: Optional[LinkTag] = None
 
-    _order: list = [
-        "ico_icon_16_32_href",
-        "png_icon_16_href",
-        "png_icon_32_href",
-        "png_icon_128_href",
-        "png_icon_180_href",
-        "png_icon_192_href",
-        "png_icon_228_href",
-        "png_icon_512_href",
-        "apple_touch_icon",
-    ]
+    icon_reference: dict = {
+        "ico_icon_href": {
+            "rel": "icon",
+            "sizes": "16x16 32x32",
+            "type": "image/x-icon",
+            "generated_filename": "favicon.ico",
+        },
+        "png_icon_16_href": {
+            "rel": "icon",
+            "sizes": "16x16",
+            "type": "image/png",
+            "generated_filename": "favicon-16x16.png",
+        },
+        "png_icon_32_href": {
+            "rel": "icon",
+            "sizes": "32x32",
+            "type": "image/png",
+            "generated_filename": "favicon-32x32.png",
+        },
+        "png_icon_64_href": {
+            "rel": "icon",
+            "sizes": "64x64",
+            "type": "image/png",
+            "generated_filename": "favicon-64x64.png",
+        },
+        "png_icon_96_href": {
+            "rel": "icon",
+            "sizes": "96x96",
+            "type": "image/png",
+            "generated_filename": "favicon-96x96.png",
+        },
+        "png_icon_180_href": {
+            "rel": "icon",
+            "sizes": "180x180",
+            "type": "image/png",
+            "generated_filename": "favicon-180x180.png",
+        },
+        "png_icon_196_href": {
+            "rel": "icon",
+            "sizes": "196x196",
+            "type": "image/png",
+            "generated_filename": "favicon-196x196.png",
+        },
+        "png_apple_touch_icon_57_href": {
+            "rel": "apple-touch-icon",
+            "sizes": "57x57",
+            "type": "image/png",
+            "generated_filename": "apple-touch-icon-57x57.png",
+        },
+        "png_apple_touch_icon_60_href": {
+            "rel": "apple-touch-icon",
+            "sizes": "60x60",
+            "type": "image/png",
+            "generated_filename": "apple-touch-icon-60x60.png",
+        },
+        "png_apple_touch_icon_72_href": {
+            "rel": "apple-touch-icon",
+            "sizes": "72x72",
+            "type": "image/png",
+            "generated_filename": "apple-touch-icon-72x72.png",
+        },
+        "png_apple_touch_icon_76_href": {
+            "rel": "apple-touch-icon",
+            "sizes": "76x76",
+            "type": "image/png",
+            "generated_filename": "apple-touch-icon-76x76.png",
+        },
+        "png_apple_touch_icon_114_href": {
+            "rel": "apple-touch-icon",
+            "sizes": "114x114",
+            "type": "image/png",
+            "generated_filename": "apple-touch-icon-114x114.png",
+        },
+        "png_apple_touch_icon_120_href": {
+            "rel": "apple-touch-icon",
+            "sizes": "120x120",
+            "type": "image/png",
+            "generated_filename": "apple-touch-icon-120x120.png",
+        },
+        "png_apple_touch_icon_144_href": {
+            "rel": "apple-touch-icon",
+            "sizes": "144x144",
+            "type": "image/png",
+            "generated_filename": "apple-touch-icon-144x144.png",
+        },
+        "png_apple_touch_icon_152_href": {
+            "rel": "apple-touch-icon",
+            "sizes": "152x152",
+            "type": "image/png",
+            "generated_filename": "apple-touch-icon-152x152.png",
+        },
+        "png_apple_touch_icon_167_href": {
+            "rel": "apple-touch-icon",
+            "sizes": "167x167",
+            "type": "image/png",
+            "generated_filename": "apple-touch-icon-167x167.png",
+        },
+        "png_apple_touch_icon_180_href": {
+            "rel": "apple-touch-icon",
+            "sizes": "180x180",
+            "type": "image/png",
+            "generated_filename": "apple-touch-icon-180x180.png",
+        },
+        "png_mstile_70_href": {
+            "rel": "msapplication-square70x70logo",
+            "content": "image/png",
+            "generated_filename": "mstile-70x70.png",
+        },
+        "png_mstile_270_href": {
+            "rel": "msapplication-square270x270logo",
+            "content": "image/png",
+            "generated_filename": "mstile-270x270.png",
+        },
+        "png_mstile_310x150_href": {
+            "rel": "msapplication-wide310x150logo",
+            "content": "image/png",
+            "generated_filename": "mstile-310x150.png",
+        },
+        "png_mstile_310_href": {
+            "rel": "msapplication-wide310x150logo",
+            "content": "image/png",
+            "generated_filename": "mstile-310x150.png",
+        },
+    }
 
     def __init__(
         self,
-        ico_icon_16_32_href: Optional[str] = None,
+        ico_icon_href: Optional[str] = None,
         png_icon_16_href: Optional[str] = None,
         png_icon_32_href: Optional[str] = None,
-        png_icon_128_href: Optional[str] = None,
+        png_icon_64_href: Optional[str] = None,
+        png_icon_96_href: Optional[str] = None,
         png_icon_180_href: Optional[str] = None,
-        png_icon_192_href: Optional[str] = None,
-        png_icon_228_href: Optional[str] = None,
-        png_icon_512_href: Optional[str] = None,
-        set_icon_192_to_apple_touch_icon: bool = False,
-        *args,
-        **kwargs,
+        png_icon_196_href: Optional[str] = None,
+        png_apple_touch_icon_57_href: Optional[str] = None,
+        png_apple_touch_icon_60_href: Optional[str] = None,
+        png_apple_touch_icon_72_href: Optional[str] = None,
+        png_apple_touch_icon_76_href: Optional[str] = None,
+        png_apple_touch_icon_114_href: Optional[str] = None,
+        png_apple_touch_icon_120_href: Optional[str] = None,
+        png_apple_touch_icon_144_href: Optional[str] = None,
+        png_apple_touch_icon_152_href: Optional[str] = None,
+        png_apple_touch_icon_167_href: Optional[str] = None,
+        png_apple_touch_icon_180_href: Optional[str] = None,
+        png_mstile_70_href: Optional[str] = None,
+        png_mstile_270_href: Optional[str] = None,
+        png_mstile_310x150_href: Optional[str] = None,
+        png_mstile_310_href: Optional[str] = None,
     ):
-        if ico_icon_16_32_href is not None:
-            self.ico_icon_16_32_href = LinkTag(
-                "icon", ico_icon_16_32_href, "16x16 32x32", "image/x-icon"
-            )
+        set_kwargs = {
+            "ico_icon_href": ico_icon_href,
+            "png_icon_16_href": png_icon_16_href,
+            "png_icon_32_href": png_icon_32_href,
+            "png_icon_64_href": png_icon_64_href,
+            "png_icon_96_href": png_icon_96_href,
+            "png_icon_180_href": png_icon_180_href,
+            "png_icon_196_href": png_icon_196_href,
+            "png_apple_touch_icon_57_href": png_apple_touch_icon_57_href,
+            "png_apple_touch_icon_60_href": png_apple_touch_icon_60_href,
+            "png_apple_touch_icon_72_href": png_apple_touch_icon_72_href,
+            "png_apple_touch_icon_76_href": png_apple_touch_icon_76_href,
+            "png_apple_touch_icon_114_href": png_apple_touch_icon_114_href,
+            "png_apple_touch_icon_120_href": png_apple_touch_icon_120_href,
+            "png_apple_touch_icon_144_href": png_apple_touch_icon_144_href,
+            "png_apple_touch_icon_152_href": png_apple_touch_icon_152_href,
+            "png_apple_touch_icon_167_href": png_apple_touch_icon_167_href,
+            "png_apple_touch_icon_180_href": png_apple_touch_icon_180_href,
+            "png_mstile_70_href": png_mstile_70_href,
+            "png_mstile_270_href": png_mstile_270_href,
+            "png_mstile_310x150_href": png_mstile_310x150_href,
+            "png_mstile_310_href": png_mstile_310_href,
+        }
 
-        if png_icon_16_href is not None:
-            self.png_icon_16_href = LinkTag(
-                "icon", png_icon_16_href, "16x16", "image/png"
-            )
-
-        if png_icon_32_href is not None:
-            self.png_icon_32_href = LinkTag(
-                "icon", png_icon_32_href, "32x32", "image/png"
-            )
-
-        if png_icon_128_href is not None:
-            self.png_icon_128_href = LinkTag(
-                "icon", png_icon_128_href, "128x128", "image/png"
-            )
-
-        if png_icon_180_href is not None:
-            self.png_icon_180_href = LinkTag(
-                "icon", png_icon_180_href, "180x180", "image/png"
-            )
-
-        if png_icon_192_href is not None:
-            self.png_icon_192_href = LinkTag(
-                "icon", png_icon_192_href, "192x192", "image/png"
-            )
-            if set_icon_192_to_apple_touch_icon:
-                self.apple_touch_icon = LinkTag("apple-touch-icon", png_icon_192_href)
-
-        if png_icon_228_href is not None:
-            self.png_icon_228_href = LinkTag(
-                "icon", png_icon_228_href, "228x228", "image/png"
-            )
-
-        if png_icon_512_href is not None:
-            self.png_icon_228_href = LinkTag(
-                "icon", png_icon_512_href, "512x512", "image/png"
-            )
-
-        _, __ = args, kwargs
+        for name, value in set_kwargs.items():
+            if value:
+                setattr(self, name, LinkTag(**self.icon_reference[name], href=value))
 
     def __repr__(self):
-        _ico_icon_16_32_href = (
-            f'ico_icon_16_32_href="{self.ico_icon_16_32_href}" '
-            if self.ico_icon_16_32_href is not None
-            else ""
-        )
-        _png_icon_16_href = (
-            f'png_icon_16_href="{self.png_icon_16_href}" '
-            if self.png_icon_16_href is not None
-            else ""
-        )
-        _png_icon_32_href = (
-            f'png_icon_32_href="{self.png_icon_32_href}" '
-            if self.png_icon_32_href is not None
-            else ""
-        )
-        _png_icon_128_href = (
-            f'png_icon_128_href="{self.png_icon_128_href}" '
-            if self.png_icon_128_href is not None
-            else ""
-        )
-        _png_icon_180_href = (
-            f'png_icon_180_href="{self.png_icon_180_href}" '
-            if self.png_icon_180_href is not None
-            else ""
-        )
-        _png_icon_192_href = (
-            f'png_icon_192_href="{self.png_icon_192_href}" '
-            if self.png_icon_192_href is not None
-            else ""
-        )
-        _png_icon_228_href = (
-            f'png_icon_228_href="{self.png_icon_228_href}" '
-            if self.png_icon_228_href is not None
-            else ""
-        )
-        _png_icon_512_href = (
-            f'png_icon_512_href="{self.png_icon_512_href}" '
-            if self.png_icon_512_href is not None
-            else ""
-        )
-        _apple_touch_icon = (
-            f'apple_touch_icon="{self.apple_touch_icon}" '
-            if self.apple_touch_icon is not None
-            else ""
-        )
         return (
-            f"<FavIcon {_ico_icon_16_32_href}"
-            f"{_png_icon_16_href}"
-            f"{_png_icon_32_href}"
-            f"{_png_icon_128_href}"
-            f"{_png_icon_180_href}"
-            f"{_png_icon_192_href}"
-            f"{_png_icon_228_href}"
-            f"{_png_icon_512_href}"
-            f"{_apple_touch_icon}"
-            ">".replace(" >", ">")
+            "<FavIcon " " ".join(
+                [
+                    str(getattr(self, o_link).href)
+                    for o_link in self.icon_reference
+                    if getattr(self, o_link) is not None
+                ]
+            ),
+            ">".replace(" >", ">"),
         )
 
     def __str__(self):
@@ -285,7 +359,7 @@ class FavIcon:
     def _compile(self):
         _ = [
             str(getattr(self, o_link))
-            for o_link in self._order
+            for o_link in self.icon_reference
             if getattr(self, o_link) is not None
         ]
         if _:
