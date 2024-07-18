@@ -1,5 +1,5 @@
 {
-  "base": "https://example.com",
+  "base": "http://127.0.0.1:5000",
   "title": "Hello World",
   "exclude_title_tags": true,
   "description": "This is a test",

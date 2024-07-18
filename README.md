@@ -46,7 +46,6 @@ def create_app():
         head.set_default_content_security_policy()
         head.set_referrer_policy(
             policy="no-referrer",
-            fallback="origin",
         )
         head.set_google(
             googlebot="index, follow",
@@ -86,15 +85,27 @@ def create_app():
             locale="en_US",
         )
         head.set_favicon(
-            ico_icon_16_32_href="https://example.com/favicon.ico",
-            png_icon_16_href="https://example.com/favicon-16x16.png",
-            png_icon_32_href="https://example.com/favicon-32x32.png",
-            png_icon_128_href="https://example.com/favicon-128x128.png",
-            png_icon_180_href="https://example.com/favicon-180x180.png",
-            png_icon_192_href="https://example.com/favicon-192x192.png",
-            png_icon_228_href="https://example.com/favicon-228x228.png",
-            png_icon_512_href="https://example.com/favicon-512x512.png",
-            set_icon_192_to_apple_touch_icon=True,
+            ico_icon_href="/favicon.ico",
+            png_icon_16_href="/favicon-16x16.png",
+            png_icon_32_href="/favicon-32x32.png",
+            png_icon_64_href="/favicon-64x64.png",
+            png_icon_96_href="/favicon-96x96.png",
+            png_icon_180_href="/favicon-180x180.png",
+            png_icon_196_href="/favicon-196x196.png",
+            png_apple_touch_icon_57_href="/apple-touch-icon-57x57.png",
+            png_apple_touch_icon_60_href="/apple-touch-icon-60x60.png",
+            png_apple_touch_icon_72_href="/apple-touch-icon-72x72.png",
+            png_apple_touch_icon_76_href="/apple-touch-icon-76x76.png",
+            png_apple_touch_icon_114_href="/apple-touch-icon-114x114.png",
+            png_apple_touch_icon_120_href="/apple-touch-icon-120x120.png",
+            png_apple_touch_icon_144_href="/apple-touch-icon-144x144.png",
+            png_apple_touch_icon_152_href="/apple-touch-icon-152x152.png",
+            png_apple_touch_icon_167_href="/apple-touch-icon-167x167.png",
+            png_apple_touch_icon_180_href="/apple-touch-icon-180x180.png",
+            png_mstile_70_href="/mstile-70x70.png",
+            png_mstile_270_href="/mstile-270x270.png",
+            png_mstile_310x150_href="/mstile-310x150.png",
+            png_mstile_310_href="/mstile-310x150.png",
         )
 
         head.set_link_tag("canonical", "https://example.com")
@@ -170,14 +181,27 @@ Results in:
     <meta name="geo.region" content="en_GB">
     <meta name="geo.placename" content="Duke of Wellington">
     <!-- Link Tags -->
-    <link rel="icon" href="https://example.com/favicon.ico" sizes="16x16 32x32" type="image/x-icon">
-    <link rel="icon" href="https://example.com/favicon-16x16.png" sizes="16x16" type="image/png">
-    <link rel="icon" href="https://example.com/favicon-32x32.png" sizes="32x32" type="image/png">
-    <link rel="icon" href="https://example.com/favicon-128x128.png" sizes="128x128" type="image/png">
-    <link rel="icon" href="https://example.com/favicon-180x180.png" sizes="180x180" type="image/png">
-    <link rel="icon" href="https://example.com/favicon-192x192.png" sizes="192x192" type="image/png">
-    <link rel="icon" href="https://example.com/favicon-512x512.png" sizes="512x512" type="image/png">
-    <link rel="apple-touch-icon" href="https://example.com/favicon-192x192.png">
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32" type="image/x-icon">
+    <link rel="icon" href="/favicon-16x16.png" sizes="16x16" type="image/png">
+    <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="/favicon-64x64.png" sizes="64x64" type="image/png">
+    <link rel="icon" href="/favicon-96x96.png" sizes="96x96" type="image/png">
+    <link rel="icon" href="/favicon-180x180.png" sizes="180x180" type="image/png">
+    <link rel="icon" href="/favicon-196x196.png" sizes="196x196" type="image/png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon-57x57.png" sizes="57x57" type="image/png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon-60x60.png" sizes="60x60" type="image/png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon-72x72.png" sizes="72x72" type="image/png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon-76x76.png" sizes="76x76" type="image/png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon-114x114.png" sizes="114x114" type="image/png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon-120x120.png" sizes="120x120" type="image/png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon-144x144.png" sizes="144x144" type="image/png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon-152x152.png" sizes="152x152" type="image/png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon-167x167.png" sizes="167x167" type="image/png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" sizes="180x180" type="image/png">
+    <link rel="msapplication-square70x70logo" href="/mstile-70x70.png">
+    <link rel="msapplication-square270x270logo" href="/mstile-270x270.png">
+    <link rel="msapplication-wide310x150logo" href="/mstile-310x150.png">
+    <link rel="msapplication-wide310x150logo" href="/mstile-310x150.png">
     <link rel="canonical" href="https://example.com">
 </head>
 <body>
@@ -279,7 +303,7 @@ the stored JSON data in this case would look something like:
     "image_alt": "Example"
   },
   "favicon": {
-    "ico_icon_16_32_href": "https://example.com/favicon.ico"
+    "ico_icon_href": "https://example.com/favicon.ico"
   }
 }
 ```
@@ -316,8 +340,8 @@ The head object can be modified in templates that extend other templates. Here's
 {% extends "extends.html" %}
 
 {% block head %}
-{% set _ = head.append_title('Flask App', ' - ') %}
-{% set _ = head.remove_link_tag('canonical') %}
+{{ head.append_title('Flask App', ' - ', _from_template=True) }}
+{{ head.remove_link_tag('canonical', _from_template=True) }}
 {{ super() }}
 {% endblock %}
 
@@ -339,7 +363,7 @@ tag is removed, and the title is appended, resulting in:
 <base href="https://example.com">
 <title>Hello World - Flask App</title>
 ...
-<link rel="apple-touch-icon" href="https://example.com/favicon-192x192.png">
+<link rel="msapplication-wide310x150logo" href="/mstile-310x150.png">
 
 <!-- /\ No canonical link tag -->
 </head>
@@ -390,24 +414,23 @@ apple-touch-icon-144x144.png
 apple-touch-icon-152x152.png
 apple-touch-icon-167x167.png
 apple-touch-icon-180x180.png
-favicon.html
-favicon.ico
 favicon-16x16.png
 favicon-32x32.png
 favicon-64x64.png
 favicon-96x96.png
 favicon-180x180.png
 favicon-196x196.png
+favicon-delete_me_after_use.html
+favicon-delete_me_after_use.py
 mstile-70x70.png
 mstile-270x270.png
 mstile-310x150.png
 mstile-310x310.png
 ```
 
-The `favicon.html` file will contain the following:
+The `favicon-delete_me_after_use.html` file will contain the following:
 
 ```html
-
 <link rel="icon" href="https://example.com/favicon.ico" sizes="16x16 32x32">
 <link rel="icon" href="https://example.com/favicon-16x16.png" sizes="16x16">
 <link rel="icon" href="https://example.com/favicon-32x32.png" sizes="32x32">
@@ -431,4 +454,35 @@ The `favicon.html` file will contain the following:
 <link rel="msapplication-wide310x150logo" href="https://example.com/mstile-310x150.png">
 ```
 
-You can then copy the contents of the `favicon.html` file into the `<head>` tag of your HTML file.
+The `favicon-delete_me_after_use.py` file will contain the following:
+
+```python
+from pyhead import Head
+
+head = Head()
+head.set_favicon(
+    ico_icon_href="/favicon.ico",
+    png_icon_16_href="/favicon-16x16.png",
+    png_icon_32_href="/favicon-32x32.png",
+    png_icon_64_href="/favicon-64x64.png",
+    png_icon_96_href="/favicon-96x96.png",
+    png_icon_180_href="/favicon-180x180.png",
+    png_icon_196_href="/favicon-196x196.png",
+    png_apple_touch_icon_57_href="/apple-touch-icon-57x57.png",
+    png_apple_touch_icon_60_href="/apple-touch-icon-60x60.png",
+    png_apple_touch_icon_72_href="/apple-touch-icon-72x72.png",
+    png_apple_touch_icon_76_href="/apple-touch-icon-76x76.png",
+    png_apple_touch_icon_114_href="/apple-touch-icon-114x114.png",
+    png_apple_touch_icon_120_href="/apple-touch-icon-120x120.png",
+    png_apple_touch_icon_144_href="/apple-touch-icon-144x144.png",
+    png_apple_touch_icon_152_href="/apple-touch-icon-152x152.png",
+    png_apple_touch_icon_167_href="/apple-touch-icon-167x167.png",
+    png_apple_touch_icon_180_href="/apple-touch-icon-180x180.png",
+    png_mstile_70_href="/mstile-70x70.png",
+    png_mstile_270_href="/mstile-270x270.png",
+    png_mstile_310x150_href="/mstile-310x150.png",
+    png_mstile_310_href="/mstile-310x150.png",
+)
+```
+
+Remember to delete the `favicon-delete_me_after_use.html` and `favicon-delete_me_after_use.py` files after use.

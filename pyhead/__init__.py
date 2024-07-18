@@ -1,109 +1,114 @@
 """A simple python package to generate HTML head tags."""
 
-from typing import Optional, Union, Literal
+from typing import Optional, Union, Literal, List
 
 from markupsafe import Markup
 
-from .exceptions import (
-    PageTitleNotSet,
-    KeywordsNotSet,
-)
-from .tags import (
-    LinkTag,
-    MetaTag,
-    FavIcon,
+from .presets import (
+    Favicon,
     Charset,
-    Title,
-    Base,
     Keywords,
     Google,
     Verification,
     OpenGraphWebsite,
     TwitterCard,
     GeoPosition,
+)
+from .tags import (
+    LinkTag,
+    MetaTag,
+    TitleTag,
+    BaseTag,
     ScriptTag,
 )
 
-__version__ = "2.1"
+__version__ = "3.0"
 
 
 class Head:
     _exclude_title_tags: bool
 
-    t__charset: Charset
-    t__viewport: MetaTag
-    t__content_security_policy: Optional[MetaTag] = None
-    t__application_name: Optional[MetaTag] = None
-    t__generator: Optional[MetaTag] = None
-    t__theme_color: Optional[MetaTag] = None
-    t__title: Optional[Title] = None
-    t__base: Optional[Base] = None
-    t__description: Optional[MetaTag] = None
-    t__keywords: Optional[Keywords] = None
-    t__subject: Optional[MetaTag] = None
-    t__rating: Optional[MetaTag] = None
-    t__robots: Optional[MetaTag] = None
-    t__referrer_policy: Optional[MetaTag] = None
-    t__google: Optional[Google] = None
-    t__verification: Optional[Verification] = None
-    t__opengraph_website: Optional[OpenGraphWebsite] = None
-    t__twitter_card: Optional[TwitterCard] = None
-    t__geo_position: Optional[GeoPosition] = None
-    t__detect_telephone_numbers: Optional[MetaTag] = None
+    # Preset tags
+    _t__charset: Charset
+    _t__title: Optional[TitleTag] = None
+    _t__base: Optional[BaseTag] = None
+    _t__keywords: Optional[Keywords] = None
+    _t__google: Optional[Google] = None
+    _t__verification: Optional[Verification] = None
+    _t__opengraph_website: Optional[OpenGraphWebsite] = None
+    _t__twitter_card: Optional[TwitterCard] = None
+    _t__geo_position: Optional[GeoPosition] = None
+
+    # Build on run tags
+    _t__viewport: MetaTag
+    _t__content_security_policy: Optional[MetaTag] = None
+    _t__application_name: Optional[MetaTag] = None
+    _t__generator: Optional[MetaTag] = None
+    _t__theme_color: Optional[MetaTag] = None
+    _t__description: Optional[MetaTag] = None
+    _t__subject: Optional[MetaTag] = None
+    _t__rating: Optional[MetaTag] = None
+    _t__robots: Optional[MetaTag] = None
+    _t__referrer_policy: Optional[MetaTag] = None
+    _t__detect_telephone_numbers: Optional[MetaTag] = None
 
     _set_meta_tags: dict
     _set_link_tags: dict
     _set_script_tags: dict
 
+    _title_tag_appends: List[tuple] = None
+    _title_tag_prepends: List[tuple] = None
+    _keywords: List[str] = None
+
     _top_level_tags = [
-        "t__charset",
-        "t__viewport",
-        "t__base",
+        "_t__charset",
+        "_t__viewport",
+        "_t__base",
     ]
     _order = [
-        "t__content_security_policy",
-        "t__application_name",
-        "t__generator",
-        "t__theme_color",
-        "t__description",
-        "t__keywords",
-        "t__subject",
-        "t__rating",
-        "t__robots",
-        "t__referrer_policy",
-        "t__google",
-        "t__verification",
-        "t__opengraph_website",
-        "t__twitter_card",
-        "t__geo_position",
-        "t__detect_telephone_numbers",
+        "_t__content_security_policy",
+        "_t__application_name",
+        "_t__generator",
+        "_t__theme_color",
+        "_t__description",
+        "_t__keywords",
+        "_t__subject",
+        "_t__rating",
+        "_t__robots",
+        "_t__referrer_policy",
+        "_t__google",
+        "_t__verification",
+        "_t__opengraph_website",
+        "_t__twitter_card",
+        "_t__geo_position",
+        "_t__detect_telephone_numbers",
     ]
 
     def __init__(
-            self,
-            charset: str = "utf-8",
-            viewport: Optional[str] = None,
-            content_security_policy: Optional[str] = None,
-            application_name: Optional[str] = None,
-            generator: Optional[str] = None,
-            theme_color: Optional[str] = None,
-            title: Optional[str] = None,
-            base: Optional[str] = None,
-            description: Optional[str] = None,
-            keywords: Optional[Union[str, list]] = None,
-            subject: Optional[str] = None,
-            rating: Optional[str] = None,
-            robots: Optional[str] = None,
-            referrer_policy: Optional[str] = None,
-            google: Optional[dict] = None,
-            verification: Optional[dict] = None,
-            opengraph_website: Optional[dict] = None,
-            twitter_card: Optional[dict] = None,
-            geo_position: Optional[dict] = None,
-            disable_detection_of_telephone_numbers: bool = False,
-            exclude_title_tags: bool = False,
-            exclude_viewport: bool = False,
-            favicon: Optional[dict] = None,
+        self,
+        charset: str = "utf-8",
+        viewport: Optional[str] = None,
+        content_security_policy: Optional[str] = None,
+        application_name: Optional[str] = None,
+        generator: Optional[str] = None,
+        theme_color: Optional[str] = None,
+        title: Optional[str] = None,
+        base: Optional[str] = None,
+        description: Optional[str] = None,
+        keywords: Optional[Union[str, list]] = None,
+        subject: Optional[str] = None,
+        rating: Optional[str] = None,
+        robots: Optional[str] = None,
+        referrer_policy: Optional[str] = None,
+        google: Optional[dict] = None,
+        verification: Optional[dict] = None,
+        opengraph_website: Optional[dict] = None,
+        twitter_card: Optional[dict] = None,
+        geo_position: Optional[dict] = None,
+        disable_detection_of_telephone_numbers: bool = False,
+        exclude_title_tags: bool = False,
+        exclude_viewport: bool = False,
+        favicon: Optional[dict] = None,
     ):
         """
         viewport is set to "width=device-width, initial-scale=1" by default.
@@ -174,87 +179,96 @@ class Head:
         self._set_link_tags = {}
         self._set_script_tags = {}
 
-        self.t__charset = Charset(charset)
+        self._t__charset = Charset(charset)
 
-        if content_security_policy is not None:
-            self.t__viewport = MetaTag("viewport", viewport)
-        else:
-            if not exclude_viewport:
-                self.t__viewport = MetaTag(
-                    "viewport", "width=device-width, initial-scale=1"
-                )
+        self._title_tag_appends = []
+        self._title_tag_prepends = []
 
-        if content_security_policy is not None:
-            self.t__content_security_policy = MetaTag(
-                "Content-Security-Policy", content_security_policy, is_http_equiv=True
-            )
-
-        if application_name is not None:
-            self.t__application_name = MetaTag("application_name", application_name)
-
-        if generator is not None:
-            self.t__generator = MetaTag("generator", generator)
-
-        if theme_color is not None:
-            self.t__theme_color = MetaTag("theme-color", theme_color)
-
-        if title is not None:
-            self.t__title = Title(title, self._exclude_title_tags)
+        # Preset tags
 
         if base is not None:
-            self.t__base = Base(base)
+            self._t__base = BaseTag(base)
 
-        if description is not None:
-            self.t__description = MetaTag("description", description)
+        if title is not None:
+            self._t__title = TitleTag(title, self._exclude_title_tags)
 
-        if keywords is not None:
-            self.t__keywords = Keywords()
-            if isinstance(keywords, str):
-                self.t__keywords.set_from_string(keywords)
-            if isinstance(keywords, list):
-                self.t__keywords.set_from_list(keywords)
+        if google:
+            self._t__google = Google(**google)
 
-        if subject is not None:
-            self.t__subject = MetaTag("subject", subject)
+        if verification:
+            self._t__verification = Verification(**verification)
 
-        if rating is not None:
-            self.t__rating = MetaTag("rating", rating)
+        if opengraph_website:
+            self._t__opengraph_website = OpenGraphWebsite(**opengraph_website)
 
-        if robots is not None:
-            self.t__robots = MetaTag("robots", robots)
+        if twitter_card:
+            self._t__twitter_card = TwitterCard(**twitter_card)
 
-        if referrer_policy is not None:
-            self.t__referrer_policy = MetaTag("referrer", referrer_policy)
+        if geo_position:
+            self._t__geo_position = GeoPosition(**geo_position)
 
-        if google is not None:
-            self.t__google = Google(**google)
+        if favicon:
+            self._set_link_tags["favicon"] = Favicon(**favicon)
 
-        if verification is not None:
-            self.t__verification = Verification(**verification)
+        # Build on run tags
 
-        if opengraph_website is not None:
-            self.t__opengraph_website = OpenGraphWebsite(**opengraph_website)
+        if viewport:
+            self._t__viewport = MetaTag(name="viewport", content=viewport)
+        else:
+            if not exclude_viewport:
+                self._t__viewport = MetaTag(
+                    name="viewport", content="width=device-width, initial-scale=1"
+                )
 
-        if twitter_card is not None:
-            self.t__twitter_card = TwitterCard(**twitter_card)
-
-        if geo_position is not None:
-            self.t__geo_position = GeoPosition(**geo_position)
-
-        if disable_detection_of_telephone_numbers:
-            self.t__detect_telephone_numbers = MetaTag(
-                "format-detection", "telephone=no"
+        if content_security_policy:
+            self._t__content_security_policy = MetaTag(
+                http_equiv="Content-Security-Policy", content=content_security_policy
             )
 
-        if favicon is not None:
-            self._set_link_tags["favicon"] = FavIcon(**favicon)
+        if application_name:
+            self._t__application_name = MetaTag(
+                name="application_name", content=application_name
+            )
+
+        if generator:
+            self._t__generator = MetaTag(name="generator", content=generator)
+
+        if theme_color:
+            self._t__theme_color = MetaTag(name="theme-color", content=theme_color)
+
+        if description:
+            self._t__description = MetaTag(name="description", content=description)
+
+        if keywords:
+            self._t__keywords = Keywords()
+            if isinstance(keywords, str):
+                self._t__keywords.set_from_string(keywords)
+            if isinstance(keywords, list):
+                self._t__keywords.set_from_list(keywords)
+
+        if subject:
+            self._t__subject = MetaTag(name="subject", content=subject)
+
+        if rating:
+            self._t__rating = MetaTag(name="rating", content=rating)
+
+        if robots:
+            self._t__robots = MetaTag(name="robots", content=robots)
+
+        if referrer_policy:
+            self._t__referrer_policy = MetaTag(name="referrer", content=referrer_policy)
+
+        if disable_detection_of_telephone_numbers:
+            self._t__detect_telephone_numbers = MetaTag(
+                name="format-detection", content="telephone=no"
+            )
 
     @property
     def instance(self):
         return self
 
     def __repr__(self):
-        return f'<Head page_title="{self.t__title}">'
+        return f'<Head page_title="{self._t__title}">'
 
     def __str__(self):
         return Markup(self._compile_all())
@@ -262,133 +276,163 @@ class Head:
     def __call__(self, *args, **kwargs):
         return Markup(self._compile_all())
 
-    def set_charset(self, charset: str):
-        self.t__charset.replace(charset)
-        return self
+    def set_charset(self, charset: str, _from_template: bool = False) -> Union[str, "Head"]:
+        self._t__charset.replace(charset)
+        return self if not _from_template else ""
 
-    def set_viewport(self, viewport: str):
-        self.t__viewport.replace_content(viewport)
-        return self
+    def set_viewport(self, viewport: str, _from_template: bool = False) -> Union[str, "Head"]:
+        self._t__viewport.replace_content(viewport)
+        return self if not _from_template else ""
 
-    def set_content_security_policy(self, content_security_policy: str):
-        if self.t__content_security_policy is not None:
-            self.t__content_security_policy.replace_content(content_security_policy)
-            return self
+    def set_content_security_policy(
+        self, content_security_policy: str, _from_template: bool = False
+    ) -> Union[str, "Head"]:
+        if self._t__content_security_policy:
+            self._t__content_security_policy.replace_content(content_security_policy)
+            return self if not _from_template else ""
 
-        self.t__content_security_policy = MetaTag(
-            "Content-Security-Policy", content_security_policy, is_http_equiv=True
+        self._t__content_security_policy = MetaTag(
+            http_equiv="Content-Security-Policy", content=content_security_policy
         )
-        return self
+        return self if not _from_template else ""
 
-    def set_default_content_security_policy(self):
-        MetaTag("Content-Security-Policy", "default-src 'self'", is_http_equiv=True)
-        return self
+    def set_default_content_security_policy(
+        self, _from_template: bool = False
+    ) -> Union[str, "Head"]:
+        MetaTag(http_equiv="Content-Security-Policy", content="default-src 'self'")
+        return self if not _from_template else ""
 
-    def set_application_name(self, application_name: str):
-        if self.t__application_name is not None:
-            self.t__application_name.replace_content(application_name)
-            return self
+    def set_application_name(
+        self, application_name: str, _from_template: bool = False
+    ) -> Union[str, "Head"]:
+        if self._t__application_name is not None:
+            self._t__application_name.replace_content(application_name)
+            return self if not _from_template else ""
 
-        self.t__application_name = MetaTag("application_name", application_name)
-        return self
+        self._t__application_name = MetaTag(
+            name="application_name", content=application_name
+        )
+        return self if not _from_template else ""
 
-    def set_generator(self, generator: str):
-        if self.t__generator is not None:
-            self.t__generator.replace_content(generator)
-            return self
+    def set_generator(
+        self, generator: str, _from_template: bool = False
+    ) -> Union[str, "Head"]:
+        if self._t__generator is not None:
+            self._t__generator.replace_content(generator)
+            return self if not _from_template else ""
 
-        self.t__generator = MetaTag("generator", generator)
-        return self
+        self._t__generator = MetaTag(name="generator", content=generator)
+        return self if not _from_template else ""
 
-    def set_theme_color(self, theme_color: str):
-        if self.t__theme_color is not None:
-            self.t__theme_color.replace_content(theme_color)
-            return self
+    def set_theme_color(
+        self, theme_color: str, _from_template: bool = False
+    ) -> Union[str, "Head"]:
+        if self._t__theme_color is not None:
+            self._t__theme_color.replace_content(theme_color)
+            return self if not _from_template else ""
 
-        self.t__theme_color = MetaTag("theme-color", theme_color)
-        return self
+        self._t__theme_color = MetaTag(name="theme-color", content=theme_color)
+        return self if not _from_template else ""
 
-    def set_title(self, title: str):
-        self.t__title = Title(title, self._exclude_title_tags)
-        return self
+    def set_title(self, title: str, _from_template: bool = False) -> Union[str, "Head"]:
+        self._t__title = TitleTag(title, self._exclude_title_tags)
+        return self if not _from_template else ""
 
-    def append_title(self, title: str, separator: str = " "):
-        if self.t__title is not None:
-            self.t__title.append(title, separator)
-            return self
+    def reset_title_appends(self, _from_template: bool = False) -> Union[str, "Head"]:
+        self._title_tag_appends = []
+        if isinstance(self._t__title, TitleTag):
+            self._t__title.set_appends(self._title_tag_appends)
 
-        raise PageTitleNotSet("Page title not set")
+        return self if not _from_template else ""
 
-    def prepend_title(self, title: str, separator: str = " "):
-        if self.t__title is not None:
-            self.t__title.prepend(title, separator)
-            return self
+    def reset_title_prepends(self, _from_template: bool = False) -> Union[str, "Head"]:
+        self._title_tag_prepends = []
+        if isinstance(self._t__title, TitleTag):
+            self._t__title.set_prepends(self._title_tag_prepends)
 
-        raise PageTitleNotSet("Page title not set")
+        return self if not _from_template else ""
 
-    def set_base(self, base: str):
-        self.t__base = Base(base)
-        return self
+    def append_title(
+        self, append: str, separator: str = " ", _from_template: bool = False
+    ) -> Union[str, "Head"]:
+        self._title_tag_appends.append((append, separator))
+        if isinstance(self._t__title, TitleTag):
+            print(self._title_tag_appends)
+            self._t__title.set_appends(self._title_tag_appends)
 
-    def set_description(self, description: str):
-        if self.t__description is not None:
-            self.t__description.replace_content(description)
-            return self
+        return self if not _from_template else ""
 
-        self.t__description = MetaTag("description", description)
-        return self
+    def prepend_title(
+        self, prepend: str, separator: str = " ", _from_template: bool = False
+    ) -> Union[str, "Head"]:
+        self._title_tag_prepends.append((prepend, separator))
+        if isinstance(self._t__title, TitleTag):
+            print(self._title_tag_prepends)
+            self._t__title.set_prepends(self._title_tag_prepends)
 
-    def set_subject(self, subject: str):
-        if self.t__subject is not None:
-            self.t__subject.replace_content(subject)
-            return self
+        return self if not _from_template else ""
 
-        self.t__subject = MetaTag("subject", subject)
-        return self
+    def set_base(self, href: str, _from_template: bool = False) -> Union[str, "Head"]:
+        self._t__base = BaseTag(href)
+        return self if not _from_template else ""
 
-    def set_rating(self, rating: str = "General"):
-        if self.t__rating is not None:
-            self.t__rating.replace_content(rating)
-            return self
+    def set_description(
+        self, description: str, _from_template: bool = False
+    ) -> Union[str, "Head"]:
+        if self._t__description is not None:
+            self._t__description.replace_content(description)
+            return self if not _from_template else ""
 
-        self.t__rating = MetaTag("rating", rating)
-        return self
+        self._t__description = MetaTag(name="description", content=description)
+        return self if not _from_template else ""
 
-    def set_referrer_policy(self, policy: str = "no-referrer"):
-        if self.t__referrer_policy is not None:
-            self.t__referrer_policy.replace_content(policy)
-            return self
+    def set_subject(self, subject: str, _from_template: bool = False) -> Union[str, "Head"]:
+        if self._t__subject is not None:
+            self._t__subject.replace_content(subject)
+            return self if not _from_template else ""
 
-        self.t__referrer_policy = MetaTag("referrer", policy)
-        return self
+        self._t__subject = MetaTag(name="subject", content=subject)
+        return self if not _from_template else ""
 
-    def set_keywords(self, keywords: Union[str, list]):
-        self.t__keywords = Keywords()
+    def set_rating(
+        self, rating: str = "General", _from_template: bool = False
+    ) -> Union[str, "Head"]:
+        if self._t__rating is not None:
+            self._t__rating.replace_content(rating)
+            return self if not _from_template else ""
+
+        self._t__rating = MetaTag(name="rating", content=rating)
+        return self if not _from_template else ""
+
+    def set_referrer_policy(
+        self, policy: str = "no-referrer", _from_template: bool = False
+    ) -> Union[str, "Head"]:
+        if self._t__referrer_policy is not None:
+            self._t__referrer_policy.replace_content(policy)
+            return self if not _from_template else ""
+
+        self._t__referrer_policy = MetaTag(name="referrer", content=policy)
+        return self if not _from_template else ""
+
+    def set_keywords(
+        self, keywords: Union[str, list], _from_template: bool = False
+    ) -> Union[str, "Head"]:
+        self._t__keywords = Keywords()
         if isinstance(keywords, str):
-            self.t__keywords.set_from_string(keywords)
-            return self
+            self._t__keywords.set_from_string(keywords)
+            return self if not _from_template else ""
         if isinstance(keywords, list):
-            self.t__keywords.set_from_list(keywords)
-            return self
+            self._t__keywords.set_from_list(keywords)
+            return self if not _from_template else ""
 
-        return self
-
-    def append_keywords(self, keywords: Union[str, list]):
-        if self.t__keywords is not None:
-            if isinstance(keywords, str):
-                self.t__keywords.str_append(keywords)
-                return self
-            if isinstance(keywords, list):
-                self.t__keywords.list_append(keywords)
-                return self
-
-        raise KeywordsNotSet("Keywords not set")
+        return self if not _from_template else ""
 
     def set_google(
-            self,
-            googlebot: Optional[str] = "index, follow",
-            no_sitelinks_search_box: bool = False,
-            no_translate: bool = False,
+        self,
+        googlebot: Optional[str] = "index, follow",
+        no_sitelinks_search_box: bool = False,
+        no_translate: bool = False,
+        _from_template: bool = False,
     ):
         google_meta = Google(
             googlebot=googlebot,
@@ -396,29 +440,31 @@ class Head:
             no_translate=no_translate,
         )
         if str(google_meta) != "":
-            self.t__google = google_meta
+            self._t__google = google_meta
         else:
-            self.t__google = None
+            self._t__google = None
 
-        return self
+        return self if not _from_template else ""
 
     def set_robots(
-            self,
-            instructions: Optional[str] = "index, follow",
+        self,
+        instructions: Optional[str] = "index, follow",
+        _from_template: bool = False,
     ):
-        self.t__robots = MetaTag("robots", instructions)
-        return self
+        self._t__robots = MetaTag(name="robots", content=instructions)
+        return self if not _from_template else ""
 
     def set_verification(
-            self,
-            google: Optional[str] = None,
-            yandex: Optional[str] = None,
-            bing: Optional[str] = None,
-            alexa: Optional[str] = None,
-            pinterest: Optional[str] = None,
-            norton: Optional[str] = None,
+        self,
+        google: Optional[str] = None,
+        yandex: Optional[str] = None,
+        bing: Optional[str] = None,
+        alexa: Optional[str] = None,
+        pinterest: Optional[str] = None,
+        norton: Optional[str] = None,
+        _from_template: bool = False,
     ):
-        self.t__verification = Verification(
+        self._t__verification = Verification(
             google=google,
             yandex=yandex,
             bing=bing,
@@ -426,19 +472,20 @@ class Head:
             pinterest=pinterest,
             norton=norton,
         )
-        return self
+        return self if not _from_template else ""
 
     def set_opengraph_website(
-            self,
-            site_name: Optional[str] = None,
-            title: Optional[str] = None,
-            description: Optional[str] = None,
-            url: Optional[str] = None,
-            image: Optional[str] = None,
-            image_alt: Optional[str] = None,
-            locale: Optional[str] = None,
+        self,
+        site_name: Optional[str] = None,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        url: Optional[str] = None,
+        image: Optional[str] = None,
+        image_alt: Optional[str] = None,
+        locale: Optional[str] = None,
+        _from_template: bool = False,
     ):
-        self.t__opengraph_website = OpenGraphWebsite(
+        self._t__opengraph_website = OpenGraphWebsite(
             site_name=site_name,
             title=title,
             description=description,
@@ -447,20 +494,21 @@ class Head:
             image_alt=image_alt,
             locale=locale,
         )
-        return self
+        return self if not _from_template else ""
 
     def set_twitter_card(
-            self,
-            card: Literal["summary", "summary_large_image"] = "summary",
-            site_account: Optional[str] = None,
-            creator_account: Optional[str] = None,
-            title: Optional[str] = None,
-            description: Optional[str] = None,
-            image: Optional[str] = None,
-            image_alt: Optional[str] = None,
-            url: Optional[str] = None,
+        self,
+        card: Literal["summary", "summary_large_image"] = "summary",
+        site_account: Optional[str] = None,
+        creator_account: Optional[str] = None,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        image: Optional[str] = None,
+        image_alt: Optional[str] = None,
+        url: Optional[str] = None,
+        _from_template: bool = False,
     ):
-        self.t__twitter_card = TwitterCard(
+        self._t__twitter_card = TwitterCard(
             card=card,
             site_account=site_account,
             creator_account=creator_account,
@@ -470,57 +518,63 @@ class Head:
             image_alt=image_alt,
             url=url,
         )
-        return self
+        return self if not _from_template else ""
 
     def set_geo_position(
-            self,
-            icbm: Optional[str] = None,
-            geo_position: Optional[str] = None,
-            geo_region: Optional[str] = None,
-            geo_placename: Optional[str] = None,
+        self,
+        icbm: Optional[str] = None,
+        geo_position: Optional[str] = None,
+        geo_region: Optional[str] = None,
+        geo_placename: Optional[str] = None,
+        _from_template: bool = False,
     ):
-        self.t__geo_position = GeoPosition(
+        self._t__geo_position = GeoPosition(
             icbm=icbm,
             geo_position=geo_position,
             geo_region=geo_region,
             geo_placename=geo_placename,
         )
-        return self
+        return self if not _from_template else ""
 
-    def set_disable_detection_of_telephone_numbers(self):
-        self.t__detect_telephone_numbers = MetaTag("format-detection", "telephone=no")
-        return self
+    def set_disable_detection_of_telephone_numbers(
+        self, _from_template: bool = False
+    ) -> Union[str, "Head"]:
+        self._t__detect_telephone_numbers = MetaTag(
+            name="format-detection", content="telephone=no"
+        )
+        return self if not _from_template else ""
 
     def set_favicon(
-            self,
-            ico_icon_href: Optional[str] = None,
-            png_icon_16_href: Optional[str] = None,
-            png_icon_32_href: Optional[str] = None,
-            png_icon_64_href: Optional[str] = None,
-            png_icon_96_href: Optional[str] = None,
-            png_icon_180_href: Optional[str] = None,
-            png_icon_196_href: Optional[str] = None,
-            png_apple_touch_icon_57_href: Optional[str] = None,
-            png_apple_touch_icon_60_href: Optional[str] = None,
-            png_apple_touch_icon_72_href: Optional[str] = None,
-            png_apple_touch_icon_76_href: Optional[str] = None,
-            png_apple_touch_icon_114_href: Optional[str] = None,
-            png_apple_touch_icon_120_href: Optional[str] = None,
-            png_apple_touch_icon_144_href: Optional[str] = None,
-            png_apple_touch_icon_152_href: Optional[str] = None,
-            png_apple_touch_icon_167_href: Optional[str] = None,
-            png_apple_touch_icon_180_href: Optional[str] = None,
-            png_mstile_70_href: Optional[str] = None,
-            png_mstile_270_href: Optional[str] = None,
-            png_mstile_310x150_href: Optional[str] = None,
-            png_mstile_310_href: Optional[str] = None,
+        self,
+        ico_icon_href: Optional[str] = None,
+        png_icon_16_href: Optional[str] = None,
+        png_icon_32_href: Optional[str] = None,
+        png_icon_64_href: Optional[str] = None,
+        png_icon_96_href: Optional[str] = None,
+        png_icon_180_href: Optional[str] = None,
+        png_icon_196_href: Optional[str] = None,
+        png_apple_touch_icon_57_href: Optional[str] = None,
+        png_apple_touch_icon_60_href: Optional[str] = None,
+        png_apple_touch_icon_72_href: Optional[str] = None,
+        png_apple_touch_icon_76_href: Optional[str] = None,
+        png_apple_touch_icon_114_href: Optional[str] = None,
+        png_apple_touch_icon_120_href: Optional[str] = None,
+        png_apple_touch_icon_144_href: Optional[str] = None,
+        png_apple_touch_icon_152_href: Optional[str] = None,
+        png_apple_touch_icon_167_href: Optional[str] = None,
+        png_apple_touch_icon_180_href: Optional[str] = None,
+        png_mstile_70_href: Optional[str] = None,
+        png_mstile_270_href: Optional[str] = None,
+        png_mstile_310x150_href: Optional[str] = None,
+        png_mstile_310_href: Optional[str] = None,
+        _from_template: bool = False,
     ):
         """
         Set favicon links.
 
         :return:
         """
-        self._set_link_tags["favicon"] = FavIcon(
+        self._set_link_tags["favicon"] = Favicon(
             ico_icon_href=ico_icon_href,
             png_icon_16_href=png_icon_16_href,
             png_icon_32_href=png_icon_32_href,
@@ -543,61 +597,128 @@ class Head:
             png_mstile_310x150_href=png_mstile_310x150_href,
             png_mstile_310_href=png_mstile_310_href,
         )
-        return self
+        return self if not _from_template else ""
 
-    def set_meta_tag(self, name: str, content: str, is_http_equiv: bool = False):
-        self._set_meta_tags[name] = MetaTag(name, content, is_http_equiv)
-        return self
+    def set_meta_tag(
+        self,
+        name: str = None,
+        http_equiv: str = None,
+        property_: str = None,
+        content: str = None,
+        lookup_id: Optional[str] = None,
+        _from_template: bool = False,
+    ):
+        """
+        Set a meta tag.
 
-    def remove_meta_tag(self, name: str):
-        if name in self._set_meta_tags:
-            del self._set_meta_tags[name]
-        return self
+        The lookup_id is used to remove the tag later. One is generated if not provided.
+
+        :param name:
+        :param http_equiv:
+        :param property_:
+        :param content:
+        :param lookup_id:
+        :param _from_template:
+        :return:
+        """
+        if not lookup_id:
+            lookup_id = f"{name}_{len(self._set_meta_tags)}"
+        self._set_meta_tags[lookup_id] = MetaTag(
+            name, http_equiv, property_, content, id_=lookup_id
+        )
+        return self if not _from_template else ""
+
+    def remove_meta_tag(
+        self, lookup_id: str, _from_template: bool = False
+    ) -> Union[str, "Head"]:
+        """
+        Remove a meta tag by lookup_id.
+
+        :param lookup_id:
+        :param _from_template:
+        :return:
+        """
+        if lookup_id in self._set_meta_tags:
+            del self._set_meta_tags[lookup_id]
+        return self if not _from_template else ""
 
     def set_link_tag(
-            self,
-            rel: str,
-            href: str,
-            sizes: Optional[str] = None,
-            type_: Optional[str] = None,
-            hreflang: Optional[str] = None,
+        self,
+        rel: str,
+        href: str,
+        sizes: Optional[str] = None,
+        type_: Optional[str] = None,
+        hreflang: Optional[str] = None,
+        lookup_id: Optional[str] = None,
+        _from_template: bool = False,
     ):
-        self._set_link_tags[rel] = LinkTag(rel, href, sizes, type_, hreflang)
-        return self
+        """
+        Set a link tag.
 
-    def remove_link_tag(self, rel: str):
-        if rel in self._set_link_tags:
-            del self._set_link_tags[rel]
-        return self
+        The lookup_id is used to remove the tag later. One is generated if not provided.
+
+        :param rel:
+        :param href:
+        :param sizes:
+        :param type_:
+        :param hreflang:
+        :param lookup_id:
+        :param _from_template:
+        :return:
+        """
+        if not lookup_id:
+            lookup_id = f"{rel}_{len(self._set_link_tags)}"
+        self._set_link_tags[lookup_id] = LinkTag(
+            rel, href, sizes, type_, hreflang, id_=lookup_id
+        )
+        return self if not _from_template else ""
+
+    def remove_link_tag(
+        self, lookup_id: str, _from_template: bool = False
+    ) -> Union[str, "Head"]:
+        """
+        Remove a link tag by lookup_id.
+
+        :param lookup_id:
+        :param _from_template:
+        :return:
+        """
+        if lookup_id in self._set_link_tags:
+            del self._set_link_tags[lookup_id]
+        return self if not _from_template else ""
 
     def set_script_tag(
-            self,
-            src: str,
-            type: Optional[str] = None,
-            async_: bool = False,
-            defer: bool = False,
-            crossorigin: Optional[str] = None,
-            integrity: Optional[str] = None,
+        self,
+        src: str,
+        type_: Optional[str] = None,
+        async_: bool = False,
+        defer: bool = False,
+        crossorigin: Optional[str] = None,
+        integrity: Optional[str] = None,
+        lookup_id: Optional[str] = None,
+        _from_template: bool = False,
     ):
         self._set_script_tags[src] = ScriptTag(
-            src, type, async_, defer, crossorigin, integrity
+            src, type_, async_, defer, crossorigin, integrity, id_=lookup_id
         )
-        return self
+        return self if not _from_template else ""
 
-    def remove_script_tag(self, src: str):
-        if src in self._set_script_tags:
-            del self._set_script_tags[src]
-        return self
+    def remove_script_tag(
+        self, lookup_id: str, _from_template: bool = False
+    ) -> Union[str, "Head"]:
+        if lookup_id in self._set_script_tags:
+            del self._set_script_tags[lookup_id]
+        return self if not _from_template else ""
 
     def as_dict(self):
         return {
             **{
-                o_tag.replace("t__", ""): getattr(self, o_tag)
+                o_tag.replace("_t__", ""): getattr(self, o_tag)
                 for o_tag in self._top_level_tags
                 if getattr(self, o_tag) is not None
             },
             **{
-                o_tag.replace("t__", ""): getattr(self, o_tag)
+                o_tag.replace("_t__", ""): getattr(self, o_tag)
                 for o_tag in self._order
                 if getattr(self, o_tag) is not None
             },
@@ -607,7 +728,7 @@ class Head:
 
     @property
     def title(self):
-        return Markup(str(self.t__title))
+        return Markup(str(self._t__title))
 
     @property
     def top_level_tags(self):
@@ -680,8 +801,8 @@ class Head:
         ]
 
         if not self._exclude_title_tags:
-            if self.t__title is not None:
-                compiled_tags.append(str(self.t__title))
+            if self._t__title is not None:
+                compiled_tags.append(str(self._t__title))
 
         compiled_tags = compiled_tags + [
             *[
