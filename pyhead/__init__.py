@@ -363,7 +363,6 @@ class Head:
     ) -> Union[str, "Head"]:
         self._title_tag_appends.append((append, separator))
         if isinstance(self._t__title, TitleTag):
-            print(self._title_tag_appends)
             self._t__title.set_appends(self._title_tag_appends)
 
         return self if not _from_template else ""
@@ -373,7 +372,6 @@ class Head:
     ) -> Union[str, "Head"]:
         self._title_tag_prepends.append((prepend, separator))
         if isinstance(self._t__title, TitleTag):
-            print(self._title_tag_prepends)
             self._t__title.set_prepends(self._title_tag_prepends)
 
         return self if not _from_template else ""
