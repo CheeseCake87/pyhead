@@ -56,5 +56,6 @@ class LinkTag:
             f"{self._ta_sizes}"
             f"{self._ta_type}"
             f"{self._ta_hreflang}"
+            f"{self._ta_id}"
             f">"
         ).replace(" >", ">")

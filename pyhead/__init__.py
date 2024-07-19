@@ -1,5 +1,7 @@
 """A simple python package to generate HTML head tags."""
 
+import hashlib
+
 from typing import Optional, Union, Literal, List
 
 from markupsafe import Markup
@@ -276,11 +278,15 @@ class Head:
     def __call__(self, *args, **kwargs):
         return Markup(self._compile_all())
 
-    def set_charset(self, charset: str, _from_template: bool = False) -> Union[str, "Head"]:
+    def set_charset(
+        self, charset: str, _from_template: bool = False
+    ) -> Union[str, "Head"]:
         self._t__charset.replace(charset)
         return self if not _from_template else ""
 
-    def set_viewport(self, viewport: str, _from_template: bool = False) -> Union[str, "Head"]:
+    def set_viewport(
+        self, viewport: str, _from_template: bool = False
+    ) -> Union[str, "Head"]:
         self._t__viewport.replace_content(viewport)
         return self if not _from_template else ""
 
@@ -386,7 +392,9 @@ class Head:
         self._t__description = MetaTag(name="description", content=description)
         return self if not _from_template else ""
 
-    def set_subject(self, subject: str, _from_template: bool = False) -> Union[str, "Head"]:
+    def set_subject(
+        self, subject: str, _from_template: bool = False
+    ) -> Union[str, "Head"]:
         if self._t__subject is not None:
             self._t__subject.replace_content(subject)
             return self if not _from_template else ""
@@ -622,7 +630,9 @@ class Head:
         :return:
         """
         if not lookup_id:
-            lookup_id = f"{name}_{len(self._set_meta_tags)}"
+            lookup_id = hashlib.md5(
+                f"{''.join([x for x in [name, http_equiv, property_, content] if x])}".encode()
+            ).hexdigest()
         self._set_meta_tags[lookup_id] = MetaTag(
             name, http_equiv, property_, content, id_=lookup_id
         )
@@ -667,7 +677,9 @@ class Head:
         :return:
         """
         if not lookup_id:
-            lookup_id = f"{rel}_{len(self._set_link_tags)}"
+            lookup_id = hashlib.md5(
+                f"{''.join([x for x in [rel, href, sizes, type_, hreflang] if x])}".encode()
+            ).hexdigest()
         self._set_link_tags[lookup_id] = LinkTag(
             rel, href, sizes, type_, hreflang, id_=lookup_id
         )
@@ -698,6 +710,10 @@ class Head:
         lookup_id: Optional[str] = None,
         _from_template: bool = False,
     ):
+        if not lookup_id:
+            lookup_id = hashlib.md5(
+                f"{''.join([x for x in [src, type_, async_, defer, crossorigin, integrity] if x])}".encode()
+            ).hexdigest()
         self._set_script_tags[src] = ScriptTag(
             src, type_, async_, defer, crossorigin, integrity, id_=lookup_id
         )
