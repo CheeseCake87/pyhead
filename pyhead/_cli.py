@@ -41,7 +41,13 @@ def cli():
     help="value to prefix the href attribute of the link tag",
     default="",
 )
-def generate_favicons(source, output, href_prefix: str):
+@click.option(
+    "--skip-code-generation",
+    "-scg",
+    is_flag=True,
+    help="Skip generating the html and python code",
+)
+def generate_favicons(source, output, href_prefix: str, skip_code_generation: bool):
     """
     Generate favicons from a source favicon file, supported file formats are [png, jpg, jpeg, gif, svg, tiff].
 
@@ -82,6 +88,9 @@ def generate_favicons(source, output, href_prefix: str):
                     f"{meta['generated_filename']}",
                 ),
             )
+
+        if skip_code_generation:
+            return
 
         html_code.write_text(favicon_tags(), encoding="utf-8")
         object_code.write_text(
