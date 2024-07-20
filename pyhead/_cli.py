@@ -1,4 +1,5 @@
 from pathlib import Path
+from textwrap import dedent
 
 import click
 
@@ -18,6 +19,35 @@ def check_source(source: Path) -> Path | None:
         return source
     else:
         return None
+
+
+py_file = """\
+from pyhead import Head
+
+head = Head()
+head.set_favicon(
+    ico_icon_href="{ico_icon_href}",
+    png_icon_16_href="{png_icon_16_href}",
+    png_icon_32_href="{png_icon_32_href}",
+    png_icon_64_href="{png_icon_64_href}",
+    png_icon_96_href="{png_icon_96_href}",
+    png_icon_180_href="{png_icon_180_href}",
+    png_icon_196_href="{png_icon_196_href}",
+    png_apple_touch_icon_57_href="{png_apple_touch_icon_57_href}",
+    png_apple_touch_icon_60_href="{png_apple_touch_icon_60_href}",
+    png_apple_touch_icon_72_href="{png_apple_touch_icon_72_href}",
+    png_apple_touch_icon_76_href="{png_apple_touch_icon_76_href}",
+    png_apple_touch_icon_114_href="{png_apple_touch_icon_114_href}",
+    png_apple_touch_icon_120_href="{png_apple_touch_icon_120_href}",
+    png_apple_touch_icon_144_href="{png_apple_touch_icon_144_href}",
+    png_apple_touch_icon_152_href="{png_apple_touch_icon_152_href}",
+    png_apple_touch_icon_167_href="{png_apple_touch_icon_167_href}",
+    png_apple_touch_icon_180_href="{png_apple_touch_icon_180_href}",
+    png_mstile_70_href="{png_mstile_70_href}",
+    png_mstile_270_href="{png_mstile_270_href}",
+    png_mstile_310x150_href="{png_mstile_310x150_href}",
+    png_mstile_310_href="{png_mstile_310_href}",
+)"""
 
 
 @click.group()
@@ -89,45 +119,19 @@ def generate_favicons(source, output, href_prefix: str, skip_code_generation: bo
                 ),
             )
 
-        if skip_code_generation:
-            return
-
-        html_code.write_text(favicon_tags(), encoding="utf-8")
-        object_code.write_text(
-            """\
-from pyhead import Head
-
-head = Head()
-head.set_favicon(
-    ico_icon_href="{ico_icon_href}",
-    png_icon_16_href="{png_icon_16_href}",
-    png_icon_32_href="{png_icon_32_href}",
-    png_icon_64_href="{png_icon_64_href}",
-    png_icon_96_href="{png_icon_96_href}",
-    png_icon_180_href="{png_icon_180_href}",
-    png_icon_196_href="{png_icon_196_href}",
-    png_apple_touch_icon_57_href="{png_apple_touch_icon_57_href}",
-    png_apple_touch_icon_60_href="{png_apple_touch_icon_60_href}",
-    png_apple_touch_icon_72_href="{png_apple_touch_icon_72_href}",
-    png_apple_touch_icon_76_href="{png_apple_touch_icon_76_href}",
-    png_apple_touch_icon_114_href="{png_apple_touch_icon_114_href}",
-    png_apple_touch_icon_120_href="{png_apple_touch_icon_120_href}",
-    png_apple_touch_icon_144_href="{png_apple_touch_icon_144_href}",
-    png_apple_touch_icon_152_href="{png_apple_touch_icon_152_href}",
-    png_apple_touch_icon_167_href="{png_apple_touch_icon_167_href}",
-    png_apple_touch_icon_180_href="{png_apple_touch_icon_180_href}",
-    png_mstile_70_href="{png_mstile_70_href}",
-    png_mstile_270_href="{png_mstile_270_href}",
-    png_mstile_310x150_href="{png_mstile_310x150_href}",
-    png_mstile_310_href="{png_mstile_310_href}",
-)""".format(
-                **{
-                    k: f"{href_prefix if href_prefix.endswith('/') else href_prefix + '/'}"
-                    f"{v['generated_filename']}"
-                    for k, v in favicon_tags.icon_reference.items()
-                }
+        if not skip_code_generation:
+            html_code.write_text(favicon_tags(), encoding="utf-8")
+            object_code.write_text(
+                dedent(
+                    py_file.format(
+                        **{
+                            k: f"{href_prefix if href_prefix.endswith('/') else href_prefix + '/'}"
+                            f"{v['generated_filename']}"
+                            for k, v in favicon_tags.icon_reference.items()
+                        }
+                    )
+                )
             )
-        )
 
 
 if __name__ == "__main__":
