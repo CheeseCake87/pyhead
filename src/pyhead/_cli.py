@@ -105,7 +105,7 @@ def generate_favicons(
         output_dir.mkdir()
 
     with Favicons(raw_favicon, output_dir) as favicons:
-        favicons.generate()  #type: ignore
+        favicons.generate()  # type: ignore
         favicon_tags = Favicon()
         for icon, meta in favicon_tags.icon_reference.items():
             setattr(

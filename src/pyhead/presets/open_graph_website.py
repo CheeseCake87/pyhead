@@ -35,8 +35,8 @@ class OpenGraphWebsite:
         description: Optional[str] = None,
         site_name: Optional[str] = None,
         url: Optional[str] = None,
-            *args: list[Any],
-            **kwargs: dict[str, Any],
+        *args: list[Any],
+        **kwargs: dict[str, Any],
     ) -> None:
         self.type = MetaTag(property_="og:type", content="website")
         self.locale = MetaTag(property_="og:locale", content=locale)
@@ -59,9 +59,7 @@ class OpenGraphWebsite:
         if site_name is not None:
             self.site_name = MetaTag(property_="og:site_name", content=site_name)
 
-
         _, __ = args, kwargs
-
 
     def __repr__(self) -> str:
         return (

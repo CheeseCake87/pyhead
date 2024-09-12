@@ -1,4 +1,3 @@
-
 from markupsafe import Markup
 
 

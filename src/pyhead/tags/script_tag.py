@@ -63,7 +63,7 @@ class ScriptTag:
     def __str__(self) -> Markup:
         return Markup(self._compile())
 
-    def __call__(self)  -> Markup:
+    def __call__(self) -> Markup:
         return Markup(self._compile())
 
     def _compile(self) -> str:

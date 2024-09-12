@@ -24,8 +24,8 @@ class GeoPosition:
         geo_position: Optional[str] = None,
         geo_region: Optional[str] = None,
         geo_placename: Optional[str] = None,
-            *args: list[Any],
-            **kwargs: dict[str, Any],
+        *args: list[Any],
+        **kwargs: dict[str, Any],
     ) -> None:
         if icbm is not None:
             self.icbm = MetaTag(name="ICBM", content=icbm)

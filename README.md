@@ -2,19 +2,24 @@
 
 [![PyPI version](https://badge.fury.io/py/pyhead.svg)](https://badge.fury.io/py/pyhead)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/CheeseCake87/pyhead/master/LICENSE)
+![Downloads](https://static.pepy.tech/badge/pyhead)
+![black](https://img.shields.io/badge/code%20style-black-000000.svg)
 
 The Python HTML `<head>` filler.
 
 `pip install pyhead`
 
-TOC:
-
-- [What is Pyhead?](#what-is-pyhead)
-- [Flask example](#flask-example)
-- [Advanced use cases](#advanced-use-cases)
-- [dict as args, and JSON](#dict-as-args-and-json)
-- [Working with extended templates](#working-with-extended-templates)
-- [Generating favicons](#generating-favicons)
+<!-- TOC -->
+* [pyhead 🐍🤯](#pyhead-)
+  * [What is Pyhead?](#what-is-pyhead)
+  * [Flask example:](#flask-example)
+  * [Advanced use cases:](#advanced-use-cases)
+    * [Flask + g](#flask--g)
+    * [Working with extended templates](#working-with-extended-templates)
+    * [dict as args, and JSON](#dict-as-args-and-json)
+  * [CLI Commands](#cli-commands)
+    * [Generating favicons](#generating-favicons)
+<!-- TOC -->
 
 ## What is Pyhead?
 
@@ -37,6 +42,7 @@ def create_app():
             base="https://example.com",
             title="Hello World",
             exclude_title_tags=True,
+            # /\ Set to False if returning {{ head() }} in the template
             description="This is a test",
             keywords="test, hello, world",
             subject="Hello World",
@@ -134,6 +140,25 @@ def create_app():
 
 ```
 
+or
+
+```html
+
+<html lang="en">
+<head>
+    {{ head() }}
+    <!-- 
+    REMEMBER to remove (or set to False) the `exclude_title_tags=True`, 
+    from the Head() constructor.
+    -->
+</head>
+<body>
+<h1>Flask App</h1>
+<p>Right-Click view source</p>
+</body>
+</html>
+```
+
 Results in:
 
 ```html
@@ -212,24 +237,122 @@ Results in:
 
 ```
 
-The following will result in the same output as above but with less template control over the title tag, **Note** You
-must remove the `exclude_title_tags=True`, from the Head() constructor.
+## Advanced use cases:
+
+### Flask + g
+
+You can use the `g` object in Flask to store the head object.
+
+```python
+from flask import Flask, render_template, g
+
+from pyhead import Head
+
+
+def create_app():
+    app = Flask(__name__)
+
+    @app.before_request
+    def inject_pyhead():
+        g.head = Head()
+        g.head.set_title("My Cool Site")
+
+    @app.route("/")
+    def index():
+        render_template("index.html")
+```
+
+`index.html`
 
 ```html
+<!DOCTYPE html>
 
 <html lang="en">
 <head>
-    {{ head() }}
+    {{ g.head.append_title("Home Page", " - ", _from_template=True) }}
+    {{ g.head() }}
 </head>
 <body>
-<h1>Flask App</h1>
-<p>Right-Click view source</p>
+{% block content %}
+
+{% endblock %}
+</body>
+</html>
+```
+
+Results in:
+
+```html
+...
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="'width=device-width, initial-scale=1.0'">
+    <title>My Cool Site - Home Page</title>
+
+</head>
+
+...
+```
+
+### Working with extended templates
+
+The head object can be modified in templates that extend other templates. Here's an example:
+
+`extends.html`
+
+```html
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    {%- block head -%}
+    {{ g.head() }}
+    {% endblock %}
+</head>
+<body>
+{% block content %}
+
+{% endblock %}
 </body>
 </html>
 
 ```
 
-## Advanced use cases:
+`index.hml`
+
+```html
+
+{% extends "extends.html" %}
+
+{% block head %}
+{{ g.head.append_title('Flask App', ' - ', _from_template=True) }}
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+<h1>Flask App</h1>
+<p>Right-Click view source</p>
+{% endblock %}
+
+```
+
+In this example the `<link rel="canonical" href="https://example.com">`
+tag is removed, and the title is appended, resulting in:
+
+```html
+...
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="'width=device-width, initial-scale=1.0'">
+<base href="https://example.com">
+<title>My Cool Site - Flask App</title>
+
+</head>
+...
+```
 
 ### dict as args, and JSON
 
@@ -308,68 +431,7 @@ the stored JSON data in this case would look something like:
 }
 ```
 
-### Working with extended templates
-
-The head object can be modified in templates that extend other templates. Here's an example:
-
-`extends.html`
-
-```html
-
-<!DOCTYPE html>
-
-<html lang="en">
-<head>
-    {%- block head -%}
-    {{ head() }}
-    {% endblock %}
-</head>
-<body>
-{% block content %}
-
-{% endblock %}
-</body>
-</html>
-
-```
-
-`index.hml`
-
-```html
-
-{% extends "extends.html" %}
-
-{% block head %}
-{{ head.append_title('Flask App', ' - ', _from_template=True) }}
-{{ head.remove_link_tag('canonical', _from_template=True) }}
-{{ super() }}
-{% endblock %}
-
-{% block content %}
-<h1>Flask App</h1>
-<p>Right-Click view source</p>
-{% endblock %}
-
-```
-
-In this example the `<link rel="canonical" href="https://example.com">`
-tag is removed, and the title is appended, resulting in:
-
-```html
-...
-
-<meta charset="utf-8">
-<meta name="viewport" content="'width=device-width, initial-scale=1.0'">
-<base href="https://example.com">
-<title>Hello World - Flask App</title>
-...
-<link rel="msapplication-wide310x150logo" href="/mstile-310x150.png">
-
-<!-- /\ No canonical link tag -->
-</head>
-
-...
-```
+## CLI Commands
 
 ### Generating favicons
 
@@ -431,6 +493,7 @@ mstile-310x310.png
 The `favicon-delete_me_after_use.html` file will contain the following:
 
 ```html
+
 <link rel="icon" href="https://example.com/favicon.ico" sizes="16x16 32x32">
 <link rel="icon" href="https://example.com/favicon-16x16.png" sizes="16x16">
 <link rel="icon" href="https://example.com/favicon-32x32.png" sizes="32x32">

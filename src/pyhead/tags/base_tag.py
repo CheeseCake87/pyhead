@@ -7,7 +7,7 @@ class BaseTag:
     def __init__(self, href: str) -> None:
         self.href = href
 
-    def __repr__(self)  -> str:
+    def __repr__(self) -> str:
         return f'<Base base="{self.href}">'
 
     def __str__(self) -> Markup:

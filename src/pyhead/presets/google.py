@@ -23,8 +23,8 @@ class Google:
         googlebot: Optional[str] = None,
         no_sitelinks_search_box: bool = False,
         no_translate: bool = False,
-            *args: list[Any],
-            **kwargs: dict[str, Any],
+        *args: list[Any],
+        **kwargs: dict[str, Any],
     ) -> None:
         self._googlebot = []
 

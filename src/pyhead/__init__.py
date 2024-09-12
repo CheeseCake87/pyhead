@@ -24,7 +24,7 @@ from .tags import (
     ScriptTag,
 )
 
-__version__ = "3.2"
+__version__ = "4.0.0"
 
 
 class Head:
@@ -111,6 +111,8 @@ class Head:
         exclude_title_tags: bool = False,
         exclude_viewport: bool = False,
         favicon: Optional[Dict[str, Any]] = None,
+        *args: list[Any],
+        **kwargs: dict[str, Any],
     ):
         """
         viewport is set to "width=device-width, initial-scale=1" by default.
@@ -265,6 +267,8 @@ class Head:
             self._t__detect_telephone_numbers = MetaTag(
                 name="format-detection", content="telephone=no"
             )
+
+        _, __ = args, kwargs
 
     @property
     def instance(self) -> "Head":
