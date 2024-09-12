@@ -32,27 +32,27 @@ class Head:
 
     # Preset tags
     _t__charset: Charset
-    _t__title: Optional[TitleTag]
-    _t__base: Optional[BaseTag]
-    _t__keywords: Optional[Keywords]
-    _t__google: Optional[Google]
-    _t__verification: Optional[Verification]
-    _t__opengraph_website: Optional[OpenGraphWebsite]
-    _t__twitter_card: Optional[TwitterCard]
-    _t__geo_position: Optional[GeoPosition]
+    _t__title: Optional[TitleTag] = None
+    _t__base: Optional[BaseTag] = None
+    _t__keywords: Optional[Keywords] = None
+    _t__google: Optional[Google] = None
+    _t__verification: Optional[Verification] = None
+    _t__opengraph_website: Optional[OpenGraphWebsite] = None
+    _t__twitter_card: Optional[TwitterCard] = None
+    _t__geo_position: Optional[GeoPosition] = None
 
     # Build on run tags
-    _t__viewport: MetaTag
-    _t__content_security_policy: Optional[MetaTag]
-    _t__application_name: Optional[MetaTag]
-    _t__generator: Optional[MetaTag]
-    _t__theme_color: Optional[MetaTag]
-    _t__description: Optional[MetaTag]
-    _t__subject: Optional[MetaTag]
-    _t__rating: Optional[MetaTag]
-    _t__robots: Optional[MetaTag]
-    _t__referrer_policy: Optional[MetaTag]
-    _t__detect_telephone_numbers: Optional[MetaTag]
+    _t__viewport: Optional[MetaTag] = None
+    _t__content_security_policy: Optional[MetaTag] = None
+    _t__application_name: Optional[MetaTag] = None
+    _t__generator: Optional[MetaTag] = None
+    _t__theme_color: Optional[MetaTag] = None
+    _t__description: Optional[MetaTag] = None
+    _t__subject: Optional[MetaTag] = None
+    _t__rating: Optional[MetaTag] = None
+    _t__robots: Optional[MetaTag] = None
+    _t__referrer_policy: Optional[MetaTag] = None
+    _t__detect_telephone_numbers: Optional[MetaTag] = None
 
     _set_meta_tags: dict[str, Any]
     _set_link_tags: dict[str, Any]
@@ -292,7 +292,10 @@ class Head:
     def set_viewport(
         self, viewport: str, _from_template: bool = False
     ) -> Union[str, "Head"]:
-        self._t__viewport.replace_content(viewport)
+        if self._t__viewport and isinstance(self._t__viewport, MetaTag):
+            self._t__viewport.replace_content(viewport)
+        else:
+            self._t__viewport = MetaTag(name="viewport", content=viewport)
         return self if not _from_template else ""
 
     def set_content_security_policy(
@@ -817,19 +820,19 @@ class Head:
             *[
                 str(getattr(self, o_tag))
                 for o_tag in self._top_level_tags
-                if getattr(self, o_tag) is not None
+                if getattr(self, o_tag) is not None and hasattr(self, o_tag)
             ],
         ]
 
         if not self._exclude_title_tags:
-            if self._t__title is not None:
+            if hasattr(self, "_t__title") and self._t__title is not None:
                 compiled_tags.append(str(self._t__title))
 
         compiled_tags = compiled_tags + [
             *[
                 str(getattr(self, o_tag))
                 for o_tag in self._order
-                if getattr(self, o_tag) is not None
+                if getattr(self, o_tag) is not None and hasattr(self, o_tag)
             ],
             *[
                 str(c_tag)
