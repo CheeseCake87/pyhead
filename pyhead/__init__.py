@@ -1,11 +1,10 @@
 """A simple python package to generate HTML head tags."""
 
-import hashlib
-
 from typing import Optional, Union, Literal, List
 
 from markupsafe import Markup
 
+from ._helpers import random_key
 from .presets import (
     Favicon,
     Charset,
@@ -13,6 +12,7 @@ from .presets import (
     Google,
     Verification,
     OpenGraphWebsite,
+    Stylesheet,
     TwitterCard,
     GeoPosition,
 )
@@ -605,6 +605,14 @@ class Head:
         )
         return self if not _from_template else ""
 
+    def set_stylesheet(
+        self, href: str, lookup_id: Optional[str] = None, _from_template: bool = False
+    ) -> Union[str, "Head"]:
+        if not lookup_id:
+            lookup_id = random_key(len(self._set_link_tags.keys()))
+        self._set_link_tags[lookup_id] = Stylesheet(href=href)
+        return self if not _from_template else ""
+
     def set_meta_tag(
         self,
         name: str = None,
@@ -628,9 +636,7 @@ class Head:
         :return:
         """
         if not lookup_id:
-            lookup_id = hashlib.md5(
-                f"{''.join([x for x in [name, http_equiv, property_, content] if x])}".encode()
-            ).hexdigest()
+            lookup_id = random_key(len(self._set_meta_tags.keys()))
         self._set_meta_tags[lookup_id] = MetaTag(
             name, http_equiv, property_, content, id_=lookup_id
         )
@@ -675,9 +681,7 @@ class Head:
         :return:
         """
         if not lookup_id:
-            lookup_id = hashlib.md5(
-                f"{''.join([x for x in [rel, href, sizes, type_, hreflang] if x])}".encode()
-            ).hexdigest()
+            lookup_id = random_key(len(self._set_link_tags.keys()))
         self._set_link_tags[lookup_id] = LinkTag(
             rel, href, sizes, type_, hreflang, id_=lookup_id
         )
@@ -709,9 +713,7 @@ class Head:
         _from_template: bool = False,
     ):
         if not lookup_id:
-            lookup_id = hashlib.md5(
-                f"{''.join([x for x in [src, type_, async_, defer, crossorigin, integrity] if x])}".encode()
-            ).hexdigest()
+            lookup_id = random_key(len(self._set_script_tags.keys()))
         self._set_script_tags[src] = ScriptTag(
             src, type_, async_, defer, crossorigin, integrity, id_=lookup_id
         )

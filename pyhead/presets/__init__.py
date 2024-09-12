@@ -4,6 +4,7 @@ from .geo_position import GeoPosition
 from .google import Google
 from .keywords import Keywords
 from .open_graph_website import OpenGraphWebsite
+from .stylesheet import Stylesheet
 from .twitter_card import TwitterCard
 from .verification import Verification
 
@@ -14,6 +15,7 @@ __all__ = [
     "Google",
     "Keywords",
     "OpenGraphWebsite",
+    "Stylesheet",
     "TwitterCard",
     "Verification",
 ]
