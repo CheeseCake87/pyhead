@@ -1,4 +1,4 @@
-from typing import Optional, Literal
+from typing import Optional, Literal, Any
 
 from markupsafe import Markup
 
@@ -15,7 +15,7 @@ class TwitterCard:
     image_alt: Optional[MetaTag] = None
     url: Optional[MetaTag] = None
 
-    _order: list = [
+    _order: list[str] = [
         "card",
         "site_account",
         "creator_account",
@@ -36,9 +36,9 @@ class TwitterCard:
         image: Optional[str] = None,
         image_alt: Optional[str] = None,
         url: Optional[str] = None,
-        *args,
-        **kwargs,
-    ):
+        *args: list[Any],
+        **kwargs: dict[str, Any],
+    ) -> None:
         self.card = MetaTag(name="twitter:card", content=card)
 
         if site_account is not None:
@@ -66,7 +66,7 @@ class TwitterCard:
 
         _, __ = args, kwargs
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"<TwitterCard card={self.card} site_account={self.site_account} "
             f"creator_account={self.creator_account} title={self.title} "
@@ -74,13 +74,13 @@ class TwitterCard:
             f"image_alt={self.image_alt} url={self.url}>"
         )
 
-    def __str__(self):
+    def __str__(self) -> Markup:
         return Markup(self._compile())
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self) -> Markup:
         return Markup(self._compile())
 
-    def _compile(self):
+    def _compile(self) -> str:
         _ = [
             str(getattr(self, o_tag))
             for o_tag in self._order

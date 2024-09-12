@@ -1,10 +1,11 @@
 from pathlib import Path
 from textwrap import dedent
+from typing import Union, Optional
 
 import click
 
-from pyhead.presets import Favicon
-from pyhead.tags import LinkTag
+from .presets import Favicon
+from .tags import LinkTag
 
 try:
     from favicons import Favicons
@@ -13,7 +14,7 @@ except ImportError:
     exit(1)
 
 
-def check_source(source: Path) -> Path | None:
+def check_source(source: Path) -> Optional[Path]:
     supported_file_ext = [".png", ".jpg", ".jpeg", ".gif", ".svg", ".tiff"]
     if source.is_file() and source.suffix.lower() in supported_file_ext:
         return source
@@ -51,7 +52,7 @@ head.set_favicon(
 
 
 @click.group()
-def cli():
+def cli() -> None:
     pass
 
 
@@ -77,7 +78,9 @@ def cli():
     is_flag=True,
     help="Skip generating the html and python code",
 )
-def generate_favicons(source, output, href_prefix: str, skip_code_generation: bool):
+def generate_favicons(
+    source: Path, output: Path, href_prefix: str, skip_code_generation: bool
+) -> None:
     """
     Generate favicons from a source favicon file, supported file formats are [png, jpg, jpeg, gif, svg, tiff].
 
@@ -102,7 +105,7 @@ def generate_favicons(source, output, href_prefix: str, skip_code_generation: bo
         output_dir.mkdir()
 
     with Favicons(raw_favicon, output_dir) as favicons:
-        favicons.generate()
+        favicons.generate()  #type: ignore
         favicon_tags = Favicon()
         for icon, meta in favicon_tags.icon_reference.items():
             setattr(

@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 
 from markupsafe import Markup
 
@@ -11,7 +11,7 @@ class GeoPosition:
     geo_region: Optional[MetaTag] = None
     geo_placename: Optional[MetaTag] = None
 
-    _order: list = [
+    _order: list[str] = [
         "icbm",
         "geo_position",
         "geo_region",
@@ -24,9 +24,9 @@ class GeoPosition:
         geo_position: Optional[str] = None,
         geo_region: Optional[str] = None,
         geo_placename: Optional[str] = None,
-        *args,
-        **kwargs,
-    ):
+            *args: list[Any],
+            **kwargs: dict[str, Any],
+    ) -> None:
         if icbm is not None:
             self.icbm = MetaTag(name="ICBM", content=icbm)
 
@@ -41,19 +41,19 @@ class GeoPosition:
 
         _, __ = args, kwargs
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"<GeoPosition icbm={self.icbm} geo_position={self.geo_position} "
             f"geo_region={self.geo_region} geo_placename={self.geo_placename}>"
         )
 
-    def __str__(self):
+    def __str__(self) -> Markup:
         return Markup(self._compile())
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self) -> Markup:
         return Markup(self._compile())
 
-    def _compile(self):
+    def _compile(self) -> str:
         _ = [
             str(getattr(self, o_tag))
             for o_tag in self._order

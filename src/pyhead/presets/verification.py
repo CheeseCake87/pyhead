@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 
 from markupsafe import Markup
 
@@ -13,7 +13,7 @@ class Verification:
     pinterest: Optional[MetaTag] = None
     norton: Optional[MetaTag] = None
 
-    _order: list = [
+    _order: list[str] = [
         "google",
         "yandex",
         "bing",
@@ -30,9 +30,9 @@ class Verification:
         alexa: Optional[str] = None,
         pinterest: Optional[str] = None,
         norton: Optional[str] = None,
-        *args,
-        **kwargs,
-    ):
+        *args: list[Any],
+        **kwargs: dict[str, Any],
+    ) -> None:
         if google is not None:
             self.google = MetaTag(name="google-site-verification", content=google)
 
@@ -55,20 +55,20 @@ class Verification:
 
         _, __ = args, kwargs
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"<Verification google={self.google} yandex={self.yandex} "
             f"bing={self.bing} alexa={self.alexa} pinterest={self.pinterest} "
             f"norton={self.norton}>"
         )
 
-    def __str__(self):
+    def __str__(self) -> Markup:
         return Markup(self._compile())
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self) -> Markup:
         return Markup(self._compile())
 
-    def _compile(self):
+    def _compile(self) -> str:
         _ = [
             str(getattr(self, o_tag))
             for o_tag in self._order

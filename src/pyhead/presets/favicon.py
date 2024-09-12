@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 
 from markupsafe import Markup
 
@@ -28,7 +28,7 @@ class Favicon:
     png_mstile_310x150_href: Optional[LinkTag] = None
     png_mstile_310_href: Optional[LinkTag] = None
 
-    icon_reference: dict = {
+    icon_reference: dict[str, dict[str, str]] = {
         "ico_icon_href": {
             "rel": "icon",
             "sizes": "16x16 32x32",
@@ -176,7 +176,9 @@ class Favicon:
         png_mstile_270_href: Optional[str] = None,
         png_mstile_310x150_href: Optional[str] = None,
         png_mstile_310_href: Optional[str] = None,
-    ):
+        *args: list[Any],
+        **kwargs: dict[str, Any],
+    ) -> None:
         set_kwargs = {
             "ico_icon_href": ico_icon_href,
             "png_icon_16_href": png_icon_16_href,
@@ -216,25 +218,25 @@ class Favicon:
                     ),
                 )
 
-    def __repr__(self):
-        return (
-            "<FavIcon " " ".join(
-                [
-                    str(getattr(self, o_link).href)
-                    for o_link in self.icon_reference
-                    if getattr(self, o_link) is not None
-                ]
-            ),
-            ">".replace(" >", ">"),
+        _, __ = args, kwargs
+
+    def __repr__(self) -> str:
+        attrs = " ".join(
+            [
+                str(getattr(self, o_link).href)
+                for o_link in self.icon_reference
+                if getattr(self, o_link) is not None
+            ]
         )
+        return f"<FavIcon {attrs}>".replace(" >", ">")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return Markup(self._compile())
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self) -> str:
         return Markup(self._compile())
 
-    def _compile(self):
+    def _compile(self) -> str:
         _ = [
             str(getattr(self, o_link))
             for o_link in self.icon_reference

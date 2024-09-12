@@ -1,22 +1,23 @@
 from markupsafe import Markup
+from typing import Optional
 
 
 class MetaTag:
     # ta = Tag Attribute
-    _ta_name: str = None
-    _ta_http_equiv: str = None
-    _ta_property: str = None
-    _ta_content: str = None
-    _ta_id: str = None
+    _ta_name: str
+    _ta_http_equiv: str
+    _ta_property: str
+    _ta_content: str
+    _ta_id: str
 
     def __init__(
         self,
-        name: str = None,
-        http_equiv: str = None,
-        property_: str = None,
-        content: str = None,
-        id_: str = None,
-    ):
+        name: Optional[str] = None,
+        http_equiv: Optional[str] = None,
+        property_: Optional[str] = None,
+        content: Optional[str] = None,
+        id_: Optional[str] = None,
+    ) -> None:
         one_only = [name, http_equiv, property_]
         if one_only.count(None) != 2:
             raise ValueError(
@@ -31,7 +32,7 @@ class MetaTag:
         self._ta_content = f'content="{content}" ' if content is not None else ""
         self._ta_id = f'id="{id_}" ' if id_ is not None else ""
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"<MetaTag "
             f"{self._ta_name}"
@@ -42,13 +43,13 @@ class MetaTag:
             f">"
         )
 
-    def __str__(self):
+    def __str__(self) -> Markup:
         return Markup(self._compile())
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self) -> Markup:
         return Markup(self._compile())
 
-    def _compile(self):
+    def _compile(self) -> str:
         return (
             f"<meta "
             f"{self._ta_name}"
@@ -59,6 +60,6 @@ class MetaTag:
             f">"
         )
 
-    def replace_content(self, content: str):
+    def replace_content(self, content: str) -> "MetaTag":
         self.content = content
         return self

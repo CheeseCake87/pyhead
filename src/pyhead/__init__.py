@@ -1,6 +1,6 @@
 """A simple python package to generate HTML head tags."""
 
-from typing import Optional, Union, Literal, List
+from typing import Optional, Union, Literal, List, Any, Dict
 
 from markupsafe import Markup
 
@@ -32,35 +32,35 @@ class Head:
 
     # Preset tags
     _t__charset: Charset
-    _t__title: Optional[TitleTag] = None
-    _t__base: Optional[BaseTag] = None
-    _t__keywords: Optional[Keywords] = None
-    _t__google: Optional[Google] = None
-    _t__verification: Optional[Verification] = None
-    _t__opengraph_website: Optional[OpenGraphWebsite] = None
-    _t__twitter_card: Optional[TwitterCard] = None
-    _t__geo_position: Optional[GeoPosition] = None
+    _t__title: Optional[TitleTag]
+    _t__base: Optional[BaseTag]
+    _t__keywords: Optional[Keywords]
+    _t__google: Optional[Google]
+    _t__verification: Optional[Verification]
+    _t__opengraph_website: Optional[OpenGraphWebsite]
+    _t__twitter_card: Optional[TwitterCard]
+    _t__geo_position: Optional[GeoPosition]
 
     # Build on run tags
     _t__viewport: MetaTag
-    _t__content_security_policy: Optional[MetaTag] = None
-    _t__application_name: Optional[MetaTag] = None
-    _t__generator: Optional[MetaTag] = None
-    _t__theme_color: Optional[MetaTag] = None
-    _t__description: Optional[MetaTag] = None
-    _t__subject: Optional[MetaTag] = None
-    _t__rating: Optional[MetaTag] = None
-    _t__robots: Optional[MetaTag] = None
-    _t__referrer_policy: Optional[MetaTag] = None
-    _t__detect_telephone_numbers: Optional[MetaTag] = None
+    _t__content_security_policy: Optional[MetaTag]
+    _t__application_name: Optional[MetaTag]
+    _t__generator: Optional[MetaTag]
+    _t__theme_color: Optional[MetaTag]
+    _t__description: Optional[MetaTag]
+    _t__subject: Optional[MetaTag]
+    _t__rating: Optional[MetaTag]
+    _t__robots: Optional[MetaTag]
+    _t__referrer_policy: Optional[MetaTag]
+    _t__detect_telephone_numbers: Optional[MetaTag]
 
-    _set_meta_tags: dict
-    _set_link_tags: dict
-    _set_script_tags: dict
+    _set_meta_tags: dict[str, Any]
+    _set_link_tags: dict[str, Any]
+    _set_script_tags: dict[str, Any]
 
-    _title_tag_appends: List[tuple] = None
-    _title_tag_prepends: List[tuple] = None
-    _keywords: List[str] = None
+    _title_tag_appends: List[tuple[str, str]]
+    _title_tag_prepends: List[tuple[str, str]]
+    _keywords: List[str]
 
     _top_level_tags = [
         "_t__charset",
@@ -97,20 +97,20 @@ class Head:
         title: Optional[str] = None,
         base: Optional[str] = None,
         description: Optional[str] = None,
-        keywords: Optional[Union[str, list]] = None,
+        keywords: Optional[Union[str, list[str]]] = None,
         subject: Optional[str] = None,
         rating: Optional[str] = None,
         robots: Optional[str] = None,
         referrer_policy: Optional[str] = None,
-        google: Optional[dict] = None,
-        verification: Optional[dict] = None,
-        opengraph_website: Optional[dict] = None,
-        twitter_card: Optional[dict] = None,
-        geo_position: Optional[dict] = None,
+        google: Optional[Dict[str, Any]] = None,
+        verification: Optional[Dict[str, Any]] = None,
+        opengraph_website: Optional[Dict[str, Any]] = None,
+        twitter_card: Optional[Dict[str, Any]] = None,
+        geo_position: Optional[Dict[str, Any]] = None,
         disable_detection_of_telephone_numbers: bool = False,
         exclude_title_tags: bool = False,
         exclude_viewport: bool = False,
-        favicon: Optional[dict] = None,
+        favicon: Optional[Dict[str, Any]] = None,
     ):
         """
         viewport is set to "width=device-width, initial-scale=1" by default.
@@ -185,6 +185,7 @@ class Head:
 
         self._title_tag_appends = []
         self._title_tag_prepends = []
+        self._keywords = []
 
         # Preset tags
 
@@ -266,16 +267,16 @@ class Head:
             )
 
     @property
-    def instance(self):
+    def instance(self) -> "Head":
         return self
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'<Head page_title="{self._t__title}">'
 
-    def __str__(self):
+    def __str__(self) -> Markup:
         return Markup(self._compile_all())
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self) -> Markup:
         return Markup(self._compile_all())
 
     def set_charset(
@@ -421,7 +422,7 @@ class Head:
         return self if not _from_template else ""
 
     def set_keywords(
-        self, keywords: Union[str, list], _from_template: bool = False
+        self, keywords: Union[str, list[str]], _from_template: bool = False
     ) -> Union[str, "Head"]:
         self._t__keywords = Keywords()
         if isinstance(keywords, str):
@@ -439,7 +440,7 @@ class Head:
         no_sitelinks_search_box: bool = False,
         no_translate: bool = False,
         _from_template: bool = False,
-    ):
+    ) -> Union["Head", str]:
         google_meta = Google(
             googlebot=googlebot,
             no_sitelinks_search_box=no_sitelinks_search_box,
@@ -456,7 +457,7 @@ class Head:
         self,
         instructions: Optional[str] = "index, follow",
         _from_template: bool = False,
-    ):
+    ) -> Union["Head", str]:
         self._t__robots = MetaTag(name="robots", content=instructions)
         return self if not _from_template else ""
 
@@ -469,7 +470,7 @@ class Head:
         pinterest: Optional[str] = None,
         norton: Optional[str] = None,
         _from_template: bool = False,
-    ):
+    ) -> Union["Head", str]:
         self._t__verification = Verification(
             google=google,
             yandex=yandex,
@@ -488,9 +489,9 @@ class Head:
         url: Optional[str] = None,
         image: Optional[str] = None,
         image_alt: Optional[str] = None,
-        locale: Optional[str] = None,
+        locale: str = "en_US",
         _from_template: bool = False,
-    ):
+    ) -> Union["Head", str]:
         self._t__opengraph_website = OpenGraphWebsite(
             site_name=site_name,
             title=title,
@@ -513,7 +514,7 @@ class Head:
         image_alt: Optional[str] = None,
         url: Optional[str] = None,
         _from_template: bool = False,
-    ):
+    ) -> Union["Head", str]:
         self._t__twitter_card = TwitterCard(
             card=card,
             site_account=site_account,
@@ -533,7 +534,7 @@ class Head:
         geo_region: Optional[str] = None,
         geo_placename: Optional[str] = None,
         _from_template: bool = False,
-    ):
+    ) -> Union["Head", str]:
         self._t__geo_position = GeoPosition(
             icbm=icbm,
             geo_position=geo_position,
@@ -574,7 +575,7 @@ class Head:
         png_mstile_310x150_href: Optional[str] = None,
         png_mstile_310_href: Optional[str] = None,
         _from_template: bool = False,
-    ):
+    ) -> Union["Head", str]:
         """
         Set favicon links.
 
@@ -615,13 +616,13 @@ class Head:
 
     def set_meta_tag(
         self,
-        name: str = None,
-        http_equiv: str = None,
-        property_: str = None,
-        content: str = None,
+        name: Optional[str] = None,
+        http_equiv: Optional[str] = None,
+        property_: Optional[str] = None,
+        content: Optional[str] = None,
         lookup_id: Optional[str] = None,
         _from_template: bool = False,
-    ):
+    ) -> Union["Head", str]:
         """
         Set a meta tag.
 
@@ -665,7 +666,7 @@ class Head:
         hreflang: Optional[str] = None,
         lookup_id: Optional[str] = None,
         _from_template: bool = False,
-    ):
+    ) -> Union["Head", str]:
         """
         Set a link tag.
 
@@ -711,7 +712,7 @@ class Head:
         integrity: Optional[str] = None,
         lookup_id: Optional[str] = None,
         _from_template: bool = False,
-    ):
+    ) -> Union["Head", str]:
         if not lookup_id:
             lookup_id = random_key(len(self._set_script_tags.keys()))
         self._set_script_tags[src] = ScriptTag(
@@ -726,7 +727,7 @@ class Head:
             del self._set_script_tags[lookup_id]
         return self if not _from_template else ""
 
-    def as_dict(self):
+    def as_dict(self) -> dict[str, Any]:
         return {
             **{
                 o_tag.replace("_t__", ""): getattr(self, o_tag)
@@ -743,11 +744,11 @@ class Head:
         }
 
     @property
-    def title(self):
+    def title(self) -> Markup:
         return Markup(str(self._t__title))
 
     @property
-    def top_level_tags(self):
+    def top_level_tags(self) -> Markup:
         return Markup(
             "\n".join(
                 [
@@ -761,7 +762,7 @@ class Head:
         )
 
     @property
-    def meta_tags(self):
+    def meta_tags(self) -> Markup:
         return Markup(
             "\n".join(
                 [
@@ -780,7 +781,7 @@ class Head:
         )
 
     @property
-    def link_tags(self):
+    def link_tags(self) -> Markup:
         return Markup(
             "\n".join(
                 [
@@ -794,7 +795,7 @@ class Head:
         )
 
     @property
-    def script_tags(self):
+    def script_tags(self) -> Markup:
         return Markup(
             "\n".join(
                 [
@@ -807,7 +808,7 @@ class Head:
             )
         )
 
-    def _compile_all(self):
+    def _compile_all(self) -> str:
         compiled_tags = [
             *[
                 str(getattr(self, o_tag))

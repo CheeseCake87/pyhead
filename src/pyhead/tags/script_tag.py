@@ -5,15 +5,15 @@ from markupsafe import Markup
 
 class ScriptTag:
     # ta = Tag Attribute
-    _ta_src: str = None
-    _ta_type: str = None
-    _ta_async: str = None
-    _ta_defer: str = None
-    _ta_crossorigin: str = None
-    _ta_integrity: str = None
-    _ta_nomodule: str = None
-    _ta_referrerpolicy: str = None
-    _ta_id: str = None
+    _ta_src: str
+    _ta_type: str
+    _ta_async: str
+    _ta_defer: str
+    _ta_crossorigin: str
+    _ta_integrity: str
+    _ta_nomodule: str
+    _ta_referrerpolicy: str
+    _ta_id: str
 
     def __init__(
         self,
@@ -26,7 +26,7 @@ class ScriptTag:
         nomodule: bool = False,
         referrerpolicy: Optional[str] = None,
         id_: Optional[str] = None,
-    ):
+    ) -> None:
         self._ta_src = f'src="{src}" '
         self._ta_type = f'type="{type_}" ' if type_ is not None else ""
         self._ta_async = f'async="{str(async_).lower()}" ' if async_ else ""
@@ -43,7 +43,7 @@ class ScriptTag:
         )
         self._ta_id = f'id="{id_}" ' if id_ is not None else ""
 
-    def __repr__(self):
+    def __repr__(self) -> Markup:
         return Markup(
             (
                 f"<ScriptTag "
@@ -60,13 +60,13 @@ class ScriptTag:
             ).replace(" >", ">")
         )
 
-    def __str__(self):
+    def __str__(self) -> Markup:
         return Markup(self._compile())
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self)  -> Markup:
         return Markup(self._compile())
 
-    def _compile(self):
+    def _compile(self) -> str:
         return (
             f"<script "
             f"{self._ta_src}"

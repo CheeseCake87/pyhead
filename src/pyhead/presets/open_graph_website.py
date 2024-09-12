@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 
 from markupsafe import Markup
 
@@ -15,7 +15,7 @@ class OpenGraphWebsite:
     description: Optional[MetaTag] = None
     site_name: Optional[MetaTag] = None
 
-    _order: list = [
+    _order: list[str] = [
         "type",
         "locale",
         "site_name",
@@ -35,9 +35,9 @@ class OpenGraphWebsite:
         description: Optional[str] = None,
         site_name: Optional[str] = None,
         url: Optional[str] = None,
-        *args,
-        **kwargs,
-    ):
+            *args: list[Any],
+            **kwargs: dict[str, Any],
+    ) -> None:
         self.type = MetaTag(property_="og:type", content="website")
         self.locale = MetaTag(property_="og:locale", content=locale)
 
@@ -59,9 +59,11 @@ class OpenGraphWebsite:
         if site_name is not None:
             self.site_name = MetaTag(property_="og:site_name", content=site_name)
 
+
         _, __ = args, kwargs
 
-    def __repr__(self):
+
+    def __repr__(self) -> str:
         return (
             f"<OpenGraphWebsite type={self.type} locale={self.locale} "
             f"title={self.title} url={self.url} image={self.image} "
@@ -69,13 +71,13 @@ class OpenGraphWebsite:
             f"site_name={self.site_name}>"
         )
 
-    def __str__(self):
+    def __str__(self) -> Markup:
         return Markup(self._compile())
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self) -> Markup:
         return Markup(self._compile())
 
-    def _compile(self):
+    def _compile(self) -> str:
         _ = [
             str(getattr(self, o_tag))
             for o_tag in self._order
