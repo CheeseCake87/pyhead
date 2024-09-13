@@ -1,9 +1,8 @@
-"""A simple python package to generate HTML head tags."""
-
 from typing import Optional, Union, Literal, List, Any, Dict
 
 from markupsafe import Markup
 
+from .__version__ import __version__
 from ._helpers import random_key
 from .presets import (
     Favicon,
@@ -23,8 +22,6 @@ from .tags import (
     BaseTag,
     ScriptTag,
 )
-
-__version__ = "4.0.1"
 
 
 class Head:
@@ -851,3 +848,6 @@ class Head:
             ],
         ]
         return "\n".join([tag for tag in compiled_tags if tag is not None])
+
+
+__all__ = ["__version__", "Head"]

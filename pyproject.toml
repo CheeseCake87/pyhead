@@ -1,11 +1,12 @@
 [project]
 name = "pyhead"
+version = "4.1.0"
+description = "A simple python package to generate HTML head tags."
 authors = [{ name = "David Carmichael", email = "david@uilix.com" }]
 readme = "README.md"
 license = { file = "LICENSE" }
 classifiers = ["License :: OSI Approved :: MIT License"]
 requires-python = ">=3.7"
-dynamic = ["version", "description"]
 
 dependencies = [
     "MarkupSafe >= 2.1.3",
