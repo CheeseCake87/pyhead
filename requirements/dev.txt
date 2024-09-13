@@ -4,3 +4,4 @@ ruff
 flask
 mypy
 pyright
+pre-commit
