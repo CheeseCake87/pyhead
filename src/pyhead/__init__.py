@@ -614,11 +614,11 @@ class Head:
         return self if not _from_template else ""
 
     def set_stylesheet(
-        self, href: str, lookup_id: Optional[str] = None, _from_template: bool = False
+        self, href: str, _from_template: bool = False
     ) -> Union[str, "Head"]:
-        if not lookup_id:
-            lookup_id = random_key(len(self._set_link_tags.keys()))
-        self._set_link_tags[lookup_id] = Stylesheet(href=href)
+        self._set_link_tags[random_key(len(self._set_link_tags.keys()))] = Stylesheet(
+            href=href
+        )
         return self if not _from_template else ""
 
     def set_meta_tag(
