@@ -3,7 +3,12 @@ from typing import Optional, Union, Literal, List, Any, Dict
 from markupsafe import Markup
 
 from .__version__ import __version__
-from ._helpers import random_key
+from ._helpers import (
+    generate_script_tag_lookup_id,
+    generate_stylesheet_tag_lookup_id,
+    generate_meta_tag_lookup_id,
+    generate_link_tag_lookup_id,
+)
 from .presets import (
     Favicon,
     Charset,
@@ -611,11 +616,21 @@ class Head:
         return self if not _from_template else ""
 
     def set_stylesheet(
-        self, href: str, _from_template: bool = False
+        self,
+        href: str,
+        lookup_id: Optional[str] = None,
+        _push_to_top: bool = False,
+        _from_template: bool = False,
     ) -> Union[str, "Head"]:
-        self._set_link_tags[random_key(len(self._set_link_tags.keys()))] = Stylesheet(
-            href=href
-        )
+        if not lookup_id:
+            lookup_id = generate_stylesheet_tag_lookup_id(href)
+        if _push_to_top:
+            self._set_link_tags = {
+                lookup_id: Stylesheet(href=href, id_=lookup_id),
+                **self._set_link_tags,
+            }
+        else:
+            self._set_link_tags[lookup_id] = Stylesheet(href=href, id_=lookup_id)
         return self if not _from_template else ""
 
     def set_meta_tag(
@@ -625,6 +640,7 @@ class Head:
         property_: Optional[str] = None,
         content: Optional[str] = None,
         lookup_id: Optional[str] = None,
+        push_to_top: bool = False,
         _from_template: bool = False,
     ) -> Union["Head", str]:
         """
@@ -637,14 +653,23 @@ class Head:
         :param property_:
         :param content:
         :param lookup_id:
+        :param push_to_top: Push the tag to the top of the list when compiled.
         :param _from_template:
         :return:
         """
         if not lookup_id:
-            lookup_id = random_key(len(self._set_meta_tags.keys()))
-        self._set_meta_tags[lookup_id] = MetaTag(
-            name, http_equiv, property_, content, id_=lookup_id
-        )
+            lookup_id = generate_meta_tag_lookup_id(
+                name, http_equiv, property_, content
+            )
+        if push_to_top:
+            self._set_meta_tags = {
+                lookup_id: MetaTag(name, http_equiv, property_, content, id_=lookup_id),
+                **self._set_meta_tags,
+            }
+        else:
+            self._set_meta_tags[lookup_id] = MetaTag(
+                name, http_equiv, property_, content, id_=lookup_id
+            )
         return self if not _from_template else ""
 
     def remove_meta_tag(
@@ -669,6 +694,7 @@ class Head:
         type_: Optional[str] = None,
         hreflang: Optional[str] = None,
         lookup_id: Optional[str] = None,
+        push_to_top: bool = False,
         _from_template: bool = False,
     ) -> Union["Head", str]:
         """
@@ -682,14 +708,21 @@ class Head:
         :param type_:
         :param hreflang:
         :param lookup_id:
+        :param push_to_top: Push the tag to the top of the list when compiled.
         :param _from_template:
         :return:
         """
         if not lookup_id:
-            lookup_id = random_key(len(self._set_link_tags.keys()))
-        self._set_link_tags[lookup_id] = LinkTag(
-            rel, href, sizes, type_, hreflang, id_=lookup_id
-        )
+            lookup_id = generate_link_tag_lookup_id(rel, href, sizes, type_, hreflang)
+        if push_to_top:
+            self._set_link_tags = {
+                lookup_id: LinkTag(rel, href, sizes, type_, hreflang, id_=lookup_id),
+                **self._set_link_tags,
+            }
+        else:
+            self._set_link_tags[lookup_id] = LinkTag(
+                rel, href, sizes, type_, hreflang, id_=lookup_id
+            )
         return self if not _from_template else ""
 
     def remove_link_tag(
@@ -715,13 +748,22 @@ class Head:
         crossorigin: Optional[str] = None,
         integrity: Optional[str] = None,
         lookup_id: Optional[str] = None,
+        push_to_top: bool = False,
         _from_template: bool = False,
     ) -> Union["Head", str]:
         if not lookup_id:
-            lookup_id = random_key(len(self._set_script_tags.keys()))
-        self._set_script_tags[src] = ScriptTag(
-            src, type_, async_, defer, crossorigin, integrity, id_=lookup_id
-        )
+            lookup_id = generate_script_tag_lookup_id(src)
+        if push_to_top:
+            self._set_script_tags = {
+                lookup_id: ScriptTag(
+                    src, type_, async_, defer, crossorigin, integrity, id_=lookup_id
+                ),
+                **self._set_script_tags,
+            }
+        else:
+            self._set_script_tags[lookup_id] = ScriptTag(
+                src, type_, async_, defer, crossorigin, integrity, id_=lookup_id
+            )
         return self if not _from_template else ""
 
     def remove_script_tag(
