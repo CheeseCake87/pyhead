@@ -96,6 +96,7 @@ def create_app():
         head.set_link_tag("canonical", "https://example.co.uk")
 
         head.set_script_tag("/static/example.js", type_="module")
+        head.set_stylesheet("/static/main.css")
 
         head.reset_title_appends()
         head.reset_title_prepends()
