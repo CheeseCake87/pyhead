@@ -1,7 +1,0 @@
--r main.txt
-flit
-ruff
-flask
-mypy
-pyright
-pre-commit

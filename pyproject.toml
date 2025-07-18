@@ -13,6 +13,16 @@ dependencies = [
     "click >= 8.1.7",
 ]
 
+[dependency-groups]
+dev = [
+    "flask>=2.2.5",
+    "flit>=3.9.0",
+    "mypy>=1.4.1",
+    "pre-commit>=2.21.0",
+    "pyright>=1.1.403",
+    "ruff>=0.12.4",
+]
+
 [project.scripts]
 pyhead = "pyhead._cli:cli"
 
