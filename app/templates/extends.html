@@ -2,14 +2,10 @@
 
 <html lang="en">
 <head>
-{%- block head -%}
-{{ head.top_level_tags }}
-<title>{{ head.title }}</title>
-{{ head.meta_tags }}
-{{ head.link_tags }}
-{{ head.script_tags }}
-{% endblock %}
+    <title>{{ head.title }}</title>
+    {{ head.compile(skip_title=True) }}
 </head>
+
 <body>
 {% block content %}
 

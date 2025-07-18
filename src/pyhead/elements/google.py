@@ -1,21 +1,22 @@
-from typing import Optional, Any
+from typing import Optional
 
 from markupsafe import Markup
 
-from ..tags import MetaTag
+from ..elements import Meta
 
 
 class Google:
-    googlebot: Optional[MetaTag] = None
-    sitelinkssearchbox: Optional[MetaTag] = None
-    no_translate: Optional[MetaTag] = None
+    unique: bool = True
+    key: str = "google"
 
-    _googlebot: list[str]
+    _googlebot: Optional[Meta] = None
+    _sitelinkssearchbox: Optional[Meta] = None
+    _no_translate: Optional[Meta] = None
 
     _order: list[str] = [
-        "googlebot",
-        "sitelinkssearchbox",
-        "no_translate",
+        "_googlebot",
+        "_sitelinkssearchbox",
+        "_no_translate",
     ]
 
     def __init__(
@@ -23,26 +24,20 @@ class Google:
         googlebot: Optional[str] = None,
         no_sitelinks_search_box: bool = False,
         no_translate: bool = False,
-        *args: list[Any],
-        **kwargs: dict[str, Any],
     ) -> None:
-        self._googlebot = []
-
         if googlebot is not None:
-            self.googlebot = MetaTag(name="googlebot", content=googlebot)
+            self._googlebot = Meta(name="googlebot", content=googlebot)
 
         if no_sitelinks_search_box:
-            self.sitelinks = MetaTag(name="google", content="nositelinkssearchbox")
+            self.sitelinks = Meta(name="google", content="nositelinkssearchbox")
 
         if no_translate:
-            self.no_translate = MetaTag(name="google", content="notranslate")
-
-        _, __ = args, kwargs
+            self._no_translate = Meta(name="google", content="notranslate")
 
     def __repr__(self) -> str:
         return (
-            f"<Google googlebot={self.googlebot} sitelinkssearchbox={self.sitelinkssearchbox} "
-            f"no_translate={self.no_translate}>"
+            f"<Google googlebot={self._googlebot} sitelinkssearchbox={self._sitelinkssearchbox} "
+            f"no_translate={self._no_translate}>"
         )
 
     def __str__(self) -> Markup:

@@ -1,11 +1,5 @@
 {% extends "extends.html" %}
 
-{% block head %}
-    {{ head.append_title('Flask App', ' - ', _from_template=True) }}
-    {{ head.remove_link_tag('canonical', _from_template=True) }}
-    {{ super() }}
-{% endblock %}
-
 {% block content %}
     <h1>Flask App</h1>
     <p>Right-Click view source</p>

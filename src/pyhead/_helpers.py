@@ -4,6 +4,14 @@ from string import ascii_letters, digits, punctuation, whitespace
 from typing import Union, Optional
 
 
+def has_key(element):
+    if hasattr(element, "key"):
+        if element.key:
+            return element.key
+
+    return None
+
+
 def random_key(append: Optional[Union[str, int]] = None) -> str:
     """
     Generate a random string used in element keys.
