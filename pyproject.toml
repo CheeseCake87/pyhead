@@ -1,6 +1,6 @@
 [project]
 name = "pyhead"
-version = "4.2.0"
+version = "5.0.0"
 description = "A simple python package to generate HTML head tags."
 authors = [{ name = "David Carmichael", email = "david@uilix.com" }]
 readme = "README.md"
