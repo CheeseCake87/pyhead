@@ -4,13 +4,16 @@ from markupsafe import Markup
 
 
 class Charset:
-    charset: Optional[str]
+    unique: bool = True
+    key: str = "charset"
+
+    _charset: Optional[str]
 
     def __init__(self, charset: str = "utf-8") -> None:
-        self.charset = charset
+        self._charset = charset
 
     def __repr__(self) -> str:
-        return f'<Charset charset="{self.charset}">'
+        return f'<Charset charset="{self._charset}">'
 
     def __str__(self) -> Markup:
         return Markup(self._compile())
@@ -19,8 +22,4 @@ class Charset:
         return Markup(self._compile())
 
     def _compile(self) -> str:
-        return f'<meta charset="{self.charset}">'
-
-    def replace(self, charset: str) -> "Charset":
-        self.charset = charset
-        return self
+        return f'<meta charset="{self._charset}">'

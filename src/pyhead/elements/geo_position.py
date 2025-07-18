@@ -1,21 +1,24 @@
-from typing import Optional, Any
+from typing import Optional
 
 from markupsafe import Markup
 
-from ..tags import MetaTag
+from .meta import Meta
 
 
 class GeoPosition:
-    icbm: Optional[MetaTag] = None
-    geo_position: Optional[MetaTag] = None
-    geo_region: Optional[MetaTag] = None
-    geo_placename: Optional[MetaTag] = None
+    unique: bool = True
+    key: str = "geo_position"
+
+    _icbm: Optional[Meta] = None
+    _geo_position: Optional[Meta] = None
+    _geo_region: Optional[Meta] = None
+    _geo_placename: Optional[Meta] = None
 
     _order: list[str] = [
-        "icbm",
-        "geo_position",
-        "geo_region",
-        "geo_placename",
+        "_icbm",
+        "_geo_position",
+        "_geo_region",
+        "_geo_placename",
     ]
 
     def __init__(
@@ -24,27 +27,23 @@ class GeoPosition:
         geo_position: Optional[str] = None,
         geo_region: Optional[str] = None,
         geo_placename: Optional[str] = None,
-        *args: list[Any],
-        **kwargs: dict[str, Any],
     ) -> None:
         if icbm is not None:
-            self.icbm = MetaTag(name="ICBM", content=icbm)
+            self._icbm = Meta(name="ICBM", content=icbm)
 
         if geo_position is not None:
-            self.geo_position = MetaTag(name="geo.position", content=geo_position)
+            self._geo_position = Meta(name="geo.position", content=geo_position)
 
         if geo_region is not None:
-            self.geo_region = MetaTag(name="geo.region", content=geo_region)
+            self._geo_region = Meta(name="geo.region", content=geo_region)
 
         if geo_placename is not None:
-            self.geo_placename = MetaTag(name="geo.placename", content=geo_placename)
-
-        _, __ = args, kwargs
+            self._geo_placename = Meta(name="geo.placename", content=geo_placename)
 
     def __repr__(self) -> str:
         return (
-            f"<GeoPosition icbm={self.icbm} geo_position={self.geo_position} "
-            f"geo_region={self.geo_region} geo_placename={self.geo_placename}>"
+            f"<GeoPosition icbm={self._icbm} geo_position={self._geo_position} "
+            f"geo_region={self._geo_region} geo_placename={self._geo_placename}>"
         )
 
     def __str__(self) -> Markup:

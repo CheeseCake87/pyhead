@@ -5,7 +5,7 @@ from typing import Optional
 import click
 
 from .class_presets import Favicon
-from .tags import LinkTag
+from .elements import LinkTag
 
 try:
     from favicons import Favicons

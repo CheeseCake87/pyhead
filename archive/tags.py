@@ -342,7 +342,7 @@ class FavIcon:
         return (
             "<FavIcon " " ".join(
                 [
-                    str(getattr(self, o_link).href)
+                    str(getattr(self, o_link)._ta_href)
                     for o_link in self.icon_reference
                     if getattr(self, o_link) is not None
                 ]

@@ -1,14 +1,17 @@
 from markupsafe import Markup
 
 
-class BaseTag:
-    href: str
+class Base:
+    unique: bool = True
+    key: str = "base"
+
+    _href: str
 
     def __init__(self, href: str) -> None:
-        self.href = href
+        self._href = href
 
     def __repr__(self) -> str:
-        return f'<Base base="{self.href}">'
+        return f'<Base base="{self._href}">'
 
     def __str__(self) -> Markup:
         return Markup(self._compile())
@@ -17,8 +20,4 @@ class BaseTag:
         return Markup(self._compile())
 
     def _compile(self) -> str:
-        return f'<base href="{self.href}">'
-
-    def replace(self, href: str) -> "BaseTag":
-        self.href = href
-        return self
+        return f'<base href="{self._href}">'
