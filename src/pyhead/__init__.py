@@ -38,7 +38,7 @@ class Head:
 
     def __init__(
         self,
-        elements_: list[  #
+        elements_: list[
             ApplicationName
             | Base
             | Charset
