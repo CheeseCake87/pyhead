@@ -4,8 +4,7 @@ from typing import Optional
 
 import click
 
-from .class_presets import Favicon
-from .elements import LinkTag
+from .elements import Link, Favicon
 
 try:
     from favicons import Favicons
@@ -23,10 +22,9 @@ def check_source(source: Path) -> Optional[Path]:
 
 
 py_file = """\
-from pyhead import Head
+from pyhead.elements import Favicon
 
-head = Head()
-head.set_favicon(
+Favicon(
     ico_icon_href="{ico_icon_href}",
     png_icon_16_href="{png_icon_16_href}",
     png_icon_32_href="{png_icon_32_href}",
@@ -107,11 +105,11 @@ def generate_favicons(
     with Favicons(raw_favicon, output_dir) as favicons:
         favicons.generate()  # type: ignore
         favicon_tags = Favicon()
-        for icon, meta in favicon_tags.icon_reference.items():
+        for icon, meta in favicon_tags._icon_reference.items():
             setattr(
                 favicon_tags,
                 icon,
-                LinkTag(
+                Link(
                     **{
                         k: v
                         for k, v in meta.items()
@@ -130,7 +128,7 @@ def generate_favicons(
                         **{
                             k: f"{href_prefix if href_prefix.endswith('/') else href_prefix + '/'}"
                             f"{v['generated_filename']}"
-                            for k, v in favicon_tags.icon_reference.items()
+                            for k, v in favicon_tags._icon_reference.items()
                         }
                     )
                 )

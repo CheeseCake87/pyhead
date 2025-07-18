@@ -2,7 +2,7 @@ from typing import Optional
 
 from markupsafe import Markup
 
-from ..elements import Meta
+from .meta import Meta
 
 
 class Google:

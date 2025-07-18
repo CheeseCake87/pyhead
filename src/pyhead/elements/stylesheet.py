@@ -31,5 +31,5 @@ class Stylesheet:
         return Markup(self._compile())
 
     def _compile(self) -> str:
-        _ = Link(rel="stylesheet", href=self._href, id_=self._id)
-        return str(_)
+        stylesheet = Link(rel="stylesheet", href=self._href, id_=self._id)
+        return str(stylesheet)
