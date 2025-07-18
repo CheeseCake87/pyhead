@@ -1,10 +1,10 @@
 from pathlib import Path
 from textwrap import dedent
-from typing import Union, Optional
+from typing import Optional
 
 import click
 
-from .presets import Favicon
+from .class_presets import Favicon
 from .tags import LinkTag
 
 try:

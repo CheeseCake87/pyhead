@@ -9,7 +9,7 @@ from ._helpers import (
     generate_meta_tag_lookup_id,
     generate_link_tag_lookup_id,
 )
-from .presets import (
+from .class_presets import (
     Favicon,
     Charset,
     Keywords,
