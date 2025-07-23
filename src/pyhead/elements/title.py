@@ -24,4 +24,4 @@ class Title:
         return Markup(f"{self._compile()}")
 
     def _compile(self) -> str:
-        return f"<title>" f"{self._title}" f"</title>"
+        return f"<title>{self._title}</title>"
