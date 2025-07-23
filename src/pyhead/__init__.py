@@ -36,6 +36,8 @@ class Head:
 
     title: Optional[str] = None
 
+    _elements: list
+
     def __init__(
         self,
         elements_: list[
@@ -69,18 +71,30 @@ class Head:
 
         Here's a simple example.
 
-        .. code-block::
+        .. highlight:: python
+        .. code-block:: python
 
             from pyhead import Head
             from pyhead.elements import Page
 
             head = Head([Page(title="My Website")])
 
-
         :param elements_:
+            A list of objects that can include any of the following types:
+            ApplicationName, Base, Charset, ContentSecurityPolicy, Description,
+            Favicon, FormatDetection, GeoPosition, Google, Keywords, Link, Meta,
+            OpenGraphWebsite, Page, ReferrerPolicy, Robots, Script,
+            SocialMediaCard, Stylesheet, ThemeColor, Title, TwitterCard,
+            Verification.
+        :type elements_: list[ApplicationName | Base | Charset |
+            ContentSecurityPolicy | Description | Favicon | FormatDetection |
+            GeoPosition | Google | Keywords | Link | Meta | OpenGraphWebsite |
+            Page | ReferrerPolicy | Robots | Script | SocialMediaCard |
+            Stylesheet | ThemeColor | Title | TwitterCard | Verification]
         """
         self.e = {}
 
+        self._elements = elements_
         self._loop_elements(elements_)
 
     def _loop_elements(
@@ -115,7 +129,8 @@ class Head:
         A private method that loops through elements and adds them to head.e dict.
 
         :param elements_:
-        :return:
+        :return: None
+        :rtype: None
         """
         for index, element in enumerate(elements_):
             if isinstance(element, Page):
@@ -165,7 +180,8 @@ class Head:
         """
         Used to extend an already initialized Head object.
 
-        .. code-block::
+        .. highlight:: python
+        .. code-block:: python
 
             from pyhead import Head
             from pyhead.elements import Page, Description
@@ -174,11 +190,28 @@ class Head:
 
             head.extend([Description("This is my website.")])
 
+
+        See head.copy if you want to create a deep copy to then extend.
+
         :param elements_:
-        :return:
+        :return: The extended Head object.
+        :rtype: Head
         """
         self._loop_elements(elements_)
         return self
+
+    def copy(self) -> "Head":
+        """
+        Creates and returns a copy of the current object.
+
+        The method generates a new instance of the same type by creating a deep
+        copy of its underlying attributes.
+
+        :return: A new instance of the same type as the original object with
+                 copied data.
+        :rtype: Head
+        """
+        return Head(self._elements)
 
     def compile(self, skip_title: bool = False) -> Markup:
         """
