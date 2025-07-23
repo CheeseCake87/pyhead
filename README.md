@@ -2,7 +2,6 @@
 
 [![PyPI version](https://badge.fury.io/py/pyhead.svg)](https://badge.fury.io/py/pyhead)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/CheeseCake87/pyhead/master/LICENSE)
-![Downloads](https://static.pepy.tech/badge/pyhead)
 
 The Python HTML `<head>` filler.
 
@@ -12,6 +11,9 @@ The Python HTML `<head>` filler.
 * [pyhead 🐍🤯](#pyhead-)
   * [What is Pyhead?](#what-is-pyhead)
   * [Flask example](#flask-example)
+  * [Usage Examples](#usage-examples)
+    * [Route by Route](#route-by-route)
+    * [Copy and Extend](#copy-and-extend)
   * [CLI Commands](#cli-commands)
     * [Generating favicons](#generating-favicons)
 <!-- TOC -->
