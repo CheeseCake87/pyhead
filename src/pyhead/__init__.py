@@ -134,11 +134,32 @@ class Head:
         """
         for index, element in enumerate(elements_):
             if isinstance(element, Page):
+                if self.e.get("title"):
+                    del self.e["title"]
+
+                if self.e.get("description"):
+                    del self.e["description"]
+
+                if self.e.get("keywords"):
+                    del self.e["keywords"]
+
+                if self.e.get("subject"):
+                    del self.e["subject"]
+
+                if self.e.get("rating"):
+                    del self.e["rating"]
+
                 for key, value in element.e.items():
                     self.e[key] = value
                 continue
 
             if isinstance(element, SocialMediaCard):
+                if self.e.get("twitter_card"):
+                    del self.e["twitter_card"]
+
+                if self.e.get("open_graph_website"):
+                    del self.e["open_graph_website"]
+
                 for key, value in element.e.items():
                     self.e[key] = value
                 continue
