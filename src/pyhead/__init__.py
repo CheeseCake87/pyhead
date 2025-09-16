@@ -267,9 +267,41 @@ class Head:
         return Markup("\n".join(render))
 
 
+class HeadClass:
+    elements: list[
+        ApplicationName
+        | Base
+        | Charset
+        | ContentSecurityPolicy
+        | Description
+        | Favicon
+        | FormatDetection
+        | GeoPosition
+        | Google
+        | Keywords
+        | Link
+        | Meta
+        | OpenGraphWebsite
+        | Page
+        | ReferrerPolicy
+        | Robots
+        | Script
+        | SocialMediaCard
+        | Stylesheet
+        | ThemeColor
+        | Title
+        | TwitterCard
+        | Verification
+    ]
+
+    def __new__(cls):
+        return Head(cls.elements)
+
+
 __all__ = [
     "__version__",
     "Head",
+    "HeadClass",
     "ApplicationName",
     "Base",
     "Charset",
