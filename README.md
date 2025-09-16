@@ -298,11 +298,11 @@ def my_cool_page():
 `app/page_head.py`
 ```python
 ...
-from pyhead import Head
+from pyhead import HeadClass
 from pyhead import elements as e
 ...
 
-class MyHead(Head):
+class MyHead(HeadClass):
     elements = [
         e.Page(
             title="Hello World",
