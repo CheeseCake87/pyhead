@@ -1,8 +1,9 @@
-from typing import Optional, Literal
+from typing import Optional, Literal, Union
 
 from markupsafe import Markup
 
 from .meta import Meta
+from ..protocols import CompileDelayed
 
 
 class TwitterCard:
@@ -34,8 +35,8 @@ class TwitterCard:
         card: Literal["summary", "summary_large_image"] = "summary",
         title: Optional[str] = None,
         description: Optional[str] = None,
-        url: Optional[str] = None,
-        image: Optional[str] = None,
+        url: Optional[Union[str, CompileDelayed]] = None,
+        image: Optional[Union[str, CompileDelayed]] = None,
         image_alt: Optional[str] = None,
         site_account: Optional[str] = None,
         creator_account: Optional[str] = None,
@@ -74,12 +75,12 @@ class TwitterCard:
         )
 
     def __str__(self) -> Markup:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
     def __call__(self) -> Markup:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
-    def _compile(self) -> str:
+    def compile(self) -> str:
         _ = [
             str(getattr(self, o_tag))
             for o_tag in self._order

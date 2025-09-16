@@ -18,10 +18,10 @@ class Title:
         return f'<Title title="{self._title}">'
 
     def __str__(self) -> Markup:
-        return Markup(f"{self._compile()}")
+        return Markup(f"{self.compile()}")
 
     def __call__(self) -> Markup:
-        return Markup(f"{self._compile()}")
+        return Markup(f"{self.compile()}")
 
-    def _compile(self) -> str:
+    def compile(self) -> str:
         return f"<title>{self._title}</title>"

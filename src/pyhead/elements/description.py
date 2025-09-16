@@ -14,10 +14,10 @@ class Description:
         return f'<Description content="{self._description}">'
 
     def __str__(self) -> Markup:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
     def __call__(self) -> Markup:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
-    def _compile(self) -> str:
+    def compile(self) -> str:
         return f'<meta name="description" content="{self._description}">'

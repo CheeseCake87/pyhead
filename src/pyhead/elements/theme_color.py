@@ -16,11 +16,11 @@ class ThemeColor:
         return f'<ThemeColor content="{self._content}">'
 
     def __str__(self) -> Markup:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
     def __call__(self) -> Markup:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
-    def _compile(self) -> str:
+    def compile(self) -> str:
         meta = Meta(name="theme-color", content=self._content)
         return str(meta)

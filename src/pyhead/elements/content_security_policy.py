@@ -16,11 +16,11 @@ class ContentSecurityPolicy:
         return f'<ContentSecurityPolicy content="{self._content}">'
 
     def __str__(self) -> Markup:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
     def __call__(self) -> Markup:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
-    def _compile(self) -> str:
+    def compile(self) -> str:
         meta = Meta(http_equiv="Content-Security-Policy", content=self._content)
         return str(meta)

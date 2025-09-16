@@ -41,12 +41,12 @@ class Google:
         )
 
     def __str__(self) -> Markup:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
     def __call__(self) -> Markup:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
-    def _compile(self) -> str:
+    def compile(self) -> str:
         _ = [
             str(getattr(self, o_tag))
             for o_tag in self._order

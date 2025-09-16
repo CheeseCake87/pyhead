@@ -24,11 +24,11 @@ class Page:
         charset: str = "utf-8",
         viewport: str = "width=device-width, initial-scale=1",
     ) -> None:
-        self.e = {}
-
-        self.e["title"] = Title(title)
-        self.e["charset"] = Charset(charset)
-        self.e["viewport"] = Meta(name="viewport", content=viewport)
+        self.e = {
+            "title": Title(title),
+            "charset": Charset(charset),
+            "viewport": Meta(name="viewport", content=viewport),
+        }
 
         if description is not None:
             self.e["description"] = Meta(name="description", content=description)

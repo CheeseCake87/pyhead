@@ -28,37 +28,29 @@ class FormatDetection:
         self._url = url
 
     def __repr__(self) -> str:
-        return (
-            "<FormatDetection "
-            f'telephone="{self._telephone}" '
-            f'date="{self._date}" '
-            f'address="{self._address}" '
-            f'email="{self._email}" '
-            f'url="{self._url}">'
-        )
+        return self.compile().replace("format-detection", "FormatDetection")
 
     def __str__(self) -> Markup:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
     def __call__(self) -> Markup:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
-    def _compile(self) -> str:
-        content = []
+    def compile(self) -> str:
+        __items = []
 
         if not self._telephone:
-            content.append("telephone=no")
+            __items.append("telephone=no")
         if not self._date:
-            content.append("date=no")
+            __items.append("date=no")
         if not self._address:
-            content.append("address=no")
+            __items.append("address=no")
         if not self._email:
-            content.append("email=no")
+            __items.append("email=no")
         if not self._url:
-            content.append("url=no")
+            __items.append("url=no")
 
-        if not content:
+        if not __items:
             return ""
 
-        meta = Meta(name="format-detection", content=",".join(content))
-        return str(meta)
+        return Meta(name="format-detection", content=",".join(__items)).compile()

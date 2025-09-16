@@ -1,8 +1,9 @@
-from typing import Optional
+from typing import Optional, Union
 
 from markupsafe import Markup
 
 from .meta import Meta
+from ..protocols import CompileDelayed
 
 
 class OpenGraphWebsite:
@@ -12,8 +13,8 @@ class OpenGraphWebsite:
     _type: Meta
     _locale: Optional[Meta] = None
     _title: Optional[Meta] = None
-    _url: Optional[Meta] = None
-    _image: Optional[Meta] = None
+    _url: Optional[Union[str, CompileDelayed]] = None
+    _image: Optional[Union[str, CompileDelayed]] = None
     _image_alt: Optional[Meta] = None
     _description: Optional[Meta] = None
     _site_name: Optional[Meta] = None
@@ -35,8 +36,8 @@ class OpenGraphWebsite:
         site_name: Optional[str] = None,
         title: Optional[str] = None,
         description: Optional[str] = None,
-        url: Optional[str] = None,
-        image: Optional[str] = None,
+        url: Optional[Union[str, CompileDelayed]] = None,
+        image: Optional[Union[str, CompileDelayed]] = None,
         image_alt: Optional[str] = None,
     ) -> None:
         self._type = Meta(property_="og:type", content="website")
@@ -69,12 +70,12 @@ class OpenGraphWebsite:
         )
 
     def __str__(self) -> Markup:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
     def __call__(self) -> Markup:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
-    def _compile(self) -> str:
+    def compile(self) -> str:
         _ = [
             str(getattr(self, o_tag))
             for o_tag in self._order

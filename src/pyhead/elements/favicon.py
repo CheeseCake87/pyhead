@@ -1,8 +1,9 @@
-from typing import Optional
+from typing import Optional, Union
 
 from markupsafe import Markup
 
 from .link import Link
+from ..protocols import CompileDelayed
 
 
 class Favicon:
@@ -158,27 +159,27 @@ class Favicon:
 
     def __init__(
         self,
-        ico_icon_href: Optional[str] = None,
-        png_icon_16_href: Optional[str] = None,
-        png_icon_32_href: Optional[str] = None,
-        png_icon_64_href: Optional[str] = None,
-        png_icon_96_href: Optional[str] = None,
-        png_icon_180_href: Optional[str] = None,
-        png_icon_196_href: Optional[str] = None,
-        png_apple_touch_icon_57_href: Optional[str] = None,
-        png_apple_touch_icon_60_href: Optional[str] = None,
-        png_apple_touch_icon_72_href: Optional[str] = None,
-        png_apple_touch_icon_76_href: Optional[str] = None,
-        png_apple_touch_icon_114_href: Optional[str] = None,
-        png_apple_touch_icon_120_href: Optional[str] = None,
-        png_apple_touch_icon_144_href: Optional[str] = None,
-        png_apple_touch_icon_152_href: Optional[str] = None,
-        png_apple_touch_icon_167_href: Optional[str] = None,
-        png_apple_touch_icon_180_href: Optional[str] = None,
-        png_mstile_70_href: Optional[str] = None,
-        png_mstile_270_href: Optional[str] = None,
-        png_mstile_310x150_href: Optional[str] = None,
-        png_mstile_310_href: Optional[str] = None,
+        ico_icon_href: Optional[Union[str, CompileDelayed]] = None,
+        png_icon_16_href: Optional[Union[str, CompileDelayed]] = None,
+        png_icon_32_href: Optional[Union[str, CompileDelayed]] = None,
+        png_icon_64_href: Optional[Union[str, CompileDelayed]] = None,
+        png_icon_96_href: Optional[Union[str, CompileDelayed]] = None,
+        png_icon_180_href: Optional[Union[str, CompileDelayed]] = None,
+        png_icon_196_href: Optional[Union[str, CompileDelayed]] = None,
+        png_apple_touch_icon_57_href: Optional[Union[str, CompileDelayed]] = None,
+        png_apple_touch_icon_60_href: Optional[Union[str, CompileDelayed]] = None,
+        png_apple_touch_icon_72_href: Optional[Union[str, CompileDelayed]] = None,
+        png_apple_touch_icon_76_href: Optional[Union[str, CompileDelayed]] = None,
+        png_apple_touch_icon_114_href: Optional[Union[str, CompileDelayed]] = None,
+        png_apple_touch_icon_120_href: Optional[Union[str, CompileDelayed]] = None,
+        png_apple_touch_icon_144_href: Optional[Union[str, CompileDelayed]] = None,
+        png_apple_touch_icon_152_href: Optional[Union[str, CompileDelayed]] = None,
+        png_apple_touch_icon_167_href: Optional[Union[str, CompileDelayed]] = None,
+        png_apple_touch_icon_180_href: Optional[Union[str, CompileDelayed]] = None,
+        png_mstile_70_href: Optional[Union[str, CompileDelayed]] = None,
+        png_mstile_270_href: Optional[Union[str, CompileDelayed]] = None,
+        png_mstile_310x150_href: Optional[Union[str, CompileDelayed]] = None,
+        png_mstile_310_href: Optional[Union[str, CompileDelayed]] = None,
     ) -> None:
         set_kwargs = {
             "_ico_icon_href": ico_icon_href,
@@ -230,12 +231,12 @@ class Favicon:
         return f"<FavIcon {attrs}>".replace(" >", ">")
 
     def __str__(self) -> str:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
     def __call__(self) -> str:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
-    def _compile(self) -> str:
+    def compile(self) -> str:
         _ = [
             str(getattr(self, o_link))
             for o_link in self._icon_reference

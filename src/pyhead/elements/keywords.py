@@ -24,11 +24,11 @@ class Keywords:
         return f'<Keywords page_keywords="{self._keywords}">'
 
     def __str__(self) -> Markup:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
     def __call__(self) -> Markup:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
-    def _compile(self) -> str:
+    def compile(self) -> str:
         join = ", ".join(self._keywords)
         return f'<meta name="keywords" content="{join}">'

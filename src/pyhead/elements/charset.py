@@ -16,10 +16,10 @@ class Charset:
         return f'<Charset charset="{self._charset}">'
 
     def __str__(self) -> Markup:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
     def __call__(self) -> Markup:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
-    def _compile(self) -> str:
+    def compile(self) -> str:
         return f'<meta charset="{self._charset}">'

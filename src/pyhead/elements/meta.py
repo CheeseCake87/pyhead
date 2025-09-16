@@ -1,6 +1,8 @@
-from typing import Optional
+from typing import Optional, Union
 
 from markupsafe import Markup
+
+from ..protocols import CompileDelayed
 
 
 class Meta:
@@ -18,7 +20,7 @@ class Meta:
         name: Optional[str] = None,
         http_equiv: Optional[str] = None,
         property_: Optional[str] = None,
-        content: Optional[str] = None,
+        content: Optional[Union[str, CompileDelayed]] = None,
         id_: Optional[str] = None,
     ) -> None:
         one_only = [name, http_equiv, property_]
@@ -27,41 +29,40 @@ class Meta:
                 "You can only specify one of name, http_equiv, or property_."
             )
 
-        self._name = f'name="{name}" ' if name is not None else ""
-        self._http_equiv = (
-            f'http-equiv="{http_equiv}" ' if http_equiv is not None else ""
-        )
-        self._property = f'property="{property_}" ' if property_ is not None else ""
-        self._content = f'content="{content}" ' if content is not None else ""
-        self._id = f'id="{id_}" ' if id_ is not None else ""
-
-        if self._id:
-            self.key = self._id
+        self._name = name
+        self._http_equiv = http_equiv
+        self._property = property_
+        self._content = content
+        self._id = id_
 
     def __repr__(self) -> str:
-        return (
-            f"<Meta "
-            f"{self._name}"
-            f"{self._http_equiv}"
-            f"{self._property}"
-            f"{self._content}"
-            f"{self._id}"
-            f">"
-        )
+        return self.compile().replace("meta", "Meta")
 
     def __str__(self) -> Markup:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
     def __call__(self) -> Markup:
-        return Markup(self._compile())
+        return Markup(self.compile())
 
-    def _compile(self) -> str:
-        return (
-            f"<meta "
-            f"{self._name}"
-            f"{self._http_equiv}"
-            f"{self._property}"
-            f"{self._content}"
-            f"{self._id}"
-            f">"
-        )
+    def compile(self) -> str:
+        __items = []
+
+        if self._name:
+            __items.append(f'name="{self._name}"')
+
+        if self._http_equiv:
+            __items.append(f'http-equiv="{self._http_equiv}"')
+
+        if self._property:
+            __items.append(f'property="{self._property}"')
+
+        if self._content:
+            if isinstance(self._content, CompileDelayed):
+                __items.append(f'content="{self._content.compile()}"')
+            else:
+                __items.append(f'content="{self._content}"')
+
+        if self._id:
+            __items.append(f'id="{self._id}"')
+
+        return f"<meta {' '.join(__items)}>"
