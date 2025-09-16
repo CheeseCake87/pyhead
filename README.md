@@ -14,6 +14,9 @@ The Python HTML `<head>` filler.
   * [Usage Examples](#usage-examples)
     * [Route by Route](#route-by-route)
     * [Copy and Extend](#copy-and-extend)
+    * [Class Defined](#class-defined)
+    * [Flask Specific](#flask-specific)
+      * [`url_for` -> `FlaskUrlFor`](#url_for---flaskurlfor)
   * [CLI Commands](#cli-commands)
     * [Generating favicons](#generating-favicons)
 <!-- TOC -->
@@ -275,7 +278,7 @@ from pyhead import elements as e
 
 @app.get("/my-cool-page")
 def my_cool_page():
-  my_cool_page_head = head.copy().extend([
+    my_cool_page_head = head.copy().extend([
     e.Page(
       title="This is my cool page",
       description="This is a test",
@@ -286,8 +289,73 @@ def my_cool_page():
     e.Robots(
       "index, follow"
     )
-  ])
-  return render_template("my_cool_page.html", head=my_cool_page_head)
+    ])
+    return render_template("my_cool_page.html", head=my_cool_page_head)
+```
+
+### Class Defined
+
+`app/page_head.py`
+```python
+...
+from pyhead import Head
+from pyhead import elements as e
+...
+
+class MyHead(Head):
+    elements = [
+        e.Page(
+            title="Hello World",
+            description="This is a test",
+            keywords="test, hello, world",
+            subject="Hello World",
+            rating="General",
+        )
+    ]
+```
+`app/__init__.py`
+```python
+...
+from app.page_head import MyHead
+from pyhead import elements as e
+...
+
+
+@app.get("/my-cool-page")
+def my_cool_page():
+    return render_template("my_cool_page.html", head=MyHead())
+```
+
+### Flask Specific
+
+#### `url_for` -> `FlaskUrlFor`
+
+`FlaskUrlFor` is a class designed to lazily load the 
+`url_for` function found in Flask. This is done to ensure that
+when compiled `url_for` will be invoked within context.
+
+It has the same arguments as `url_for` but it will only
+call the `url_for` function when the `Head` is compiled.
+
+Here's an example of how to use it:
+
+```python
+...
+from pyhead import Head
+from pyhead import elements as e
+from pyhead.flask import FlaskUrlFor
+...
+
+@app.get("/my-cool-page")
+def my_cool_page():
+    head = Head(
+        [
+            ...,
+            e.Stylesheet(FlaskUrlFor("static", filename="main.css")),
+            ...,
+        ]
+    )
+    return render_template("my_cool_page.html", head=head)
 ```
 
 ## CLI Commands
