@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional, Union, Literal
 
 from markupsafe import Markup
 
@@ -14,6 +14,7 @@ class Link:
     _sizes: str
     _type: str
     _hreflang: str
+    _crossorigin: Optional[Literal["anonymous", "use-credentials"]]
     _id: str
 
     def __init__(
@@ -23,6 +24,7 @@ class Link:
         sizes: Optional[str] = None,
         type_: Optional[str] = None,
         hreflang: Optional[str] = None,
+        crossorigin: Optional[Literal["anonymous", "use-credentials"]] = None,
         id_: Optional[str] = None,
     ) -> None:
         self._rel = rel
@@ -30,6 +32,7 @@ class Link:
         self._sizes = sizes
         self._type = type_
         self._hreflang = hreflang
+        self._crossorigin = crossorigin
         self._id = id_
 
         if self._id:
@@ -66,5 +69,8 @@ class Link:
 
         if self._hreflang:
             __items.append(f'hreflang="{self._hreflang}"')
+
+        if self._crossorigin:
+            __items.append(f'crossorigin="{self._crossorigin}"')
 
         return f"<link {' '.join(__items)}>"
