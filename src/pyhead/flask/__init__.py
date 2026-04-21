@@ -15,7 +15,7 @@ class FlaskUrlFor:
     _anchor: str | None = None
     _method: str | None = None
     _scheme: str | None = None
-    _external: str | None = None
+    _external: bool | None = None
 
     values: dict[str, Any]
 
@@ -26,7 +26,7 @@ class FlaskUrlFor:
         _anchor: str | None = None,
         _method: str | None = None,
         _scheme: str | None = None,
-        _external: str | None = None,
+        _external: bool | None = None,
         **values: Any,
     ) -> None:
         self.endpoint = endpoint
