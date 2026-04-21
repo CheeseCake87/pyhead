@@ -6,7 +6,6 @@ from ..protocols import CompileDelayed
 
 
 class Base:
-    unique: bool = True
     key: str = "base"
 
     _href: Union[str, CompileDelayed]
