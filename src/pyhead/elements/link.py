@@ -6,7 +6,6 @@ from ..protocols import CompileDelayed
 
 
 class Link:
-    unique: bool = False
     key: Optional[str] = None
 
     _rel: str
@@ -75,5 +74,8 @@ class Link:
 
         if self._crossorigin:
             __items.append(f'crossorigin="{escape(self._crossorigin)}"')
+
+        if self._id:
+            __items.append(f'id="{escape(self._id)}"')
 
         return f"<link {' '.join(__items)}>"
