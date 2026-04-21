@@ -7,7 +7,6 @@ from ..protocols import CompileDelayed
 
 
 class TwitterCard:
-    unique: bool = True
     key: str = "twitter_card"
 
     _card: Meta

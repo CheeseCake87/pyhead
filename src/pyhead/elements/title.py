@@ -2,7 +2,6 @@ from markupsafe import Markup, escape
 
 
 class Title:
-    unique: bool = True
     key: str = "title"
 
     _title: str
