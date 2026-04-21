@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, TypeAlias
 
 from markupsafe import Markup
 
@@ -30,42 +30,41 @@ from .elements import (
     Verification,
 )
 
+HeadElement: TypeAlias = (
+    ApplicationName
+    | Base
+    | Charset
+    | ContentSecurityPolicy
+    | Description
+    | Favicon
+    | FormatDetection
+    | GeoPosition
+    | Google
+    | Keywords
+    | Link
+    | Meta
+    | OpenGraphWebsite
+    | Page
+    | ReferrerPolicy
+    | Robots
+    | Script
+    | SocialMediaCard
+    | Stylesheet
+    | ThemeColor
+    | Title
+    | TwitterCard
+    | Verification
+)
+
 
 class Head:
     e: dict  # Element ID: Element Class
 
     title: Optional[str] = None
 
-    _elements: list
+    _elements: list[HeadElement]
 
-    def __init__(
-        self,
-        elements_: list[
-            ApplicationName
-            | Base
-            | Charset
-            | ContentSecurityPolicy
-            | Description
-            | Favicon
-            | FormatDetection
-            | GeoPosition
-            | Google
-            | Keywords
-            | Link
-            | Meta
-            | OpenGraphWebsite
-            | Page
-            | ReferrerPolicy
-            | Robots
-            | Script
-            | SocialMediaCard
-            | Stylesheet
-            | ThemeColor
-            | Title
-            | TwitterCard
-            | Verification
-        ],
-    ) -> None:
+    def __init__(self, elements_: list[HeadElement]) -> None:
         """
         This is the main class that controls the rendering of elements.
 
@@ -80,51 +79,15 @@ class Head:
             head = Head([Page(title="My Website")])
 
         :param elements_:
-            A list of objects that can include any of the following types:
-            ApplicationName, Base, Charset, ContentSecurityPolicy, Description,
-            Favicon, FormatDetection, GeoPosition, Google, Keywords, Link, Meta,
-            OpenGraphWebsite, Page, ReferrerPolicy, Robots, Script,
-            SocialMediaCard, Stylesheet, ThemeColor, Title, TwitterCard,
-            Verification.
-        :type elements_: list[ApplicationName | Base | Charset |
-            ContentSecurityPolicy | Description | Favicon | FormatDetection |
-            GeoPosition | Google | Keywords | Link | Meta | OpenGraphWebsite |
-            Page | ReferrerPolicy | Robots | Script | SocialMediaCard |
-            Stylesheet | ThemeColor | Title | TwitterCard | Verification]
+            A list of head elements. See ``HeadElement`` for the accepted types.
+        :type elements_: list[HeadElement]
         """
         self.e = {}
 
         self._elements = elements_
         self._loop_elements(elements_)
 
-    def _loop_elements(
-        self,
-        elements_: list[
-            ApplicationName
-            | Base
-            | Charset
-            | ContentSecurityPolicy
-            | Description
-            | Favicon
-            | FormatDetection
-            | GeoPosition
-            | Google
-            | Keywords
-            | Link
-            | Meta
-            | OpenGraphWebsite
-            | Page
-            | ReferrerPolicy
-            | Robots
-            | Script
-            | SocialMediaCard
-            | Stylesheet
-            | ThemeColor
-            | Title
-            | TwitterCard
-            | Verification
-        ],
-    ) -> None:
+    def _loop_elements(self, elements_: list[HeadElement]) -> None:
         """
         A private method that loops through elements and adds them to head.e dict.
 
@@ -171,33 +134,7 @@ class Head:
         if self.e.get("title"):
             self.title = self.e["title"]._title
 
-    def extend(
-        self,
-        elements_: list[
-            ApplicationName
-            | Base
-            | Charset
-            | ContentSecurityPolicy
-            | Description
-            | Favicon
-            | FormatDetection
-            | GeoPosition
-            | Google
-            | Keywords
-            | Link
-            | Meta
-            | OpenGraphWebsite
-            | Page
-            | ReferrerPolicy
-            | Robots
-            | Script
-            | Stylesheet
-            | ThemeColor
-            | Title
-            | TwitterCard
-            | Verification
-        ],
-    ) -> "Head":
+    def extend(self, elements_: list[HeadElement]) -> "Head":
         """
         Used to extend an already initialized Head object.
 
@@ -268,31 +205,7 @@ class Head:
 
 
 class HeadClass:
-    elements: list[
-        ApplicationName
-        | Base
-        | Charset
-        | ContentSecurityPolicy
-        | Description
-        | Favicon
-        | FormatDetection
-        | GeoPosition
-        | Google
-        | Keywords
-        | Link
-        | Meta
-        | OpenGraphWebsite
-        | Page
-        | ReferrerPolicy
-        | Robots
-        | Script
-        | SocialMediaCard
-        | Stylesheet
-        | ThemeColor
-        | Title
-        | TwitterCard
-        | Verification
-    ]
+    elements: list[HeadElement]
 
     def __new__(cls):
         return Head(cls.elements)
@@ -302,6 +215,7 @@ __all__ = [
     "__version__",
     "Head",
     "HeadClass",
+    "HeadElement",
     "ApplicationName",
     "Base",
     "Charset",
