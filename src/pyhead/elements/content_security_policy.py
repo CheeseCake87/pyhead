@@ -4,7 +4,6 @@ from .meta import Meta
 
 
 class ContentSecurityPolicy:
-    unique: bool = True
     key: str = "content_security_policy"
 
     _content: str
