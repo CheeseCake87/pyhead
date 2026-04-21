@@ -1,13 +1,5 @@
 from typing import Any
 
-try:
-    from flask import url_for
-except ImportError:
-    raise ImportError(
-        "You are trying to use something from the Flask library, "
-        "but Flask is not installed. Install Flask with 'pip install flask'."
-    )
-
 
 class FlaskUrlFor:
     """
@@ -45,6 +37,14 @@ class FlaskUrlFor:
         self.values = values
 
     def compile(self) -> str:
+        try:
+            from flask import url_for
+        except ImportError as e:
+            raise ImportError(
+                "You are trying to use FlaskUrlFor, but Flask is not installed. "
+                "Install Flask with 'pip install flask'."
+            ) from e
+
         return url_for(
             self.endpoint,
             _anchor=self._anchor,
