@@ -7,7 +7,6 @@ from ..protocols import CompileDelayed
 
 
 class Favicon:
-    unique: bool = True
     key: str = "favicon"
 
     _ico_icon_href: Optional[Link] = None
@@ -137,22 +136,22 @@ class Favicon:
         },
         "_png_mstile_70_href": {
             "rel": "msapplication-square70x70logo",
-            "content": "image/png",
+            "type_": "image/png",
             "generated_filename": "mstile-70x70.png",
         },
         "_png_mstile_270_href": {
             "rel": "msapplication-square270x270logo",
-            "content": "image/png",
+            "type_": "image/png",
             "generated_filename": "mstile-270x270.png",
         },
         "_png_mstile_310x150_href": {
             "rel": "msapplication-wide310x150logo",
-            "content": "image/png",
+            "type_": "image/png",
             "generated_filename": "mstile-310x150.png",
         },
         "_png_mstile_310_href": {
             "rel": "msapplication-wide310x150logo",
-            "content": "image/png",
+            "type_": "image/png",
             "generated_filename": "mstile-310x150.png",
         },
     }
@@ -214,7 +213,7 @@ class Favicon:
                         **{
                             k: v
                             for k, v in self._icon_reference[name].items()
-                            if k not in ["generated_filename", "content"]
+                            if k != "generated_filename"
                         },
                         href=value,
                     ),
@@ -223,7 +222,7 @@ class Favicon:
     def __repr__(self) -> str:
         attrs = " ".join(
             [
-                str(getattr(self, o_link)._ta_href)
+                f'href="{getattr(self, o_link)._href}"'
                 for o_link in self._icon_reference
                 if getattr(self, o_link) is not None
             ]

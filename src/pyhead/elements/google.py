@@ -6,7 +6,6 @@ from .meta import Meta
 
 
 class Google:
-    unique: bool = True
     key: str = "google"
 
     _googlebot: Optional[Meta] = None

@@ -2,7 +2,6 @@ from markupsafe import Markup, escape
 
 
 class Description:
-    unique: bool = True
     key: str = "description"
 
     _description: str
