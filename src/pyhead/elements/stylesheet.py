@@ -7,8 +7,7 @@ from ..protocols import CompileDelayed
 
 
 class Stylesheet:
-    unique: bool = False
-    key: str = None
+    key: Optional[str] = None
 
     _href: Union[str, CompileDelayed]
     _id: Optional[str]
@@ -16,8 +15,6 @@ class Stylesheet:
     def __init__(
         self, href: Union[str, CompileDelayed], id_: Optional[str] = None
     ) -> None:
-        self.unique = False
-
         self._href = href
         self._id = id_
 
