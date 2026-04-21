@@ -7,14 +7,13 @@ from ..protocols import CompileDelayed
 
 
 class OpenGraphWebsite:
-    unique: bool = True
     key: str = "open_graph_website"
 
     _type: Meta
     _locale: Optional[Meta] = None
     _title: Optional[Meta] = None
-    _url: Optional[Union[str, CompileDelayed]] = None
-    _image: Optional[Union[str, CompileDelayed]] = None
+    _url: Optional[Meta] = None
+    _image: Optional[Meta] = None
     _image_alt: Optional[Meta] = None
     _description: Optional[Meta] = None
     _site_name: Optional[Meta] = None
