@@ -4,7 +4,6 @@ from markupsafe import Markup, escape
 
 
 class Charset:
-    unique: bool = True
     key: str = "charset"
 
     _charset: Optional[str]
