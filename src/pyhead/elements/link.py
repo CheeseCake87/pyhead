@@ -1,21 +1,21 @@
 from typing import Optional, Union, Literal
 
-from markupsafe import Markup
+from markupsafe import Markup, escape
 
 from ..protocols import CompileDelayed
 
 
 class Link:
     unique: bool = False
-    key: str = None
+    key: Optional[str] = None
 
     _rel: str
-    _href: Union[str, CompileDelayed]
-    _sizes: str
-    _type: str
-    _hreflang: str
+    _href: Optional[Union[str, CompileDelayed]]
+    _sizes: Optional[str]
+    _type: Optional[str]
+    _hreflang: Optional[str]
     _crossorigin: Optional[Literal["anonymous", "use-credentials"]]
-    _id: str
+    _id: Optional[str]
 
     def __init__(
         self,
@@ -51,26 +51,29 @@ class Link:
         __items = []
 
         if self._rel:
-            __items.append(f'rel="{self._rel}"')
+            __items.append(f'rel="{escape(self._rel)}"')
 
         if self._href:
             if _repr:
                 __items.append(f'href="{self._href}"')
             else:
-                __items.append(
-                    f'href="{self._href.compile() if isinstance(self._href, CompileDelayed) else self._href}"'
+                href = (
+                    self._href.compile()
+                    if isinstance(self._href, CompileDelayed)
+                    else self._href
                 )
+                __items.append(f'href="{escape(href)}"')
 
         if self._sizes:
-            __items.append(f'sizes="{self._sizes}"')
+            __items.append(f'sizes="{escape(self._sizes)}"')
 
         if self._type:
-            __items.append(f'type="{self._type}"')
+            __items.append(f'type="{escape(self._type)}"')
 
         if self._hreflang:
-            __items.append(f'hreflang="{self._hreflang}"')
+            __items.append(f'hreflang="{escape(self._hreflang)}"')
 
         if self._crossorigin:
-            __items.append(f'crossorigin="{self._crossorigin}"')
+            __items.append(f'crossorigin="{escape(self._crossorigin)}"')
 
         return f"<link {' '.join(__items)}>"
