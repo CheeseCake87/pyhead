@@ -1,19 +1,19 @@
 from typing import Optional, Union
 
-from markupsafe import Markup
+from markupsafe import Markup, escape
 
 from ..protocols import CompileDelayed
 
 
 class Meta:
     unique: bool = False
-    key: str = None
+    key: Optional[str] = None
 
-    _name: str
-    _http_equiv: str
-    _property: str
-    _content: str
-    _id: str
+    _name: Optional[str]
+    _http_equiv: Optional[str]
+    _property: Optional[str]
+    _content: Optional[Union[str, CompileDelayed]]
+    _id: Optional[str]
 
     def __init__(
         self,
@@ -48,21 +48,21 @@ class Meta:
         __items = []
 
         if self._name:
-            __items.append(f'name="{self._name}"')
+            __items.append(f'name="{escape(self._name)}"')
 
         if self._http_equiv:
-            __items.append(f'http-equiv="{self._http_equiv}"')
+            __items.append(f'http-equiv="{escape(self._http_equiv)}"')
 
         if self._property:
-            __items.append(f'property="{self._property}"')
+            __items.append(f'property="{escape(self._property)}"')
 
         if self._content:
             if isinstance(self._content, CompileDelayed):
-                __items.append(f'content="{self._content.compile()}"')
+                __items.append(f'content="{escape(self._content.compile())}"')
             else:
-                __items.append(f'content="{self._content}"')
+                __items.append(f'content="{escape(self._content)}"')
 
         if self._id:
-            __items.append(f'id="{self._id}"')
+            __items.append(f'id="{escape(self._id)}"')
 
         return f"<meta {' '.join(__items)}>"
