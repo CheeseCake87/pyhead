@@ -1,6 +1,6 @@
 from typing import Optional
 
-from markupsafe import Markup
+from markupsafe import Markup, escape
 
 
 class Keywords:
@@ -31,4 +31,4 @@ class Keywords:
 
     def compile(self) -> str:
         join = ", ".join(self._keywords)
-        return f'<meta name="keywords" content="{join}">'
+        return f'<meta name="keywords" content="{escape(join)}">'
