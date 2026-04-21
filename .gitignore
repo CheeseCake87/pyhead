@@ -168,3 +168,4 @@ cython_debug/
 
 # Project exclude paths
 /dist/
+/CHANGES.md
