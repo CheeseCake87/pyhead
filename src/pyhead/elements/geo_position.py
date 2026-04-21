@@ -6,7 +6,6 @@ from .meta import Meta
 
 
 class GeoPosition:
-    unique: bool = True
     key: str = "geo_position"
 
     _icbm: Optional[Meta] = None

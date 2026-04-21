@@ -4,7 +4,6 @@ from .meta import Meta
 
 
 class FormatDetection:
-    unique: bool = True
     key: str = "format_detection"
 
     _telephone: bool

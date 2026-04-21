@@ -4,7 +4,6 @@ from markupsafe import Markup, escape
 
 
 class Keywords:
-    unique: bool = True
     key: str = "keywords"
 
     _keywords: list[str]
