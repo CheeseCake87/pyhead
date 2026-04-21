@@ -4,7 +4,6 @@ from .meta import Meta
 
 
 class Robots:
-    unique: bool = True
     key: str = "robots"
 
     _content: str

@@ -4,7 +4,6 @@ from .meta import Meta
 
 
 class ReferrerPolicy:
-    unique: bool = True
     key: str = "referrer_policy"
 
     _content: str
