@@ -1,3 +1,4 @@
+from copy import deepcopy
 from typing import Optional, TypeAlias
 
 from markupsafe import Markup
@@ -95,7 +96,7 @@ class Head:
         :return: None
         :rtype: None
         """
-        for index, element in enumerate(elements_):
+        for element in elements_:
             if isinstance(element, Page):
                 if self.e.get("title"):
                     del self.e["title"]
@@ -128,8 +129,13 @@ class Head:
                 continue
 
             key = has_key(element)
-
-            self.e[str(key if key else index)] = element
+            if key:
+                self.e[str(key)] = element
+            else:
+                fallback = str(len(self.e))
+                while fallback in self.e:
+                    fallback = str(int(fallback) + 1)
+                self.e[fallback] = element
 
         if self.e.get("title"):
             self.title = self.e["title"]._title
@@ -160,16 +166,15 @@ class Head:
 
     def copy(self) -> "Head":
         """
-        Creates and returns a copy of the current object.
+        Creates and returns a deep copy of the current Head.
 
-        The method generates a new instance of the same type by creating a deep
-        copy of its underlying attributes.
+        Element instances are duplicated so that mutations on the copy do not
+        affect the original.
 
-        :return: A new instance of the same type as the original object with
-                 copied data.
+        :return: A new Head whose elements are independent of the original's.
         :rtype: Head
         """
-        return Head(self._elements)
+        return Head(deepcopy(self._elements))
 
     def compile(self, skip_title: bool = False) -> Markup:
         """
