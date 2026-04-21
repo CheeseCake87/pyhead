@@ -29,7 +29,9 @@ class Google:
             self._googlebot = Meta(name="googlebot", content=googlebot)
 
         if no_sitelinks_search_box:
-            self.sitelinks = Meta(name="google", content="nositelinkssearchbox")
+            self._sitelinkssearchbox = Meta(
+                name="google", content="nositelinkssearchbox"
+            )
 
         if no_translate:
             self._no_translate = Meta(name="google", content="notranslate")
