@@ -36,7 +36,7 @@ class Page:
         if keywords is not None:
             if isinstance(keywords, str):
                 self.e["keywords"] = Keywords(from_string=keywords)
-            if isinstance(keywords, list):
+            elif isinstance(keywords, list):
                 self.e["keywords"] = Keywords(from_list=keywords)
 
         if subject is not None:
