@@ -25,8 +25,8 @@ class Page:
         viewport: str = "width=device-width, initial-scale=1",
     ) -> None:
         self.e = {
-            "title": Title(title),
             "charset": Charset(charset),
+            "title": Title(title),
             "viewport": Meta(name="viewport", content=viewport),
         }
 
