@@ -1,9 +1,8 @@
-from markupsafe import Markup
+from markupsafe import Markup, escape
 
 
 class Title:
     unique: bool = True
-    disabled: bool = False
     key: str = "title"
 
     _title: str
@@ -24,4 +23,4 @@ class Title:
         return Markup(f"{self.compile()}")
 
     def compile(self) -> str:
-        return f"<title>{self._title}</title>"
+        return f"<title>{escape(self._title)}</title>"
