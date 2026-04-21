@@ -6,12 +6,6 @@ import click
 
 from .elements import Link, Favicon
 
-try:
-    from favicons import Favicons
-except ImportError:
-    print("Please install the favicons library. Run 'pip install favicons'.")
-    exit(1)
-
 
 def check_source(source: Path) -> Optional[Path]:
     supported_file_ext = [".png", ".jpg", ".jpeg", ".gif", ".svg", ".tiff"]
@@ -19,6 +13,12 @@ def check_source(source: Path) -> Optional[Path]:
         return source
     else:
         return None
+
+
+def _join_href(prefix: str, filename: str) -> str:
+    if not prefix:
+        return filename
+    return f"{prefix if prefix.endswith('/') else prefix + '/'}{filename}"
 
 
 py_file = """\
@@ -84,6 +84,14 @@ def generate_favicons(
 
     Paths are relative to the current working directory.
     """
+    try:
+        from favicons import Favicons
+    except ImportError as e:
+        raise click.ClickException(
+            "The 'favicons' library is required for this command. "
+            "Install it with 'pip install favicons'."
+        ) from e
+
     cwd = Path.cwd()
     source = cwd / source
     output_dir = cwd / output
@@ -93,12 +101,11 @@ def generate_favicons(
     object_code = output_dir / "favicon-delete_me_after_use.py"
 
     if raw_favicon is None:
-        print(
-            "Source file either does not exist, or is the incorrect format of [png, jpg, jpeg, gif, svg, tiff]"
+        raise click.ClickException(
+            "Source file either does not exist, or is the incorrect format of "
+            "[png, jpg, jpeg, gif, svg, tiff]"
         )
-        exit(1)
 
-    # Clear the output directory
     if not output_dir.exists():
         output_dir.mkdir()
 
@@ -110,13 +117,8 @@ def generate_favicons(
                 favicon_tags,
                 icon,
                 Link(
-                    **{
-                        k: v
-                        for k, v in meta.items()
-                        if k not in ["generated_filename", "content"]
-                    },
-                    href=f"{href_prefix if href_prefix.endswith('/') else href_prefix + '/'}"
-                    f"{meta['generated_filename']}",
+                    **{k: v for k, v in meta.items() if k != "generated_filename"},
+                    href=_join_href(href_prefix, meta["generated_filename"]),
                 ),
             )
 
@@ -126,8 +128,7 @@ def generate_favicons(
                 dedent(
                     py_file.format(
                         **{
-                            k: f"{href_prefix if href_prefix.endswith('/') else href_prefix + '/'}"
-                            f"{v['generated_filename']}"
+                            k: _join_href(href_prefix, v["generated_filename"])
                             for k, v in favicon_tags._icon_reference.items()
                         }
                     )
