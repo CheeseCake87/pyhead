@@ -1,6 +1,6 @@
 from typing import Optional
 
-from markupsafe import Markup
+from markupsafe import Markup, escape
 
 
 class Charset:
@@ -22,4 +22,4 @@ class Charset:
         return Markup(self.compile())
 
     def compile(self) -> str:
-        return f'<meta charset="{self._charset}">'
+        return f'<meta charset="{escape(self._charset)}">'
