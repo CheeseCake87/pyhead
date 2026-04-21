@@ -1,4 +1,4 @@
-from markupsafe import Markup
+from markupsafe import Markup, escape
 
 
 class Description:
@@ -20,4 +20,4 @@ class Description:
         return Markup(self.compile())
 
     def compile(self) -> str:
-        return f'<meta name="description" content="{self._description}">'
+        return f'<meta name="description" content="{escape(self._description)}">'
