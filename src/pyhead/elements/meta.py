@@ -6,7 +6,6 @@ from ..protocols import CompileDelayed
 
 
 class Meta:
-    unique: bool = False
     key: Optional[str] = None
 
     _name: Optional[str]
