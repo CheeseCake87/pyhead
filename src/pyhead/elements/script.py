@@ -6,7 +6,6 @@ from ..protocols import CompileDelayed
 
 
 class Script:
-    unique: bool = False
     key: Optional[str] = None
 
     _src: Union[str, CompileDelayed]
