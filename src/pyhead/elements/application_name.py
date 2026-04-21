@@ -4,7 +4,6 @@ from .meta import Meta
 
 
 class ApplicationName:
-    unique: bool = True
     key: str = "application_name"
 
     _content: str
