@@ -6,7 +6,6 @@ from .meta import Meta
 
 
 class Verification:
-    unique: bool = True
     key: str = "verification"
 
     _google: Optional[Meta] = None

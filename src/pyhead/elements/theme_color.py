@@ -4,7 +4,6 @@ from .meta import Meta
 
 
 class ThemeColor:
-    unique: bool = True
     key: str = "theme_color"
 
     _content: str
