@@ -1,6 +1,6 @@
 from typing import Union
 
-from markupsafe import Markup
+from markupsafe import Markup, escape
 
 from ..protocols import CompileDelayed
 
@@ -24,7 +24,9 @@ class Base:
         return Markup(self.compile())
 
     def compile(self) -> str:
-        if isinstance(self._href, CompileDelayed):
-            return f'<base href="{self._href.compile()}">'
-        else:
-            return f'<base href="{self._href}">'
+        href = (
+            self._href.compile()
+            if isinstance(self._href, CompileDelayed)
+            else self._href
+        )
+        return f'<base href="{escape(href)}">'
