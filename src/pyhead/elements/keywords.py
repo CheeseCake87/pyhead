@@ -1,9 +1,11 @@
 from typing import Optional
 
-from markupsafe import Markup, escape
+from markupsafe import escape
+
+from .._base import BaseElement
 
 
-class Keywords:
+class Keywords(BaseElement):
     key: str = "keywords"
 
     _keywords: list[str]
@@ -20,13 +22,7 @@ class Keywords:
             self._keywords.extend(from_list)
 
     def __repr__(self) -> str:
-        return f'<Keywords page_keywords="{self._keywords}">'
-
-    def __str__(self) -> Markup:
-        return Markup(self.compile())
-
-    def __call__(self) -> Markup:
-        return Markup(self.compile())
+        return f"Keywords(keywords={self._keywords!r})"
 
     def compile(self) -> str:
         join = ", ".join(self._keywords)
