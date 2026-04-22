@@ -1,17 +1,15 @@
 from typing import Optional
 
-from markupsafe import Markup
-
+from .._base import BaseElement
 from .meta import Meta
 
 
-class Verification:
+class Verification(BaseElement):
     key: str = "verification"
 
     _google: Optional[Meta] = None
     _yandex: Optional[Meta] = None
     _bing: Optional[Meta] = None
-    _alexa: Optional[Meta] = None
     _pinterest: Optional[Meta] = None
     _norton: Optional[Meta] = None
 
@@ -19,7 +17,6 @@ class Verification:
         "_google",
         "_yandex",
         "_bing",
-        "_alexa",
         "_pinterest",
         "_norton",
     ]
@@ -29,7 +26,6 @@ class Verification:
         google: Optional[str] = None,
         yandex: Optional[str] = None,
         bing: Optional[str] = None,
-        alexa: Optional[str] = None,
         pinterest: Optional[str] = None,
         norton: Optional[str] = None,
     ) -> None:
@@ -42,9 +38,6 @@ class Verification:
         if bing is not None:
             self._bing = Meta(name="msvalidate.01", content=bing)
 
-        if alexa is not None:
-            self._alexa = Meta(name="alexaVerifyID", content=alexa)
-
         if pinterest is not None:
             self._pinterest = Meta(name="p:domain_verify", content=pinterest)
 
@@ -53,23 +46,15 @@ class Verification:
 
     def __repr__(self) -> str:
         return (
-            f"<Verification google={self._google} yandex={self._yandex} "
-            f"bing={self._bing} alexa={self._alexa} pinterest={self._pinterest} "
-            f"norton={self._norton}>"
+            f"Verification(google={self._google!r}, yandex={self._yandex!r}, "
+            f"bing={self._bing!r}, pinterest={self._pinterest!r}, "
+            f"norton={self._norton!r})"
         )
 
-    def __str__(self) -> Markup:
-        return Markup(self.compile())
-
-    def __call__(self) -> Markup:
-        return Markup(self.compile())
-
     def compile(self) -> str:
-        _ = [
+        rendered = [
             str(getattr(self, o_tag))
             for o_tag in self._order
             if getattr(self, o_tag) is not None
         ]
-        if _:
-            return "\n".join(_)
-        return ""
+        return "\n".join(rendered) if rendered else ""
