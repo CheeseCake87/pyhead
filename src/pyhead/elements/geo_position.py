@@ -1,11 +1,10 @@
 from typing import Optional
 
-from markupsafe import Markup
-
+from .._base import BaseElement
 from .meta import Meta
 
 
-class GeoPosition:
+class GeoPosition(BaseElement):
     key: str = "geo_position"
 
     _icbm: Optional[Meta] = None
@@ -41,22 +40,14 @@ class GeoPosition:
 
     def __repr__(self) -> str:
         return (
-            f"<GeoPosition icbm={self._icbm} geo_position={self._geo_position} "
-            f"geo_region={self._geo_region} geo_placename={self._geo_placename}>"
+            f"GeoPosition(icbm={self._icbm!r}, geo_position={self._geo_position!r}, "
+            f"geo_region={self._geo_region!r}, geo_placename={self._geo_placename!r})"
         )
 
-    def __str__(self) -> Markup:
-        return Markup(self.compile())
-
-    def __call__(self) -> Markup:
-        return Markup(self.compile())
-
     def compile(self) -> str:
-        _ = [
+        rendered = [
             str(getattr(self, o_tag))
             for o_tag in self._order
             if getattr(self, o_tag) is not None
         ]
-        if _:
-            return "\n".join(_)
-        return ""
+        return "\n".join(rendered) if rendered else ""
