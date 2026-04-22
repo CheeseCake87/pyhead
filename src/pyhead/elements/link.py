@@ -1,13 +1,12 @@
 from typing import Optional, Union, Literal
 
-from markupsafe import Markup, escape
+from markupsafe import escape
 
+from .._base import BaseElement
 from ..protocols import CompileDelayed
 
 
-class Link:
-    key: Optional[str] = None
-
+class Link(BaseElement):
     _rel: str
     _href: Optional[Union[str, CompileDelayed]]
     _sizes: Optional[str]
@@ -38,30 +37,31 @@ class Link:
             self.key = self._id
 
     def __repr__(self) -> str:
-        return self.compile(_repr=True).replace("link", "Link")
+        parts = [f"rel={self._rel!r}"]
+        if self._href is not None:
+            parts.append(f"href={self._href!r}")
+        if self._sizes is not None:
+            parts.append(f"sizes={self._sizes!r}")
+        if self._type is not None:
+            parts.append(f"type={self._type!r}")
+        if self._hreflang is not None:
+            parts.append(f"hreflang={self._hreflang!r}")
+        if self._crossorigin is not None:
+            parts.append(f"crossorigin={self._crossorigin!r}")
+        if self._id is not None:
+            parts.append(f"id={self._id!r}")
+        return f"Link({', '.join(parts)})"
 
-    def __str__(self) -> Markup:
-        return Markup(self.compile())
-
-    def __call__(self) -> Markup:
-        return Markup(self.compile())
-
-    def compile(self, _repr: bool = False) -> str:
-        __items = []
-
-        if self._rel:
-            __items.append(f'rel="{escape(self._rel)}"')
+    def compile(self) -> str:
+        __items = [f'rel="{escape(self._rel)}"']
 
         if self._href:
-            if _repr:
-                __items.append(f'href="{self._href}"')
-            else:
-                href = (
-                    self._href.compile()
-                    if isinstance(self._href, CompileDelayed)
-                    else self._href
-                )
-                __items.append(f'href="{escape(href)}"')
+            href = (
+                self._href.compile()
+                if isinstance(self._href, CompileDelayed)
+                else self._href
+            )
+            __items.append(f'href="{escape(href)}"')
 
         if self._sizes:
             __items.append(f'sizes="{escape(self._sizes)}"')
