@@ -1,12 +1,11 @@
 from typing import Optional, Union
 
-from markupsafe import Markup
-
+from .._base import BaseElement
 from .meta import Meta
 from ..protocols import CompileDelayed
 
 
-class OpenGraphWebsite:
+class OpenGraphWebsite(BaseElement):
     key: str = "open_graph_website"
 
     _type: Meta
@@ -62,24 +61,16 @@ class OpenGraphWebsite:
 
     def __repr__(self) -> str:
         return (
-            f"<OpenGraphWebsite type={self._type} locale={self._locale} "
-            f"title={self._title} url={self._url} image={self._image} "
-            f"image_alt={self._image_alt} description={self._description} "
-            f"site_name={self._site_name}>"
+            f"OpenGraphWebsite(type={self._type!r}, locale={self._locale!r}, "
+            f"title={self._title!r}, url={self._url!r}, image={self._image!r}, "
+            f"image_alt={self._image_alt!r}, description={self._description!r}, "
+            f"site_name={self._site_name!r})"
         )
 
-    def __str__(self) -> Markup:
-        return Markup(self.compile())
-
-    def __call__(self) -> Markup:
-        return Markup(self.compile())
-
     def compile(self) -> str:
-        _ = [
+        rendered = [
             str(getattr(self, o_tag))
             for o_tag in self._order
             if getattr(self, o_tag) is not None
         ]
-        if _:
-            return "\n".join(_)
-        return ""
+        return "\n".join(rendered) if rendered else ""
