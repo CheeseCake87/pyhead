@@ -1,9 +1,8 @@
-from markupsafe import Markup
-
+from .._base import BaseElement
 from .meta import Meta
 
 
-class ReferrerPolicy:
+class ReferrerPolicy(BaseElement):
     key: str = "referrer_policy"
 
     _content: str
@@ -12,14 +11,7 @@ class ReferrerPolicy:
         self._content = content
 
     def __repr__(self) -> str:
-        return f'<ReferrerPolicy content="{self._content}">'
-
-    def __str__(self) -> Markup:
-        return Markup(self.compile())
-
-    def __call__(self) -> Markup:
-        return Markup(self.compile())
+        return f"ReferrerPolicy(content={self._content!r})"
 
     def compile(self) -> str:
-        meta = Meta(name="referrer", content=self._content)
-        return str(meta)
+        return str(Meta(name="referrer", content=self._content))
