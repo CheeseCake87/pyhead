@@ -1,13 +1,12 @@
 from typing import Optional, Union
 
-from markupsafe import Markup, escape
+from markupsafe import escape
 
+from .._base import BaseElement
 from ..protocols import CompileDelayed
 
 
-class Script:
-    key: Optional[str] = None
-
+class Script(BaseElement):
     _src: Union[str, CompileDelayed]
     _type: Optional[str]
     _async: bool
@@ -44,13 +43,24 @@ class Script:
             self.key = self._id
 
     def __repr__(self) -> str:
-        return self.compile().replace("script", "Script")
-
-    def __str__(self) -> Markup:
-        return Markup(self.compile())
-
-    def __call__(self) -> Markup:
-        return Markup(self.compile())
+        parts = [f"src={self._src!r}"]
+        if self._type is not None:
+            parts.append(f"type={self._type!r}")
+        if self._async:
+            parts.append(f"async_={self._async!r}")
+        if self._defer:
+            parts.append(f"defer={self._defer!r}")
+        if self._crossorigin is not None:
+            parts.append(f"crossorigin={self._crossorigin!r}")
+        if self._integrity is not None:
+            parts.append(f"integrity={self._integrity!r}")
+        if self._nomodule:
+            parts.append(f"nomodule={self._nomodule!r}")
+        if self._referrerpolicy is not None:
+            parts.append(f"referrerpolicy={self._referrerpolicy!r}")
+        if self._id is not None:
+            parts.append(f"id={self._id!r}")
+        return f"Script({', '.join(parts)})"
 
     def compile(self) -> str:
         __items = []
