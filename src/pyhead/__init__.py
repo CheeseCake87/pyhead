@@ -60,7 +60,8 @@ HeadElement: TypeAlias = (
 class Head:
     e: dict  # Element ID: Element Class
 
-    title: Optional[str] = None
+    render_head_tag: bool = True
+    render_title_tag: Optional[str] = None
 
     _elements: list[HeadElement]
 
@@ -137,7 +138,7 @@ class Head:
                 self.e[fallback] = element
 
         if self.e.get("title"):
-            self.title = self.e["title"]._title
+            self.render_title_tag = self.e["title"]._title
 
     def extend(self, elements_: list[HeadElement]) -> "Head":
         """
@@ -233,35 +234,45 @@ class Head:
         """
         return self.copy_extend(elements_)
 
-    def compile(self, skip_title: bool = False) -> Markup:
+    def compile(
+        self, render_head_tag: bool = True, render_title_tag: bool = True
+    ) -> Markup:
         """
         Used to compile the elements in head.e dict.
 
         .. code-block::
 
-            <head>
-                {{ head.compile() }}
-            </head>
+            <html>
+            {{ head.compile() }}
+            <body>
+            ...
+            </body>
+            </html>
 
-        If you prefer to have the title rendered separately, you can use the skip_title parameter.
+        If you prefer to have the head and the title tag rendered separately,
+        you can use the render_head_tag and render_title_tag parameters.
 
         .. code-block::
 
             <head>
                 <title>{{ head.title }}</title>
-                {{ head.compile(skip_title=True) }}
+                {{ head.compile(render_head_tag = False, render_title_tag = False) }}
             </head>
 
-        :param skip_title:
+        :param render_head_tag: If False, the head tag will not be rendered.
+        :param render_title_tag: If False, the title tag will not be rendered.
         :return:
         """
-        render = []
+        render = ["<head>" if render_head_tag else ""]
 
         for key, element in self.e.items():
-            if key == "title" and skip_title:
+            if key == "title" and not render_title_tag:
                 continue
 
             render.append(str(element))
+
+        if render_head_tag:
+            render.append("</head>")
 
         return Markup("\n".join(render))
 
