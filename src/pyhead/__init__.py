@@ -4,7 +4,6 @@ from typing import Optional, TypeAlias
 from markupsafe import Markup
 
 from .__version__ import __version__
-from ._helpers import has_key
 from .elements import (
     ApplicationName,
     Base,
@@ -128,7 +127,7 @@ class Head:
                     self.e[key] = value
                 continue
 
-            key = has_key(element)
+            key = getattr(element, "key", None)
             if key:
                 self.e[str(key)] = element
             else:
@@ -161,6 +160,7 @@ class Head:
         :return: The extended Head object.
         :rtype: Head
         """
+        self._elements = [*self._elements, *elements_]
         self._loop_elements(elements_)
         return self
 
@@ -175,6 +175,63 @@ class Head:
         :rtype: Head
         """
         return Head(deepcopy(self._elements))
+
+    def copy_extend(self, elements_: list[HeadElement]) -> "Head":
+        """
+        Used to copy and extend an already initialized Head object.
+
+        .. highlight:: python
+        .. code-block:: python
+
+            from pyhead import Head
+            from pyhead.elements import Page, Description
+
+            head = Head([Page(title="My Website")])
+
+            head = head.copy_extend([Description("This is my website.")])
+
+        :param elements_:
+        :return: The copied and extended Head object.
+        :rtype: Head
+        """
+        self._elements = [*self._elements, *elements_]
+        return Head(deepcopy(self._elements))
+
+    def cp(self) -> "Head":
+        """
+        Shortcut for copy.
+
+        Creates and returns a deep copy of the current Head.
+
+        Element instances are duplicated so that mutations on the copy do not
+        affect the original.
+
+        :return: A new Head whose elements are independent of the original's.
+        :rtype: Head
+        """
+        return self.copy()
+
+    def cpe(self, elements_: list[HeadElement]) -> "Head":
+        """
+        Shortcut for copy_extend.
+
+        Used to copy and extend an already initialized Head object.
+
+        .. highlight:: python
+        .. code-block:: python
+
+            from pyhead import Head
+            from pyhead.elements import Page, Description
+
+            head = Head([Page(title="My Website")])
+
+            head = head.cpe([Description("This is my website.")])
+
+        :param elements_:
+        :return: The copied and extended Head object.
+        :rtype: Head
+        """
+        return self.copy_extend(elements_)
 
     def compile(self, skip_title: bool = False) -> Markup:
         """
@@ -213,6 +270,16 @@ class HeadClass:
     elements: list[HeadElement]
 
     def __new__(cls):
+        if cls is HeadClass:
+            raise TypeError(
+                "HeadClass is meant to be subclassed. "
+                "Define a subclass with `elements = [...]` and instantiate that."
+            )
+        if not hasattr(cls, "elements"):
+            raise TypeError(
+                f"{cls.__name__} must define an `elements` class attribute "
+                f"(a list of head elements)."
+            )
         return Head(cls.elements)
 
 
