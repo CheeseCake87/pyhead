@@ -1,9 +1,8 @@
-from markupsafe import Markup
-
+from .._base import BaseElement
 from .meta import Meta
 
 
-class ApplicationName:
+class ApplicationName(BaseElement):
     key: str = "application_name"
 
     _content: str
@@ -12,14 +11,7 @@ class ApplicationName:
         self._content = content
 
     def __repr__(self) -> str:
-        return f'<ApplicationName content="{self._content}">'
-
-    def __str__(self) -> Markup:
-        return Markup(self.compile())
-
-    def __call__(self) -> Markup:
-        return Markup(self.compile())
+        return f"ApplicationName(content={self._content!r})"
 
     def compile(self) -> str:
-        meta = Meta(name="application_name", content=self._content)
-        return str(meta)
+        return str(Meta(name="application_name", content=self._content))
