@@ -1,7 +1,9 @@
-from markupsafe import Markup, escape
+from markupsafe import escape
+
+from .._base import BaseElement
 
 
-class Description:
+class Description(BaseElement):
     key: str = "description"
 
     _description: str
@@ -10,13 +12,7 @@ class Description:
         self._description = description
 
     def __repr__(self) -> str:
-        return f'<Description content="{self._description}">'
-
-    def __str__(self) -> Markup:
-        return Markup(self.compile())
-
-    def __call__(self) -> Markup:
-        return Markup(self.compile())
+        return f"Description(description={self._description!r})"
 
     def compile(self) -> str:
         return f'<meta name="description" content="{escape(self._description)}">'
