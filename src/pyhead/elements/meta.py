@@ -1,13 +1,12 @@
 from typing import Optional, Union
 
-from markupsafe import Markup, escape
+from markupsafe import escape
 
+from .._base import BaseElement
 from ..protocols import CompileDelayed
 
 
-class Meta:
-    key: Optional[str] = None
-
+class Meta(BaseElement):
     _name: Optional[str]
     _http_equiv: Optional[str]
     _property: Optional[str]
@@ -22,10 +21,15 @@ class Meta:
         content: Optional[Union[str, CompileDelayed]] = None,
         id_: Optional[str] = None,
     ) -> None:
-        one_only = [name, http_equiv, property_]
-        if one_only.count(None) != 2:
+        provided = [x for x in (name, http_equiv, property_) if x is not None]
+        if len(provided) == 0:
             raise ValueError(
-                "You can only specify one of name, http_equiv, or property_."
+                "Meta requires exactly one of name, http_equiv, or property_."
+            )
+        if len(provided) > 1:
+            raise ValueError(
+                "Meta accepts only one of name, http_equiv, or property_ "
+                "(not multiple)."
             )
 
         self._name = name
@@ -35,13 +39,18 @@ class Meta:
         self._id = id_
 
     def __repr__(self) -> str:
-        return self.compile().replace("meta", "Meta")
-
-    def __str__(self) -> Markup:
-        return Markup(self.compile())
-
-    def __call__(self) -> Markup:
-        return Markup(self.compile())
+        parts = []
+        if self._name is not None:
+            parts.append(f"name={self._name!r}")
+        if self._http_equiv is not None:
+            parts.append(f"http_equiv={self._http_equiv!r}")
+        if self._property is not None:
+            parts.append(f"property={self._property!r}")
+        if self._content is not None:
+            parts.append(f"content={self._content!r}")
+        if self._id is not None:
+            parts.append(f"id={self._id!r}")
+        return f"Meta({', '.join(parts)})"
 
     def compile(self) -> str:
         __items = []
