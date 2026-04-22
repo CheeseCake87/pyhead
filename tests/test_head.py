@@ -39,7 +39,7 @@ def test_head_compile_is_markup():
 
 def test_head_title_attr_is_set():
     h = Head([Page(title="My Title")])
-    assert h.title == "My Title"
+    assert h.render_title_tag == "My Title"
 
 
 def test_head_skip_title():
