@@ -1,9 +1,8 @@
-from markupsafe import Markup
-
+from .._base import BaseElement
 from .meta import Meta
 
 
-class FormatDetection:
+class FormatDetection(BaseElement):
     key: str = "format_detection"
 
     _telephone: bool
@@ -27,13 +26,10 @@ class FormatDetection:
         self._url = url
 
     def __repr__(self) -> str:
-        return self.compile().replace("format-detection", "FormatDetection")
-
-    def __str__(self) -> Markup:
-        return Markup(self.compile())
-
-    def __call__(self) -> Markup:
-        return Markup(self.compile())
+        return (
+            f"FormatDetection(telephone={self._telephone!r}, date={self._date!r}, "
+            f"address={self._address!r}, email={self._email!r}, url={self._url!r})"
+        )
 
     def compile(self) -> str:
         __items = []
