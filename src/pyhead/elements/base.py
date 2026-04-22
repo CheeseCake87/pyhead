@@ -1,11 +1,12 @@
 from typing import Union
 
-from markupsafe import Markup, escape
+from markupsafe import escape
 
+from .._base import BaseElement
 from ..protocols import CompileDelayed
 
 
-class Base:
+class Base(BaseElement):
     key: str = "base"
 
     _href: Union[str, CompileDelayed]
@@ -14,13 +15,7 @@ class Base:
         self._href = href
 
     def __repr__(self) -> str:
-        return f'<Base base="{self._href}">'
-
-    def __str__(self) -> Markup:
-        return Markup(self.compile())
-
-    def __call__(self) -> Markup:
-        return Markup(self.compile())
+        return f"Base(href={self._href!r})"
 
     def compile(self) -> str:
         href = (
