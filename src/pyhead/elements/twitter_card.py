@@ -1,12 +1,11 @@
 from typing import Optional, Literal, Union
 
-from markupsafe import Markup
-
+from .._base import BaseElement
 from .meta import Meta
 from ..protocols import CompileDelayed
 
 
-class TwitterCard:
+class TwitterCard(BaseElement):
     key: str = "twitter_card"
 
     _card: Meta
@@ -67,24 +66,16 @@ class TwitterCard:
 
     def __repr__(self) -> str:
         return (
-            f"<TwitterCard card={self._card} site_account={self._site_account} "
-            f"creator_account={self._creator_account} title={self._title} "
-            f"description={self._description} image={self._image} "
-            f"image_alt={self._image_alt} url={self._url}>"
+            f"TwitterCard(card={self._card!r}, site_account={self._site_account!r}, "
+            f"creator_account={self._creator_account!r}, title={self._title!r}, "
+            f"description={self._description!r}, image={self._image!r}, "
+            f"image_alt={self._image_alt!r}, url={self._url!r})"
         )
 
-    def __str__(self) -> Markup:
-        return Markup(self.compile())
-
-    def __call__(self) -> Markup:
-        return Markup(self.compile())
-
     def compile(self) -> str:
-        _ = [
+        rendered = [
             str(getattr(self, o_tag))
             for o_tag in self._order
             if getattr(self, o_tag) is not None
         ]
-        if _:
-            return "\n".join(_)
-        return ""
+        return "\n".join(rendered) if rendered else ""
