@@ -1,11 +1,10 @@
 from typing import Optional
 
-from markupsafe import Markup
-
+from .._base import BaseElement
 from .meta import Meta
 
 
-class Google:
+class Google(BaseElement):
     key: str = "google"
 
     _googlebot: Optional[Meta] = None
@@ -37,22 +36,15 @@ class Google:
 
     def __repr__(self) -> str:
         return (
-            f"<Google googlebot={self._googlebot} sitelinkssearchbox={self._sitelinkssearchbox} "
-            f"no_translate={self._no_translate}>"
+            f"Google(googlebot={self._googlebot!r}, "
+            f"sitelinkssearchbox={self._sitelinkssearchbox!r}, "
+            f"no_translate={self._no_translate!r})"
         )
 
-    def __str__(self) -> Markup:
-        return Markup(self.compile())
-
-    def __call__(self) -> Markup:
-        return Markup(self.compile())
-
     def compile(self) -> str:
-        _ = [
+        rendered = [
             str(getattr(self, o_tag))
             for o_tag in self._order
             if getattr(self, o_tag) is not None
         ]
-        if _:
-            return "\n".join(_)
-        return ""
+        return "\n".join(rendered) if rendered else ""
