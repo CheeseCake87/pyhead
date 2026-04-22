@@ -26,7 +26,6 @@ head = Head(
             google="1234567890",
             yandex="1234567890",
             bing="1234567890",
-            alexa="1234567890",
         ),
         e.GeoPosition(
             icbm="55.86013028402754, -4.252019430273945",
@@ -98,7 +97,6 @@ class StandardHeadClass(HeadClass):
             google="1234567890",
             yandex="1234567890",
             bing="1234567890",
-            alexa="1234567890",
         ),
         e.GeoPosition(
             icbm="55.86013028402754, -4.252019430273945",
