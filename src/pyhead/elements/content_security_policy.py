@@ -1,9 +1,8 @@
-from markupsafe import Markup
-
+from .._base import BaseElement
 from .meta import Meta
 
 
-class ContentSecurityPolicy:
+class ContentSecurityPolicy(BaseElement):
     key: str = "content_security_policy"
 
     _content: str
@@ -12,14 +11,7 @@ class ContentSecurityPolicy:
         self._content = content
 
     def __repr__(self) -> str:
-        return f'<ContentSecurityPolicy content="{self._content}">'
-
-    def __str__(self) -> Markup:
-        return Markup(self.compile())
-
-    def __call__(self) -> Markup:
-        return Markup(self.compile())
+        return f"ContentSecurityPolicy(content={self._content!r})"
 
     def compile(self) -> str:
-        meta = Meta(http_equiv="Content-Security-Policy", content=self._content)
-        return str(meta)
+        return str(Meta(http_equiv="Content-Security-Policy", content=self._content))
