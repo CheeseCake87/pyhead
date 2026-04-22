@@ -44,7 +44,7 @@ def test_head_title_attr_is_set():
 
 def test_head_skip_title():
     h = Head([Page(title="T")])
-    out = str(h.compile(skip_title=True))
+    out = str(h.compile(render_title_tag=False))
     assert "<title>T</title>" not in out
     assert "charset" in out
 
