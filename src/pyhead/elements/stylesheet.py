@@ -1,14 +1,11 @@
 from typing import Optional, Union
 
-from markupsafe import Markup
-
+from .._base import BaseElement
 from .link import Link
 from ..protocols import CompileDelayed
 
 
-class Stylesheet:
-    key: Optional[str] = None
-
+class Stylesheet(BaseElement):
     _href: Union[str, CompileDelayed]
     _id: Optional[str]
 
@@ -22,14 +19,10 @@ class Stylesheet:
             self.key = id_
 
     def __repr__(self) -> str:
-        return f"<Stylesheet href={self._href}>"
-
-    def __str__(self) -> Markup:
-        return Markup(self.compile())
-
-    def __call__(self) -> Markup:
-        return Markup(self.compile())
+        parts = [f"href={self._href!r}"]
+        if self._id is not None:
+            parts.append(f"id={self._id!r}")
+        return f"Stylesheet({', '.join(parts)})"
 
     def compile(self) -> str:
-        stylesheet = Link(rel="stylesheet", href=self._href, id_=self._id)
-        return str(stylesheet)
+        return str(Link(rel="stylesheet", href=self._href, id_=self._id))
