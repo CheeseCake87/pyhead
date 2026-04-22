@@ -1,4 +1,5 @@
 from django import template
+from django.utils.html import escape
 from django.utils.safestring import SafeString, mark_safe
 
 from pyhead import Head
@@ -28,7 +29,7 @@ def head(
     want to author the outer ``<head>`` tag yourself)::
 
         <head>
-            {% head_title head %}
+            <title>{% head_title head %}</title>
             {% head head render_head_tag=False render_title_tag=False %}
         </head>
     """
@@ -43,17 +44,21 @@ def head(
 @register.simple_tag
 def head_title(head_obj: Head) -> SafeString:
     """
-    Render just the ``<title>`` tag from a pyhead ``Head``.
+    Render just the title text (no wrapping ``<title>`` tag).
+
+    The caller is expected to author the ``<title>`` tag themselves; the
+    returned value is HTML-escaped so it is safe to drop straight into the
+    template.
 
     Usage::
 
         {% load pyhead %}
         <head>
-            {% head_title head %}
+            <title>{% head_title head %}</title>
             {% head head render_head_tag=False render_title_tag=False %}
         </head>
     """
     title_element = head_obj.e.get("title")
     if title_element is None:
-        return mark_safe("<title>Title Not Set</title>")
-    return mark_safe(str(title_element))
+        return mark_safe("Title Not Set")
+    return mark_safe(escape(title_element.title_))

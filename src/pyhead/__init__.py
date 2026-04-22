@@ -1,4 +1,5 @@
 from copy import deepcopy
+from glob import escape
 from typing import Optional, TypeAlias
 
 from markupsafe import Markup
@@ -138,7 +139,7 @@ class Head:
                 self.e[fallback] = element
 
         if self.e.get("title"):
-            self.render_title_tag = self.e["title"]._title
+            self.render_title_tag = self.e["title"].title_
 
     def extend(self, elements_: list[HeadElement]) -> "Head":
         """
@@ -275,6 +276,11 @@ class Head:
             render.append("</head>")
 
         return Markup("\n".join(render))
+
+    def title(self) -> str:
+        if self.e.get("title"):
+            return escape(self.e["title"].title_)
+        return ""
 
     def __str__(self) -> Markup:
         return self.compile()

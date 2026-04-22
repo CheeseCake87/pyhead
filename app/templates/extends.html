@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 
 <html lang="en">
-
-{{ head.compile() }}
+<head>
+    <title>{{ head.title() }}</title>
+    {{ head.compile(render_head_tag=False, render_title_tag=False) }}
+</head>
 
 <body>
 {% block content %}

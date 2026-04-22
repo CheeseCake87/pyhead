@@ -124,12 +124,29 @@ def test_head_templatetag_can_omit_wrapping_head_and_title():
     assert 'name="description" content="D"' in out
 
 
-def test_head_title_templatetag_renders_only_title():
+def test_head_title_templatetag_renders_only_title_text():
     out = _render(
-        "{% load pyhead %}{% head_title head %}",
+        "{% load pyhead %}<title>{% head_title head %}</title>",
         Head([Page(title="Just Title")]),
     )
     assert out.strip() == "<title>Just Title</title>"
+
+
+def test_head_title_templatetag_escapes_html():
+    out = _render(
+        "{% load pyhead %}{% head_title head %}",
+        Head([Page(title="<script>alert(1)</script>")]),
+    )
+    assert "<script>" not in out
+    assert "&lt;script&gt;alert(1)&lt;/script&gt;" in out
+
+
+def test_head_title_templatetag_fallback_when_no_title():
+    out = _render(
+        "{% load pyhead %}<title>{% head_title head %}</title>",
+        Head([]),
+    )
+    assert out.strip() == "<title>Title Not Set</title>"
 
 
 def test_head_via_str_does_not_get_autoescaped():

@@ -6,13 +6,13 @@ from .._base import BaseElement
 class Title(BaseElement):
     key: str = "title"
 
-    _title: str
+    title_: str
 
     def __init__(self, title: str) -> None:
-        self._title = title
+        self.title_ = title
 
     def __repr__(self) -> str:
-        return f"Title(title={self._title!r})"
+        return f"Title(title={self.title_!r})"
 
     def compile(self) -> str:
-        return f"<title>{escape(self._title)}</title>"
+        return f"<title>{escape(self.title_)}</title>"

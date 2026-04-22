@@ -151,11 +151,11 @@ or — split render, where you write the `<head>` wrapper and let pyhead fill it
 ```
 
 If you also want the `<title>` separate from the rest of the head, pass both flags
-and render the title element yourself (it's available at `head.e["title"]`):
+and render the title element yourself (it's available at `head.title()`):
 
 ```html
 <head>
-    <title>{{ head.e["title"] }}</title>
+    <title>{{ head.title() }}</title>
     {{ head.compile(render_head_tag=False, render_title_tag=False) }}
 </head>
 ```
@@ -297,14 +297,16 @@ auto-escape will render it as safe HTML:
 </html>
 ```
 
-Split render — author your own `<head>` wrapper and place the `<title>` first:
+Split render — author your own `<head>` wrapper and place the `<title>` first.
+`{% head_title %}` returns just the (HTML-escaped) title text, so you write the
+`<title>` tag yourself:
 
 ```html
 {% load pyhead %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {% head_title head %}
+    <title>{% head_title head %}</title>
     {% head head render_head_tag=False render_title_tag=False %}
 </head>
 <body>...</body>
@@ -490,8 +492,8 @@ head = Head([
 | --- | --- |
 | `{% head head %}` | The full `<head>...</head>` block, including `<title>`. |
 | `{% head head render_head_tag=False %}` | The inner elements only — you author the `<head>` wrapper. |
-| `{% head head render_head_tag=False render_title_tag=False %}` | Inner elements minus `<title>` — pair with `{% head_title head %}`. |
-| `{% head_title head %}` | Just the `<title>` tag. |
+| `{% head head render_head_tag=False render_title_tag=False %}` | Inner elements minus `<title>` — pair with `<title>{% head_title head %}</title>`. |
+| `{% head_title head %}` | The title text only (HTML-escaped); wrap it in your own `<title>` tag. |
 
 `Head` also implements `__html__`, so `{{ head }}` works without `|safe` and
 without loading the tag library — handy for simple pages.
