@@ -5,18 +5,29 @@
 
 The Python HTML `<head>` filler.
 
-`pip install pyhead`
+```bash
+pip install pyhead              # core only
+pip install "pyhead[flask]"     # core + Flask helpers
+pip install "pyhead[django]"    # core + Django helpers
+```
+
+Pyhead is framework-agnostic at its core. Flask and Django are only needed if you want the deferred `url_for` / `reverse` / `static` helpers or the Django template tags.
 
 <!-- TOC -->
 * [pyhead 🐍🤯](#pyhead-)
   * [What is Pyhead?](#what-is-pyhead)
   * [Flask example](#flask-example)
+  * [Django example](#django-example)
   * [Usage Examples](#usage-examples)
     * [Route by Route](#route-by-route)
     * [Copy and Extend](#copy-and-extend)
     * [Class Defined](#class-defined)
     * [Flask Specific](#flask-specific)
       * [`url_for` -> `FlaskUrlFor`](#url_for---flaskurlfor)
+    * [Django Specific](#django-specific)
+      * [`reverse` -> `DjangoUrlFor`](#reverse---djangourlfor)
+      * [`static` -> `DjangoStatic`](#static---djangostatic)
+      * [Template tags: `{% head %}` and `{% head_title %}`](#template-tags--head--and--head_title-)
   * [CLI Commands](#cli-commands)
     * [Generating favicons](#generating-favicons)
 <!-- TOC -->
@@ -112,39 +123,41 @@ def create_app():
     return app
 ```
 
-`index.html`:
+`index.html` — full render (pyhead writes the `<head>` wrapper itself):
 
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<title>{{ head.title }}</title>
-{{ head.compile(skip_title=True) }}
-</head>
-
+{{ head.compile() }}
 <body>
-{% block content %}
-
-{% endblock %}
+{% block content %}{% endblock %}
 </body>
 </html>
 ```
 
-or
+or — split render, where you write the `<head>` wrapper and let pyhead fill it:
 
 ```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-{{ head.compile() }}
+    {{ head.compile(render_head_tag=False) }}
 </head>
 
 <body>
-{% block content %}
-
-{% endblock %}
+{% block content %}{% endblock %}
 </body>
 </html>
+```
+
+If you also want the `<title>` separate from the rest of the head, pass both flags
+and render the title element yourself (it's available at `head.e["title"]`):
+
+```html
+<head>
+    <title>{{ head.e["title"] }}</title>
+    {{ head.compile(render_head_tag=False, render_title_tag=False) }}
+</head>
 ```
 
 Results in:
@@ -219,6 +232,82 @@ Results in:
 <h1>Flask App</h1>
 <p>Right-Click view source</p>
 </body>
+</html>
+```
+
+## Django example
+
+Register `pyhead.django` in `INSTALLED_APPS` so its template tag library is discoverable:
+
+```python
+# settings.py
+INSTALLED_APPS = [
+    # ...
+    "django.contrib.staticfiles",
+    "pyhead.django",
+]
+```
+
+Build a `Head` in your view, pass it to the template as context:
+
+```python
+# views.py
+from django.shortcuts import render
+
+from pyhead import Head
+from pyhead import elements as e
+from pyhead.django import DjangoStatic, DjangoUrlFor
+
+
+def index(request):
+    head = Head([
+        e.Page(
+            title="Hello World",
+            description="This is a test",
+            keywords="test, hello, world",
+        ),
+        e.Link(rel="canonical", href=DjangoUrlFor("index")),
+        e.Stylesheet(DjangoStatic("main.css")),
+        e.Script(type_="module", src=DjangoStatic("example.js")),
+    ])
+    return render(request, "index.html", {"head": head})
+```
+
+`index.html` — render the full head via the template tag:
+
+```html
+{% load pyhead %}
+<!DOCTYPE html>
+<html lang="en">
+{% head head %}
+<body>
+    <h1>Django App</h1>
+</body>
+</html>
+```
+
+Or skip the tag library entirely — `Head` implements `__html__`, so Django's
+auto-escape will render it as safe HTML:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+{{ head }}
+<body>...</body>
+</html>
+```
+
+Split render — author your own `<head>` wrapper and place the `<title>` first:
+
+```html
+{% load pyhead %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% head_title head %}
+    {% head head render_head_tag=False render_title_tag=False %}
+</head>
+<body>...</body>
 </html>
 ```
 
@@ -355,6 +444,57 @@ def my_cool_page():
     )
     return render_template("my_cool_page.html", head=head)
 ```
+
+### Django Specific
+
+Requires `pip install "pyhead[django]"` and `"pyhead.django"` in `INSTALLED_APPS`.
+
+#### `reverse` -> `DjangoUrlFor`
+
+`DjangoUrlFor` defers Django's `reverse()` until the `Head` is compiled, so it
+runs with the current URL configuration at request time. It accepts the same
+positional / keyword arguments as `reverse`.
+
+```python
+from pyhead import Head, elements as e
+from pyhead.django import DjangoUrlFor
+
+head = Head([
+    e.Link(rel="canonical", href=DjangoUrlFor("home")),
+    e.Link(rel="alternate", href=DjangoUrlFor("article", pk=42)),
+])
+```
+
+#### `static` -> `DjangoStatic`
+
+`DjangoStatic` defers `django.templatetags.static.static()` until compile time,
+so `STATIC_URL` and any staticfiles storage (e.g. `ManifestStaticFilesStorage`)
+are honoured.
+
+```python
+from pyhead import Head, elements as e
+from pyhead.django import DjangoStatic
+
+head = Head([
+    e.Stylesheet(DjangoStatic("main.css")),
+    e.Script(type_="module", src=DjangoStatic("example.js")),
+    e.Favicon(ico_icon_href=DjangoStatic("favicons/favicon.ico")),
+])
+```
+
+#### Template tags: `{% head %}` and `{% head_title %}`
+
+`pyhead.django` ships a template tag library. Load it with `{% load pyhead %}`.
+
+| Tag | What it renders |
+| --- | --- |
+| `{% head head %}` | The full `<head>...</head>` block, including `<title>`. |
+| `{% head head render_head_tag=False %}` | The inner elements only — you author the `<head>` wrapper. |
+| `{% head head render_head_tag=False render_title_tag=False %}` | Inner elements minus `<title>` — pair with `{% head_title head %}`. |
+| `{% head_title head %}` | Just the `<title>` tag. |
+
+`Head` also implements `__html__`, so `{{ head }}` works without `|safe` and
+without loading the tag library — handy for simple pages.
 
 ## CLI Commands
 

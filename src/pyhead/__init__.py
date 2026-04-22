@@ -276,6 +276,12 @@ class Head:
 
         return Markup("\n".join(render))
 
+    def __str__(self) -> Markup:
+        return self.compile()
+
+    def __html__(self) -> Markup:
+        return self.compile()
+
 
 class HeadClass:
     elements: list[HeadElement]
