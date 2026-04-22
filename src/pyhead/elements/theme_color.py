@@ -1,9 +1,8 @@
-from markupsafe import Markup
-
+from .._base import BaseElement
 from .meta import Meta
 
 
-class ThemeColor:
+class ThemeColor(BaseElement):
     key: str = "theme_color"
 
     _content: str
@@ -12,14 +11,7 @@ class ThemeColor:
         self._content = content
 
     def __repr__(self) -> str:
-        return f'<ThemeColor content="{self._content}">'
-
-    def __str__(self) -> Markup:
-        return Markup(self.compile())
-
-    def __call__(self) -> Markup:
-        return Markup(self.compile())
+        return f"ThemeColor(content={self._content!r})"
 
     def compile(self) -> str:
-        meta = Meta(name="theme-color", content=self._content)
-        return str(meta)
+        return str(Meta(name="theme-color", content=self._content))
