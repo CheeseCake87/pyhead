@@ -60,7 +60,6 @@ def create_app():
                 google="1234567890",
                 yandex="1234567890",
                 bing="1234567890",
-                alexa="1234567890",
             ),
             e.GeoPosition(
                 icbm="55.86013028402754, -4.252019430273945",
@@ -153,43 +152,43 @@ Results in:
 ```html
 <html lang="en">
 <head>
-<title>Hello World</title>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1" >
-<meta name="description" content="This is a test" >
+<title>Hello World</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="This is a test">
 <meta name="keywords" content="test,  hello,  world">
-<meta name="subject" content="Hello World" >
-<meta name="rating" content="General" >
+<meta name="subject" content="Hello World">
+<meta name="rating" content="General">
 <base href="http://127.0.0.1:5000">
-<meta name="robots" content="index, follow" >
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'" >
-<meta name="referrer" content="no-referrer" >
-<meta name="googlebot" content="index, follow" >
-<meta name="google" content="notranslate" >
-<meta name="google-site-verification" content="1234567890" >
-<meta name="yandex-verification" content="1234567890" >
-<meta name="msvalidate.01" content="1234567890" >
-<meta name="alexaVerifyID" content="1234567890" >
-<meta name="ICBM" content="55.86013028402754, -4.252019430273945" >
-<meta name="geo.position" content="55.86013028402754;-4.252019430273945" >
-<meta name="geo.region" content="en_GB" >
-<meta name="geo.placename" content="Duke of Wellington" >
-<meta name="twitter:card" content="summary_large_image" >
-<meta name="twitter:site" content="@example" >
-<meta name="twitter:creator" content="@example" >
-<meta name="twitter:title" content="Example" >
-<meta name="twitter:description" content="Example" >
-<meta name="twitter:image" content="https://example.com/image.png" >
-<meta name="twitter:image:alt" content="Example" >
-<meta name="twitter:url" content="https://example.com" >
-<meta property="og:type" content="website" >
-<meta property="og:locale" content="en_US" >
-<meta property="og:site_name" content="Example" >
-<meta property="og:title" content="Example" >
-<meta property="og:description" content="Example" >
-<meta property="og:image" content="https://example.com/image.png" >
-<meta property="og:image:alt" content="Example" >
-<meta property="og:url" content="https://example.com" >
+<meta name="robots" content="index, follow">
+<meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39;">
+<meta name="referrer" content="no-referrer">
+<meta name="googlebot" content="index, follow">
+<meta name="google" content="nositelinkssearchbox">
+<meta name="google" content="notranslate">
+<meta name="google-site-verification" content="1234567890">
+<meta name="yandex-verification" content="1234567890">
+<meta name="msvalidate.01" content="1234567890">
+<meta name="ICBM" content="55.86013028402754, -4.252019430273945">
+<meta name="geo.position" content="55.86013028402754;-4.252019430273945">
+<meta name="geo.region" content="en_GB">
+<meta name="geo.placename" content="Duke of Wellington">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@example">
+<meta name="twitter:creator" content="@example">
+<meta name="twitter:title" content="Example">
+<meta name="twitter:description" content="Example">
+<meta name="twitter:image" content="https://example.com/image.png">
+<meta name="twitter:image:alt" content="Example">
+<meta name="twitter:url" content="https://example.com">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Example">
+<meta property="og:title" content="Example">
+<meta property="og:description" content="Example">
+<meta property="og:image" content="https://example.com/image.png">
+<meta property="og:image:alt" content="Example">
+<meta property="og:url" content="https://example.com">
 <link rel="icon" href="/static/favicons/favicon.ico" sizes="16x16 32x32" type="image/x-icon">
 <link rel="icon" href="/static/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
 <link rel="icon" href="/static/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
@@ -207,10 +206,10 @@ Results in:
 <link rel="apple-touch-icon" href="/static/favicons/apple-touch-icon-152x152.png" sizes="152x152" type="image/png">
 <link rel="apple-touch-icon" href="/static/favicons/apple-touch-icon-167x167.png" sizes="167x167" type="image/png">
 <link rel="apple-touch-icon" href="/static/favicons/apple-touch-icon-180x180.png" sizes="180x180" type="image/png">
-<link rel="msapplication-square70x70logo" href="/static/favicons/mstile-70x70.png">
-<link rel="msapplication-square270x270logo" href="/static/favicons/mstile-270x270.png">
-<link rel="msapplication-wide310x150logo" href="/static/favicons/mstile-310x150.png">
-<link rel="msapplication-wide310x150logo" href="/static/favicons/mstile-310x150.png">
+<link rel="msapplication-square70x70logo" href="/static/favicons/mstile-70x70.png" type="image/png">
+<link rel="msapplication-square270x270logo" href="/static/favicons/mstile-270x270.png" type="image/png">
+<link rel="msapplication-wide310x150logo" href="/static/favicons/mstile-310x150.png" type="image/png">
+<link rel="msapplication-wide310x150logo" href="/static/favicons/mstile-310x150.png" type="image/png">
 <link rel="canonical" href="https://example.com">
 <link rel="canonical" href="https://example.co.uk">
 <script src="/static/example.js" type="module"></script>
@@ -221,7 +220,6 @@ Results in:
 <p>Right-Click view source</p>
 </body>
 </html>
-
 ```
 
 ## Usage Examples
