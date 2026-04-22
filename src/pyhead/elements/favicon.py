@@ -1,12 +1,11 @@
 from typing import Optional, Union
 
-from markupsafe import Markup
-
+from .._base import BaseElement
 from .link import Link
 from ..protocols import CompileDelayed
 
 
-class Favicon:
+class Favicon(BaseElement):
     key: str = "favicon"
 
     _ico_icon_href: Optional[Link] = None
@@ -220,27 +219,17 @@ class Favicon:
                 )
 
     def __repr__(self) -> str:
-        attrs = " ".join(
-            [
-                f'href="{getattr(self, o_link)._href}"'
-                for o_link in self._icon_reference
-                if getattr(self, o_link) is not None
-            ]
-        )
-        return f"<FavIcon {attrs}>".replace(" >", ">")
-
-    def __str__(self) -> str:
-        return Markup(self.compile())
-
-    def __call__(self) -> str:
-        return Markup(self.compile())
+        hrefs = [
+            getattr(self, o_link)._href
+            for o_link in self._icon_reference
+            if getattr(self, o_link) is not None
+        ]
+        return f"Favicon(hrefs={hrefs!r})"
 
     def compile(self) -> str:
-        _ = [
+        rendered = [
             str(getattr(self, o_link))
             for o_link in self._icon_reference
             if getattr(self, o_link) is not None
         ]
-        if _:
-            return "\n".join(_)
-        return ""
+        return "\n".join(rendered) if rendered else ""
