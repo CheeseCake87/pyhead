@@ -29,8 +29,7 @@ def app():
 def test_flask_url_for_resolves_static(app):
     with app.test_request_context():
         assert (
-            FlaskUrlFor("static", filename="main.css").compile()
-            == "/static/main.css"
+            FlaskUrlFor("static", filename="main.css").compile() == "/static/main.css"
         )
 
 

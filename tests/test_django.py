@@ -80,7 +80,9 @@ def test_django_static_prefixes_static_url():
 
 
 def test_django_static_nested_path():
-    assert DjangoStatic("favicons/favicon.ico").compile() == "/static/favicons/favicon.ico"
+    assert (
+        DjangoStatic("favicons/favicon.ico").compile() == "/static/favicons/favicon.ico"
+    )
 
 
 # ---------- Elements compose with the deferred helpers ----------
