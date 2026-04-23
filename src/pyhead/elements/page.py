@@ -1,9 +1,13 @@
 from typing import Optional
 
 from .charset import Charset
+from .description import Description
 from .keywords import Keywords
 from .meta import Meta
+from .rating import Rating
+from .subject import Subject
 from .title import Title
+from .viewport import Viewport
 
 
 class Page:
@@ -16,34 +20,52 @@ class Page:
 
     def __init__(
         self,
-        title: str,
-        description: Optional[str] = None,
-        keywords: Optional[str | list] = None,
-        subject: Optional[str] = None,
-        rating: Optional[str] = None,
+        title: str | Title,
+        description: Optional[str | Description] = None,
+        keywords: Optional[str | list | Keywords] = None,
+        subject: Optional[str | Subject] = None,
+        rating: Optional[str | Rating] = None,
         charset: str = "utf-8",
-        viewport: str = "width=device-width, initial-scale=1",
+        viewport: Viewport | str = "width=device-width, initial-scale=1",
     ) -> None:
+        if isinstance(viewport, Viewport):
+            viewport_element: Meta | Viewport = viewport
+        else:
+            viewport_element = Meta(name="viewport", content=viewport)
+
+        title_element = title if isinstance(title, Title) else Title(title)
+
         self.e = {
             "charset": Charset(charset),
-            "title": Title(title),
-            "viewport": Meta(name="viewport", content=viewport),
+            "title": title_element,
+            "viewport": viewport_element,
         }
 
         if description is not None:
-            self.e["description"] = Meta(name="description", content=description)
+            if isinstance(description, Description):
+                self.e["description"] = description
+            else:
+                self.e["description"] = Meta(name="description", content=description)
 
         if keywords is not None:
-            if isinstance(keywords, str):
+            if isinstance(keywords, Keywords):
+                self.e["keywords"] = keywords
+            elif isinstance(keywords, str):
                 self.e["keywords"] = Keywords(from_string=keywords)
             elif isinstance(keywords, list):
                 self.e["keywords"] = Keywords(from_list=keywords)
 
         if subject is not None:
-            self.e["subject"] = Meta(name="subject", content=subject)
+            if isinstance(subject, Subject):
+                self.e["subject"] = subject
+            else:
+                self.e["subject"] = Meta(name="subject", content=subject)
 
         if rating is not None:
-            self.e["rating"] = Meta(name="rating", content=rating)
+            if isinstance(rating, Rating):
+                self.e["rating"] = rating
+            else:
+                self.e["rating"] = Meta(name="rating", content=rating)
 
     def __repr__(self) -> str:
         return "<Page ...>"

@@ -15,14 +15,18 @@ from pyhead.elements import (
     Link,
     Meta,
     OpenGraphWebsite,
+    Page,
+    Rating,
     ReferrerPolicy,
     Robots,
     Script,
     Stylesheet,
+    Subject,
     ThemeColor,
     Title,
     TwitterCard,
     Verification,
+    Viewport,
 )
 from pyhead.protocols import CompileDelayed
 
@@ -357,3 +361,211 @@ def test_str_returns_markup():
 
 def test_call_returns_markup():
     assert isinstance(Title("x")(), Markup)
+
+
+# ---------- Viewport ----------
+
+
+def test_viewport_defaults_match_legacy_string():
+    assert (
+        str(Viewport())
+        == '<meta name="viewport" content="width=device-width, initial-scale=1">'
+    )
+
+
+def test_viewport_content_string_no_wrapper():
+    assert (
+        Viewport(width="device-width", initial_scale=1.0).content_string()
+        == "width=device-width, initial-scale=1"
+    )
+
+
+def test_viewport_all_directives_emit_in_order():
+    v = Viewport(
+        width="device-width",
+        initial_scale=1.0,
+        height=800,
+        minimum_scale=0.5,
+        maximum_scale=2.0,
+        user_scalable="no",
+        interactive_widget="resizes-content",
+        viewport_fit="cover",
+    )
+    assert v.content_string() == (
+        "width=device-width, height=800, "
+        "initial-scale=1, minimum-scale=0.5, maximum-scale=2, "
+        "user-scalable=no, interactive-widget=resizes-content, "
+        "viewport-fit=cover"
+    )
+
+
+def test_viewport_unset_directives_are_omitted():
+    v = Viewport(width=None, initial_scale=None, viewport_fit="cover")
+    assert v.content_string() == "viewport-fit=cover"
+
+
+def test_viewport_fractional_scale_preserved():
+    assert "initial-scale=1.5" in Viewport(initial_scale=1.5).content_string()
+
+
+def test_viewport_compiles_to_meta_tag():
+    v = Viewport(width="device-width", initial_scale=1.0, viewport_fit="cover")
+    assert (
+        v.compile()
+        == '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">'
+    )
+
+
+def test_viewport_key_is_viewport_for_dedup():
+    assert Viewport().key == "viewport"
+
+
+def test_viewport_width_out_of_range_raises():
+    with pytest.raises(ValueError):
+        Viewport(width=0)
+    with pytest.raises(ValueError):
+        Viewport(width=10001)
+
+
+def test_viewport_scale_out_of_range_raises():
+    with pytest.raises(ValueError):
+        Viewport(initial_scale=-0.1)
+    with pytest.raises(ValueError):
+        Viewport(initial_scale=10.1)
+
+
+def test_viewport_min_greater_than_max_raises():
+    with pytest.raises(ValueError):
+        Viewport(minimum_scale=2.0, maximum_scale=1.0)
+
+
+def test_page_accepts_viewport_instance():
+    page = Page(
+        title="Hi",
+        viewport=Viewport(
+            width="device-width", initial_scale=1.0, viewport_fit="cover"
+        ),
+    )
+    rendered = str(page.e["viewport"])
+    assert rendered == (
+        '<meta name="viewport" '
+        'content="width=device-width, initial-scale=1, viewport-fit=cover">'
+    )
+
+
+def test_page_still_accepts_viewport_string():
+    page = Page(title="Hi", viewport="width=400")
+    assert str(page.e["viewport"]) == '<meta name="viewport" content="width=400">'
+
+
+# ---------- Page.keywords input shapes ----------
+
+
+def test_page_accepts_keywords_string():
+    page = Page(title="Hi", keywords="a, b, c")
+    assert isinstance(page.e["keywords"], Keywords)
+    assert 'content="a,  b,  c"' in str(page.e["keywords"])
+
+
+def test_page_accepts_keywords_list():
+    page = Page(title="Hi", keywords=["a", "b", "c"])
+    assert isinstance(page.e["keywords"], Keywords)
+    assert 'content="a, b, c"' in str(page.e["keywords"])
+
+
+def test_page_accepts_keywords_instance():
+    kw = Keywords(from_list=["python", "html", "head"])
+    page = Page(title="Hi", keywords=kw)
+    assert page.e["keywords"] is kw
+    assert 'content="python, html, head"' in str(page.e["keywords"])
+
+
+# ---------- Page.title input shapes ----------
+
+
+def test_page_accepts_title_string():
+    page = Page(title="Hi")
+    assert isinstance(page.e["title"], Title)
+    assert str(page.e["title"]) == "<title>Hi</title>"
+
+
+def test_page_accepts_title_instance():
+    t = Title("From Element")
+    page = Page(title=t)
+    assert page.e["title"] is t
+    assert str(page.e["title"]) == "<title>From Element</title>"
+
+
+# ---------- Page.description input shapes ----------
+
+
+def test_page_accepts_description_string():
+    page = Page(title="Hi", description="a plain string")
+    # Strings flow through Meta (legacy behaviour).
+    assert 'content="a plain string"' in str(page.e["description"])
+
+
+def test_page_accepts_description_instance():
+    d = Description("from element")
+    page = Page(title="Hi", description=d)
+    assert page.e["description"] is d
+    assert 'content="from element"' in str(page.e["description"])
+
+
+# ---------- Subject element ----------
+
+
+def test_subject_compiles_to_meta_tag():
+    assert str(Subject("Hello World")) == (
+        '<meta name="subject" content="Hello World">'
+    )
+
+
+def test_subject_escapes_content():
+    assert 'content="a &amp; b"' in str(Subject("a & b"))
+
+
+def test_subject_key_is_subject():
+    assert Subject("x").key == "subject"
+
+
+# ---------- Rating element ----------
+
+
+def test_rating_compiles_to_meta_tag():
+    assert str(Rating("General")) == '<meta name="rating" content="General">'
+
+
+def test_rating_escapes_content():
+    assert 'content="adult &amp; mature"' in str(Rating("adult & mature"))
+
+
+def test_rating_key_is_rating():
+    assert Rating("x").key == "rating"
+
+
+# ---------- Page.subject / Page.rating input shapes ----------
+
+
+def test_page_accepts_subject_string():
+    page = Page(title="Hi", subject="My Subject")
+    assert 'content="My Subject"' in str(page.e["subject"])
+
+
+def test_page_accepts_subject_instance():
+    s = Subject("From Element")
+    page = Page(title="Hi", subject=s)
+    assert page.e["subject"] is s
+    assert 'content="From Element"' in str(page.e["subject"])
+
+
+def test_page_accepts_rating_string():
+    page = Page(title="Hi", rating="General")
+    assert 'content="General"' in str(page.e["rating"])
+
+
+def test_page_accepts_rating_instance():
+    r = Rating("General")
+    page = Page(title="Hi", rating=r)
+    assert page.e["rating"] is r
+    assert 'content="General"' in str(page.e["rating"])

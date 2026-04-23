@@ -12,15 +12,18 @@ from .link import Link
 from .meta import Meta
 from .open_graph_website import OpenGraphWebsite
 from .page import Page
+from .rating import Rating
 from .referrer_policy import ReferrerPolicy
 from .robots import Robots
 from .script import Script
 from .social_media_card import SocialMediaCard
 from .stylesheet import Stylesheet
+from .subject import Subject
 from .theme_color import ThemeColor
 from .title import Title
 from .twitter_card import TwitterCard
 from .verification import Verification
+from .viewport import Viewport
 
 __all__ = [
     "ApplicationName",
@@ -37,13 +40,16 @@ __all__ = [
     "Meta",
     "OpenGraphWebsite",
     "Page",
+    "Rating",
     "ReferrerPolicy",
     "Robots",
     "Script",
     "SocialMediaCard",
     "Stylesheet",
+    "Subject",
     "ThemeColor",
     "Title",
     "TwitterCard",
     "Verification",
+    "Viewport",
 ]

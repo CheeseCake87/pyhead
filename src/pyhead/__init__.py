@@ -20,15 +20,18 @@ from .elements import (
     Meta,
     OpenGraphWebsite,
     Page,
+    Rating,
     ReferrerPolicy,
     Robots,
     Script,
     SocialMediaCard,
     Stylesheet,
+    Subject,
     ThemeColor,
     Title,
     TwitterCard,
     Verification,
+    Viewport,
 )
 
 HeadElement: TypeAlias = (
@@ -46,15 +49,18 @@ HeadElement: TypeAlias = (
     | Meta
     | OpenGraphWebsite
     | Page
+    | Rating
     | ReferrerPolicy
     | Robots
     | Script
     | SocialMediaCard
     | Stylesheet
+    | Subject
     | ThemeColor
     | Title
     | TwitterCard
     | Verification
+    | Viewport
 )
 
 
@@ -325,13 +331,16 @@ __all__ = [
     "Meta",
     "OpenGraphWebsite",
     "Page",
+    "Rating",
     "ReferrerPolicy",
     "Robots",
     "Script",
     "SocialMediaCard",
     "Stylesheet",
+    "Subject",
     "ThemeColor",
     "Title",
     "TwitterCard",
     "Verification",
+    "Viewport",
 ]
